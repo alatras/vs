@@ -1,0 +1,21 @@
+FROM golang:1.13.0-alpine3.10
+
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=amd64
+ENV GOPATH /go
+
+RUN apk add --no-cache --update tzdata git bash && \
+    rm -rf /var/cache/apk/*
+
+# Install Gin live reloading golang library
+RUN go get github.com/codegangsta/gin
+
+# Expose port 3000 to the host so we can access the gin proxy
+EXPOSE 3000
+
+WORKDIR /go/src/bitbucket.verifone.com/validation-service
+
+COPY . .
+
+CMD gin --immediate --appPort 8080 --bin validation-service run
