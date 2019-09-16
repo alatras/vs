@@ -1,3 +1,12 @@
+# Validation Service
+
+## Getting Started
+
+```bash
+$ git clone ssh://git@bitbucket.verifone.com:7999/cpdb/validation-service.git bitbucket.verifone.com/validation-service
+```
+
+
 ## Rule sets in stub repository
 
 ### Organisation 1
