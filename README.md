@@ -3,7 +3,7 @@
 ## Getting Started
 
 ```bash
-$ git clone ssh://git@bitbucket.verifone.com:7999/cpdb/validation-service.git bitbucket.verifone.com/validation-service
+$ git clone ssh://git@bitbucket.verifone.com:7999/cpdb/validation-service.git $GOPATH/src/bitbucket.verifone.com/validation-service
 ```
 
 
