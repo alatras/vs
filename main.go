@@ -3,29 +3,50 @@ package main
 import (
 	"bitbucket.verifone.com/validation-service/app"
 	"bitbucket.verifone.com/validation-service/cmd"
+	"bitbucket.verifone.com/validation-service/infra/instrumentation/main"
+	"bitbucket.verifone.com/validation-service/infra/logger"
 	"bitbucket.verifone.com/validation-service/infra/repository"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"log"
 	"os"
 )
 
 var version = "unknown"
+var appName = "Validation Service"
 
 func main() {
-	log.Printf("Validation Service %s\n", version)
+	logger, err := logger.NewLogger(
+		appName,
+		version,
+		logger.TextFormat,
+		logrus.TraceLevel,
+	)
+
+	if err != nil {
+		log.Panic("Failed to initialize logger")
+	}
+
+	instrumentation := instrumentation.NewMainInstrumentation(logger)
 
 	ruleSetRepository, err := repository.NewStubRuleSetRepository()
 
 	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err)
-		return
+		instrumentation.FailedToInitRuleSetRepository(err)
+		os.Exit(1)
 	}
 
 	validatorService := app.NewValidatorService(6, ruleSetRepository)
 
-	err = cmd.NewHttpServer(":8080", validatorService).Start()
+	serverPort := 8080
+	serverAddress := fmt.Sprintf(":%d", serverPort)
+
+	instrumentation.StartingRestApiServer(serverPort)
+
+	err = cmd.NewHttpServer(serverAddress, validatorService).Start()
 
 	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err)
+		instrumentation.FailedToStartRestApiServer(err)
+		os.Exit(1)
 	}
 }
