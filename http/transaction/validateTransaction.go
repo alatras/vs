@@ -30,10 +30,32 @@ func (t validateTransactionResponse) Render(w http.ResponseWriter, r *http.Reque
 }
 
 func response(report report.Report) *validateTransactionResponse {
+
+	blocked := []ruleSetResponse{}
+	tagged := []ruleSetResponse{}
+
+	for i:=0;i<len(report.BlockedRuleSets); i++ {
+		brs := ruleSetResponse{
+			Name: report.BlockedRuleSets[i].Name,
+			Metadata: metadata(report.BlockedRuleSets[i].Metadata),
+		}
+
+		blocked = append(blocked, brs)
+	}
+
+	for i:=0;i<len(report.TaggedRuleSets); i++ {
+		trs := ruleSetResponse{
+			Name: report.TaggedRuleSets[i].Name,
+			Metadata: metadata(report.TaggedRuleSets[i].Metadata),
+		}
+
+		tagged = append(tagged, trs)
+	}
+
 	resp := &validateTransactionResponse{
 		Action: report.Action,
-		BlockedRuleSets: report.BlockedRuleSets,
-		TaggedRuleSets: report.TaggedRuleSets,
+		BlockedRuleSets: blocked,
+		TaggedRuleSets: tagged,
 	}
 
 	return resp

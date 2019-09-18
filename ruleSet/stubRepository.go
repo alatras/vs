@@ -49,7 +49,7 @@ func (r *stubRuleSetRepository) reloadCache() error {
 
 func (r *stubRuleSetRepository) fetchCacheForOrganization(organization string) ([]RuleSet, error) {
 	if organization == "1" {
-		r, err := New("Is greater than 5 and less than 5000", Block, []Metadata{
+		r, err := New("Is greater than 5 and less than 5000", Block, Metadata{
 			{
 				Key:      "amount",
 				Operator: "<",
@@ -70,7 +70,7 @@ func (r *stubRuleSetRepository) fetchCacheForOrganization(organization string) (
 	}
 
 	if organization == "2" {
-		r, err := New("Is greater than 500 and less than 1000", Tag, []Metadata{
+		r, err := New("Is greater than 500 and less than 1000", Tag, Metadata{
 			{
 				Key:      "amount",
 				Operator: "<",

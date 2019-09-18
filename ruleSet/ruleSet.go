@@ -24,7 +24,7 @@ const (
 	Greater        Operator = ">"
 )
 
-type Metadata struct {
+type Metadata []struct {
 	Key      string   `json:"key"`
 	Operator Operator `json:"operator"`
 	Value    string   `json:"value"`
@@ -37,11 +37,11 @@ type rule interface {
 type RuleSet struct {
 	Name     string `json:"name"`
 	action   Action
-	Metadata []Metadata `json:"rules"`
+	Metadata Metadata `json:"rules"`
 	rules    []rule
 }
 
-func New(name string, action Action, metadata []Metadata) (RuleSet, error) {
+func New(name string, action Action, metadata Metadata) (RuleSet, error) {
 	ruleSet := RuleSet{
 		Name:     name,
 		action:   action,

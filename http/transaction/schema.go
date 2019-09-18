@@ -10,20 +10,20 @@ type validateTransactionPayload struct {
 	Organization string `json:"organization"`
 }
 
-type Metadata struct {
+type metadata []struct {
 	Key      string   `json:"key"`
 	Operator ruleSet.Operator `json:"operator"`
 	Value    string   `json:"value"`
 }
 
-type RuleSet struct {
+type ruleSetResponse struct {
 	Name     string `json:"name"`
-	Metadata []Metadata `json:"rules"`
+	Metadata metadata `json:"rules"`
 }
 
 
 type validateTransactionResponse struct {
 	Action report.Action `json:"action"`
-	BlockedRuleSets []ruleSet.RuleSet `json:"block"`
-	TaggedRuleSets  []ruleSet.RuleSet `json:"tags"`
+	BlockedRuleSets []ruleSetResponse `json:"block"`
+	TaggedRuleSets  []ruleSetResponse `json:"tags"`
 }
