@@ -1,7 +1,7 @@
 package ruleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/domain/transaction"
+	"bitbucket.verifone.com/validation-service/transaction"
 )
 
 type amountRule struct {

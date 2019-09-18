@@ -3,9 +3,9 @@ package transaction
 import (
 	"bitbucket.verifone.com/validation-service/app"
 	"bitbucket.verifone.com/validation-service/common/httpError"
-	"bitbucket.verifone.com/validation-service/domain/report"
-	"bitbucket.verifone.com/validation-service/domain/transaction"
-	"bitbucket.verifone.com/validation-service/infra/repository"
+	"bitbucket.verifone.com/validation-service/report"
+	"bitbucket.verifone.com/validation-service/ruleSet"
+	"bitbucket.verifone.com/validation-service/transaction"
 	"errors"
 	"github.com/go-chi/render"
 	"net/http"
@@ -40,7 +40,7 @@ func ValidateTransactionResponse(report report.Report) *validateTransactionRespo
 }
 
 func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
-	ruleSetRepository, err := repository.NewStubRuleSetRepository()
+	ruleSetRepository, err := ruleSet.NewStubRuleSetRepository()
 
 	var details interface{}
 

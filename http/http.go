@@ -2,7 +2,7 @@ package http
 
 import (
 	"bitbucket.verifone.com/validation-service/app"
-	"bitbucket.verifone.com/validation-service/domain/transaction"
+	"bitbucket.verifone.com/validation-service/transaction"
 	"encoding/json"
 	"net/http"
 )
