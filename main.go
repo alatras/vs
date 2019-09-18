@@ -3,7 +3,7 @@ package main
 import (
 	"bitbucket.verifone.com/validation-service/app"
 	"bitbucket.verifone.com/validation-service/cmd"
-	"bitbucket.verifone.com/validation-service/infra/repository"
+	"bitbucket.verifone.com/validation-service/ruleSet"
 	"fmt"
 	"log"
 	"os"
@@ -14,7 +14,7 @@ var version = "unknown"
 func main() {
 	log.Printf("Validation Service %s\n", version)
 
-	ruleSetRepository, err := repository.NewStubRuleSetRepository()
+	ruleSetRepository, err := ruleSet.NewStubRuleSetRepository()
 
 	if err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)

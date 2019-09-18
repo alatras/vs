@@ -1,9 +1,9 @@
 package app
 
 import (
-	"bitbucket.verifone.com/validation-service/domain/report"
-	"bitbucket.verifone.com/validation-service/domain/ruleSet"
-	"bitbucket.verifone.com/validation-service/domain/transaction"
+	"bitbucket.verifone.com/validation-service/report"
+	"bitbucket.verifone.com/validation-service/ruleSet"
+	"bitbucket.verifone.com/validation-service/transaction"
 )
 
 type task struct {
