@@ -7,6 +7,7 @@ import (
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/transaction"
 	"errors"
+	"fmt"
 	"github.com/go-chi/render"
 	"net/http"
 )
@@ -18,6 +19,8 @@ type validateTransactionPayload struct {
 type validateTransactionResponse struct {
 	Status string `json:"status,omitempty"`
 }
+
+const numOfWorkers = 6
 
 func (t validateTransactionPayload) Bind(r *http.Request) error {
 	if t.Transaction == nil {
@@ -31,7 +34,8 @@ func (t validateTransactionResponse) Render(w http.ResponseWriter, r *http.Reque
 	return nil
 }
 
-func ValidateTransactionResponse(report report.Report) *validateTransactionResponse {
+func response(report report.Report) *validateTransactionResponse {
+	fmt.Println(report)
 	resp := &validateTransactionResponse{
 		Status: "true",
 	}
@@ -51,11 +55,11 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	trxPayload := validateTransactionPayload{}
 
 	if err := render.Bind(r, &trxPayload); err != nil {
-		_ = render.Render(w, r, httpError.UnexpectedError(err))
+		_ = render.Render(w, r, httpError.MalformedParameters(err))
 		return
 	}
 
-	validator := app.NewValidatorService(6, ruleSetRepository)
+	validator := app.NewValidatorService(numOfWorkers, ruleSetRepository)
 
 	trx := transaction.Transaction{
 		Amount: trxPayload.Amount,
@@ -65,6 +69,6 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	rpt := <-validator.Enqueue(trx)
 
 	render.Status(r, http.StatusOK)
-	_ = render.Render(w, r, ValidateTransactionResponse(rpt))
+	_ = render.Render(w, r, response(rpt))
 	return
 }
