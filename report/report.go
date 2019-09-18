@@ -1,20 +1,20 @@
 package report
 
 import (
-	"bitbucket.verifone.com/validation-service/domain/ruleSet"
+	"bitbucket.verifone.com/validation-service/ruleSet"
 )
 
 type action string
 
 const (
-	Pass action = "PASS"
-	Block       = "BLOCK"
+	Pass  action = "PASS"
+	Block        = "BLOCK"
 )
 
 type Report struct {
 	Action          action            `json:"action"`
-	BlockedRuleSets []ruleSet.RuleSet `json:"block",omitempty"`
-	TaggedRuleSets  []ruleSet.RuleSet `json:"tags",omitempty"`
+	BlockedRuleSets []ruleSet.RuleSet `json:"block"`
+	TaggedRuleSets  []ruleSet.RuleSet `json:"tags"`
 }
 
 func New() Report {

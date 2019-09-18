@@ -3,9 +3,8 @@ package main
 import (
 	"bitbucket.verifone.com/validation-service/app"
 	"bitbucket.verifone.com/validation-service/cmd"
-	"bitbucket.verifone.com/validation-service/infra/instrumentation/main"
+	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/infra/logger"
-	"bitbucket.verifone.com/validation-service/infra/repository"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"log"
@@ -29,7 +28,7 @@ func main() {
 
 	instrumentation := instrumentation.NewMainInstrumentation(logger)
 
-	ruleSetRepository, err := repository.NewStubRuleSetRepository()
+	ruleSetRepository, err := ruleSet.NewStubRuleSetRepository()
 
 	if err != nil {
 		instrumentation.FailedToInitRuleSetRepository(err)
