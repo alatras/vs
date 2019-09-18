@@ -1,7 +1,7 @@
 package ruleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/domain/transaction"
+	"bitbucket.verifone.com/validation-service/transaction"
 	"strconv"
 )
 
@@ -35,18 +35,18 @@ type rule interface {
 }
 
 type RuleSet struct {
-	Name         string     `json:"name"`
-	action       Action
-	Metadata     []Metadata `json:"rules"`
-	rules        []rule
+	Name     string `json:"name"`
+	action   Action
+	Metadata []Metadata `json:"rules"`
+	rules    []rule
 }
 
 func New(name string, action Action, metadata []Metadata) (RuleSet, error) {
 	ruleSet := RuleSet{
-		Name: name,
-		action: action,
+		Name:     name,
+		action:   action,
 		Metadata: metadata,
-		rules: []rule{},
+		rules:    []rule{},
 	}
 
 	for _, m := range metadata {
