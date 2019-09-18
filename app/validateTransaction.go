@@ -59,7 +59,7 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository)
 }
 
 func (v *ValidatorService) Enqueue(trx transaction.Transaction) chan report.Report {
-	ruleSets := v.ruleSetRepository.ListForOrganization(trx.Organization)
+	ruleSets := v.ruleSetRepository.ListForEntity(trx.Entity)
 	response := make(chan report.Report, 1)
 
 	v.queue <- newTask(trx, ruleSets, response)

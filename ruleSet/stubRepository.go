@@ -18,8 +18,8 @@ func NewStubRuleSetRepository() (*stubRuleSetRepository, error) {
 	return r, nil
 }
 
-func (r *stubRuleSetRepository) ListForOrganization(organization string) []RuleSet {
-	if rules, ok := r.cache[organization]; ok {
+func (r *stubRuleSetRepository) ListForEntity(entity string) []RuleSet {
+	if rules, ok := r.cache[entity]; ok {
 		return rules
 	}
 
@@ -27,29 +27,29 @@ func (r *stubRuleSetRepository) ListForOrganization(organization string) []RuleS
 }
 
 func (r *stubRuleSetRepository) reloadCache() error {
-	org1Rules, err := r.fetchCacheForOrganization("1")
+	entity1Rules, err := r.fetchCacheForEntity("1")
 
 	if err != nil {
 		return err
 	}
 
-	org2Rules, err := r.fetchCacheForOrganization("2")
+	entity2Rules, err := r.fetchCacheForEntity("2")
 
 	if err != nil {
 		return err
 	}
 
 	r.cache = map[string][]RuleSet{
-		"1": org1Rules,
-		"2": org2Rules,
+		"1": entity1Rules,
+		"2": entity2Rules,
 	}
 
 	return nil
 }
 
-func (r *stubRuleSetRepository) fetchCacheForOrganization(organization string) ([]RuleSet, error) {
-	if organization == "1" {
-		r, err := New("Is greater than 5 and less than 5000", Block, []Metadata{
+func (r *stubRuleSetRepository) fetchCacheForEntity(entity string) ([]RuleSet, error) {
+	if entity == "1" {
+		r, err := New("Is greater than 5 and less than 5000", "1", Block, []Metadata{
 			{
 				Key:      "amount",
 				Operator: "<",
@@ -69,8 +69,8 @@ func (r *stubRuleSetRepository) fetchCacheForOrganization(organization string) (
 		return []RuleSet{r}, nil
 	}
 
-	if organization == "2" {
-		r, err := New("Is greater than 500 and less than 1000", Tag, []Metadata{
+	if entity == "2" {
+		r, err := New("Is greater than 500 and less than 1000", "2", Tag, []Metadata{
 			{
 				Key:      "amount",
 				Operator: "<",
