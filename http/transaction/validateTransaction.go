@@ -6,22 +6,22 @@ import (
 	"bitbucket.verifone.com/validation-service/report"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/transaction"
-	"fmt"
+	"errors"
 	"github.com/go-chi/render"
 	"net/http"
 )
 
-type validateTransactionPayload struct {
-	transaction.Transaction
-}
-
-type validateTransactionResponse struct {
-	report.Report
-}
-
 const numOfWorkers = 6
 
 func (t validateTransactionPayload) Bind(r *http.Request) error {
+	if t.Amount == 0 {
+		return errors.New("amount required")
+	}
+
+	if t.Organization == "" {
+		return errors.New("organization required")
+	}
+
 	return nil
 }
 
@@ -30,9 +30,10 @@ func (t validateTransactionResponse) Render(w http.ResponseWriter, r *http.Reque
 }
 
 func response(report report.Report) *validateTransactionResponse {
-	fmt.Println(report)
 	resp := &validateTransactionResponse{
-		report,
+		Action: report.Action,
+		BlockedRuleSets: report.BlockedRuleSets,
+		TaggedRuleSets: report.TaggedRuleSets,
 	}
 
 	return resp
@@ -50,7 +51,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	trxPayload := validateTransactionPayload{}
 
 	if err := render.Bind(r, &trxPayload); err != nil {
-		_ = render.Render(w, r, httpError.MalformedParameters(err))
+		_ = render.Render(w, r, httpError.MalformedParameters(err.Error()))
 		return
 	}
 
@@ -65,5 +66,4 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 
 	render.Status(r, http.StatusOK)
 	_ = render.Render(w, r, response(rpt))
-	return
 }
