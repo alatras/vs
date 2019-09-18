@@ -4,7 +4,7 @@ type stubRuleSetRepository struct {
 	cache map[string][]RuleSet
 }
 
-func NewStubRuleSetRepository() (*stubRuleSetRepository, error) {
+func NewStubRepository() (*stubRuleSetRepository, error) {
 	r := &stubRuleSetRepository{
 		cache: make(map[string][]RuleSet),
 	}

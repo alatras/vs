@@ -14,7 +14,7 @@ var version = "unknown"
 func main() {
 	log.Printf("Validation Service %s\n", version)
 
-	ruleSetRepository, err := ruleSet.NewStubRuleSetRepository()
+	ruleSetRepository, err := ruleSet.NewStubRepository()
 
 	if err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)
