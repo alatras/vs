@@ -6,27 +6,22 @@ import (
 	"bitbucket.verifone.com/validation-service/report"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/transaction"
-	"errors"
 	"fmt"
 	"github.com/go-chi/render"
 	"net/http"
 )
 
 type validateTransactionPayload struct {
-	*transaction.Transaction
+	transaction.Transaction
 }
 
 type validateTransactionResponse struct {
-	Status string `json:"status,omitempty"`
+	report.Report
 }
 
 const numOfWorkers = 6
 
 func (t validateTransactionPayload) Bind(r *http.Request) error {
-	if t.Transaction == nil {
-		return errors.New("missing required Transaction fields")
-	}
-
 	return nil
 }
 
@@ -37,7 +32,7 @@ func (t validateTransactionResponse) Render(w http.ResponseWriter, r *http.Reque
 func response(report report.Report) *validateTransactionResponse {
 	fmt.Println(report)
 	resp := &validateTransactionResponse{
-		Status: "true",
+		report,
 	}
 
 	return resp
