@@ -14,6 +14,8 @@ const (
 	JsonFormat LogFormat = "json"
 )
 
+type Metadata = map[string]interface{}
+
 type Logger struct {
 	Output *logrus.Entry
 	Error *logrus.Entry
@@ -72,7 +74,7 @@ func (l *Logger) WithTraceId(traceId string) *Logger {
 	}
 }
 
-func (l *Logger) WithMetadata(metadata interface{}) *Logger {
+func (l *Logger) WithMetadata(metadata Metadata) *Logger {
 	return &Logger{
 		Output: l.Output.WithField("metadata", metadata),
 		Error:  l.Error.WithField("metadata", metadata),
