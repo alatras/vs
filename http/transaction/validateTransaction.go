@@ -13,6 +13,10 @@ import (
 
 const numOfWorkers = 6
 
+/*
+	Required to be implemented so that chi can bind the data to the payload struct
+	Validate the request and return error if validation fails
+ */
 func (t validateTransactionPayload) Bind(r *http.Request) error {
 	if t.Amount == 0 {
 		return errors.New("amount required")
@@ -77,7 +81,7 @@ func response(report report.Report) *validateTransactionResponse {
 func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	ruleSetRepository, err := ruleSet.NewStubRuleSetRepository()
 
-	var details interface{}
+	details := make(map[string]interface{})
 
 	if err != nil {
 		_ = render.Render(w, r, httpError.UnexpectedError(details))
@@ -86,7 +90,8 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	trxPayload := validateTransactionPayload{}
 
 	if err := render.Bind(r, &trxPayload); err != nil {
-		_ = render.Render(w, r, httpError.MalformedParameters(err.Error()))
+		details["error"]= err.Error()
+		_ = render.Render(w, r, httpError.MalformedParameters(details))
 		return
 	}
 

@@ -43,8 +43,8 @@ type ValidatorService struct {
 	workers           []chan bool
 }
 
-func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository) ValidatorService {
-	v := ValidatorService{
+func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository) *ValidatorService {
+	v := &ValidatorService{
 		ruleSetRepository: ruleSetRepository,
 		queue:             make(chan task),
 		numOfWorkers:      numOfWorkers,
