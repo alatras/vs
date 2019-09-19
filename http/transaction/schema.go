@@ -10,7 +10,7 @@ type validateTransactionPayload struct {
 	Organization string `json:"organization"`
 }
 
-type metadata []struct {
+type metadata struct {
 	Key      string   `json:"key"`
 	Operator ruleSet.Operator `json:"operator"`
 	Value    string   `json:"value"`
@@ -18,7 +18,7 @@ type metadata []struct {
 
 type ruleSetResponse struct {
 	Name     string `json:"name"`
-	Metadata metadata `json:"rules"`
+	Metadata []metadata `json:"rules"`
 }
 
 

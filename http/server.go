@@ -12,16 +12,18 @@ import (
 
 type Server struct {
 	port string
+	router chi.Router
 }
 
-func NewServer(port string) *Server {
+func NewServer(port string, r chi.Router) *Server {
 	return &Server{
 		port: port,
+		router: r,
 	}
 }
 
 func (s *Server) Start() error {
-	r := chi.NewRouter()
+	r := s.router
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)

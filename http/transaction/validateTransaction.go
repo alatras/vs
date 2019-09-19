@@ -37,8 +37,14 @@ func response(report report.Report) *validateTransactionResponse {
 	for i:=0;i<len(report.BlockedRuleSets); i++ {
 		brs := ruleSetResponse{
 			Name: report.BlockedRuleSets[i].Name,
-			Metadata: metadata(report.BlockedRuleSets[i].Metadata),
 		}
+		var md []metadata
+
+		for j:= 0; j < len(report.BlockedRuleSets[i].Metadata); j++ {
+			md = append(md, metadata(report.BlockedRuleSets[i].Metadata[j]))
+		}
+
+		brs.Metadata = md
 
 		blocked = append(blocked, brs)
 	}
@@ -46,8 +52,15 @@ func response(report report.Report) *validateTransactionResponse {
 	for i:=0;i<len(report.TaggedRuleSets); i++ {
 		trs := ruleSetResponse{
 			Name: report.TaggedRuleSets[i].Name,
-			Metadata: metadata(report.TaggedRuleSets[i].Metadata),
 		}
+
+		var md []metadata
+
+		for j:= 0; j < len(report.TaggedRuleSets[i].Metadata); j++ {
+			md = append(md, metadata(report.TaggedRuleSets[i].Metadata[j]))
+		}
+
+		trs.Metadata = md
 
 		tagged = append(tagged, trs)
 	}
