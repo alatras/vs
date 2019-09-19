@@ -1,12 +1,17 @@
 package ruleSet
 
+import (
+	"bitbucket.verifone.com/validation-service/entity"
+	"bitbucket.verifone.com/validation-service/ruleSet/rule"
+)
+
 type stubRuleSetRepository struct {
-	cache map[string][]RuleSet
+	cache map[entity.Id][]RuleSet
 }
 
 func NewStubRepository() (*stubRuleSetRepository, error) {
 	r := &stubRuleSetRepository{
-		cache: make(map[string][]RuleSet),
+		cache: make(map[entity.Id][]RuleSet),
 	}
 
 	err := r.reloadCache()
@@ -18,12 +23,12 @@ func NewStubRepository() (*stubRuleSetRepository, error) {
 	return r, nil
 }
 
-func (r *stubRuleSetRepository) ListForOrganization(organization string) []RuleSet {
-	if rules, ok := r.cache[organization]; ok {
-		return rules
+func (r *stubRuleSetRepository) ListForEntity(entityId entity.Id) ([]RuleSet, error) {
+	if rules, ok := r.cache[entityId]; ok {
+		return rules, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
 func (r *stubRuleSetRepository) reloadCache() error {
@@ -39,7 +44,7 @@ func (r *stubRuleSetRepository) reloadCache() error {
 		return err
 	}
 
-	r.cache = map[string][]RuleSet{
+	r.cache = map[entity.Id][]RuleSet{
 		"1": org1Rules,
 		"2": org2Rules,
 	}
@@ -49,14 +54,14 @@ func (r *stubRuleSetRepository) reloadCache() error {
 
 func (r *stubRuleSetRepository) fetchCacheForOrganization(organization string) ([]RuleSet, error) {
 	if organization == "1" {
-		r, err := New("Is greater than 5 and less than 5000", Block, []Metadata{
+		r, err := New("1", "Is greater than 5 and less than 5000", Block, []rule.Metadata{
 			{
-				Key:      "amount",
+				Property: "amount",
 				Operator: "<",
 				Value:    "5000",
 			},
 			{
-				Key:      "amount",
+				Property: "amount",
 				Operator: ">",
 				Value:    "5",
 			},
@@ -70,14 +75,14 @@ func (r *stubRuleSetRepository) fetchCacheForOrganization(organization string) (
 	}
 
 	if organization == "2" {
-		r, err := New("Is greater than 500 and less than 1000", Tag, []Metadata{
+		r, err := New("2", "Is greater than 500 and less than 1000", Tag, []rule.Metadata{
 			{
-				Key:      "amount",
+				Property: "amount",
 				Operator: "<",
 				Value:    "1000",
 			},
 			{
-				Key:      "amount",
+				Property: "amount",
 				Operator: ">",
 				Value:    "500",
 			},

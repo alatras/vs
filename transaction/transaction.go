@@ -1,6 +1,6 @@
 package transaction
 
 type Transaction struct {
-	Amount       int    `json:"amount"`
-	Organization string `json:"organization"`
+	Amount   int    `json:"amount"`
+	EntityId string `json:"entity"`
 }

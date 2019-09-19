@@ -4,27 +4,45 @@ import (
 	"bitbucket.verifone.com/validation-service/report"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/transaction"
+	"context"
 )
 
 type task struct {
-	transaction transaction.Transaction
-	ruleSets    []ruleSet.RuleSet
-	response    chan report.Report
+	ctx               context.Context
+	transaction       transaction.Transaction
+	ruleSetRepository ruleSet.Repository
+	response          chan report.Report
+	error             chan error
 }
 
-func newTask(t transaction.Transaction, ruleSets []ruleSet.RuleSet, response chan report.Report) task {
+func newTask(
+	ctx context.Context,
+	trx transaction.Transaction,
+	ruleSetRepository ruleSet.Repository,
+	response chan report.Report,
+	error chan error,
+) task {
 	return task{
-		transaction: t,
-		ruleSets:    ruleSets,
-		response:    response,
+		ctx:               ctx,
+		transaction:       trx,
+		ruleSetRepository: ruleSetRepository,
+		response:          response,
+		error:             error,
 	}
 }
 
 func (task *task) run() {
+	ruleSets, err := task.ruleSetRepository.ListByEntityId(task.ctx, task.transaction.EntityId)
+
+	if err != nil {
+		task.error <- err
+		return
+	}
+
 	r := report.New()
 
-	for _, rs := range task.ruleSets {
-		switch rs.EvaluateTransaction(task.transaction) {
+	for _, rs := range ruleSets {
+		switch rs.IsMatch(task.transaction) {
 		case ruleSet.Block:
 			r.AppendBlockRuleSet(rs)
 		case ruleSet.Tag:
@@ -40,7 +58,7 @@ type ValidatorService struct {
 	ruleSetRepository ruleSet.Repository
 	queue             chan task
 	numOfWorkers      int
-	workers           []chan bool
+	workers           []chan struct{}
 }
 
 func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository) ValidatorService {
@@ -48,7 +66,7 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository)
 		ruleSetRepository: ruleSetRepository,
 		queue:             make(chan task),
 		numOfWorkers:      numOfWorkers,
-		workers:           []chan bool{},
+		workers:           []chan struct{}{},
 	}
 
 	for workerId := 0; workerId < v.numOfWorkers; workerId++ {
@@ -58,13 +76,12 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository)
 	return v
 }
 
-func (v *ValidatorService) Enqueue(trx transaction.Transaction) chan report.Report {
-	ruleSets := v.ruleSetRepository.ListForOrganization(trx.Organization)
-	response := make(chan report.Report, 1)
+func (v *ValidatorService) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan error) {
+	reportChan := make(chan report.Report)
+	errorChan := make(chan error)
 
-	v.queue <- newTask(trx, ruleSets, response)
-
-	return response
+	v.queue <- newTask(ctx, trx, v.ruleSetRepository, reportChan, errorChan)
+	return reportChan, errorChan
 }
 
 func (v *ValidatorService) ResizeWorkers(numOfWorkers int) {
@@ -72,7 +89,7 @@ func (v *ValidatorService) ResizeWorkers(numOfWorkers int) {
 
 	if delta > 0 {
 		for _, worker := range v.workers[numOfWorkers:] {
-			worker <- true
+			worker <- struct{}{}
 		}
 	} else if delta < 0 {
 		workerId := v.numOfWorkers
@@ -87,15 +104,17 @@ func (v *ValidatorService) ResizeWorkers(numOfWorkers int) {
 	v.numOfWorkers = numOfWorkers
 }
 
-func newWorker(queue chan task, id int) chan bool {
-	done := make(chan bool)
+func newWorker(queue chan task, id int) chan struct{} {
+	done := make(chan struct{})
 
 	go func() {
 		defer close(done)
 		for {
 			select {
 			case task := <-queue:
-				task.run()
+				if task.ctx.Err() != context.Canceled && task.ctx.Err() != context.DeadlineExceeded {
+					task.run()
+				}
 			case <-done:
 				return
 			}
