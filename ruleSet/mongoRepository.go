@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
 type mongoRuleSetRepository struct {
@@ -132,12 +133,15 @@ func (r mongoRuleSetRepository) Delete(ctx context.Context, entityId string, rul
 }
 
 func connectToMongo(hostname, port string) (*mongo.Client, error) {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://"+hostname+":"+port))
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://"+hostname+":"+port))
 	if err != nil {
 		return nil, errors.New("error while establishing connection to MongoDB")
 	}
 
-	if err := client.Ping(context.TODO(), nil); err != nil {
+	if err := client.Ping(ctx, nil); err != nil {
 		return nil, errors.New("error while ensuring connection to MongoDB")
 	}
 
