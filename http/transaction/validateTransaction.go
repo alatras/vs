@@ -16,7 +16,7 @@ const numOfWorkers = 6
 /*
 	Required to be implemented so that chi can bind the data to the payload struct
 	Validate the request and return error if validation fails
- */
+*/
 func (t validateTransactionPayload) Bind(r *http.Request) error {
 	if t.Amount == 0 {
 		return errors.New("amount required")
@@ -36,15 +36,16 @@ func (t validateTransactionResponse) Render(w http.ResponseWriter, r *http.Reque
 func response(report report.Report) *validateTransactionResponse {
 
 	blocked := []ruleSetResponse{}
+
 	tagged := []ruleSetResponse{}
 
-	for i:=0;i<len(report.BlockedRuleSets); i++ {
+	for i := 0; i < len(report.BlockedRuleSets); i++ {
 		brs := ruleSetResponse{
 			Name: report.BlockedRuleSets[i].Name,
 		}
 		var md []metadata
 
-		for j:= 0; j < len(report.BlockedRuleSets[i].Metadata); j++ {
+		for j := 0; j < len(report.BlockedRuleSets[i].Metadata); j++ {
 			md = append(md, metadata(report.BlockedRuleSets[i].Metadata[j]))
 		}
 
@@ -53,14 +54,14 @@ func response(report report.Report) *validateTransactionResponse {
 		blocked = append(blocked, brs)
 	}
 
-	for i:=0;i<len(report.TaggedRuleSets); i++ {
+	for i := 0; i < len(report.TaggedRuleSets); i++ {
 		trs := ruleSetResponse{
 			Name: report.TaggedRuleSets[i].Name,
 		}
 
 		var md []metadata
 
-		for j:= 0; j < len(report.TaggedRuleSets[i].Metadata); j++ {
+		for j := 0; j < len(report.TaggedRuleSets[i].Metadata); j++ {
 			md = append(md, metadata(report.TaggedRuleSets[i].Metadata[j]))
 		}
 
@@ -70,9 +71,9 @@ func response(report report.Report) *validateTransactionResponse {
 	}
 
 	resp := &validateTransactionResponse{
-		Action: report.Action,
+		Action:          report.Action,
 		BlockedRuleSets: blocked,
-		TaggedRuleSets: tagged,
+		TaggedRuleSets:  tagged,
 	}
 
 	return resp
@@ -90,7 +91,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	trxPayload := validateTransactionPayload{}
 
 	if err := render.Bind(r, &trxPayload); err != nil {
-		details["error"]= err.Error()
+		details["error"] = err.Error()
 		_ = render.Render(w, r, httpError.MalformedParameters(details))
 		return
 	}
@@ -98,7 +99,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	validator := app.NewValidatorService(numOfWorkers, ruleSetRepository)
 
 	trx := transaction.Transaction{
-		Amount: trxPayload.Amount,
+		Amount:       trxPayload.Amount,
 		Organization: trxPayload.Organization,
 	}
 
