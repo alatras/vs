@@ -29,7 +29,7 @@ type Metadata struct {
 }
 
 type Validator interface {
-	IsMatch(trx transaction.Transaction) bool
+	Validate(trx transaction.Transaction) bool
 }
 
 func NewValidator(metadata Metadata) (Validator, error) {

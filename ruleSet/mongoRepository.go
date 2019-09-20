@@ -28,6 +28,7 @@ func NewMongoRepository(hostname, port string) (*mongoRuleSetRepository, error) 
 
 func (r mongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) error {
 	_, err := r.ruleSetCollection.InsertOne(ctx, ruleSet)
+
 	if err != nil {
 		return errors.New("failed to create rule set in repository")
 	}

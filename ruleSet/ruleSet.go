@@ -34,31 +34,31 @@ type Repository interface {
 
 func New(entityId string, name string, action Action, metadata []rule.Metadata) (RuleSet, error) {
 	ruleSet := RuleSet{
-		Id:             uuid.New().String(),
-		EntityId:       entityId,
-		Action:         action,
-		Name:           name,
-		RuleMetadata:   metadata,
-		ruleValidators: []rule.Validator{},
-	}
-
-	for _, m := range metadata {
-		v, err := rule.NewValidator(m)
-		if err != nil {
-			return ruleSet, err
-		}
-		ruleSet.ruleValidators = append(ruleSet.ruleValidators, v)
+		Id:           uuid.New().String(),
+		EntityId:     entityId,
+		Name:         name,
+		Action:       action,
+		RuleMetadata: metadata,
 	}
 
 	return ruleSet, nil
 }
 
-func (r RuleSet) IsMatch(trx transaction.Transaction) Action {
-	for _, validator := range r.ruleValidators {
-		if !validator.IsMatch(trx) {
-			return Pass
+func (ruleSet RuleSet) Matches(trx transaction.Transaction) (Action, error) {
+	if len(ruleSet.RuleMetadata) == 0 {
+		return Pass, nil
+	}
+
+	for _, metadata := range ruleSet.RuleMetadata {
+		validator, err := rule.NewValidator(metadata)
+		if err != nil {
+			return Pass, err
+		}
+
+		if !validator.Validate(trx) {
+			return Pass, nil
 		}
 	}
 
-	return r.Action
+	return ruleSet.Action, nil
 }

@@ -19,19 +19,20 @@ func newTask(
 	ctx context.Context,
 	trx transaction.Transaction,
 	ruleSetRepository ruleSet.Repository,
-	response chan report.Report,
-	error chan error,
 ) task {
 	return task{
 		ctx:               ctx,
 		transaction:       trx,
 		ruleSetRepository: ruleSetRepository,
-		response:          response,
-		error:             error,
+		response:          make(chan report.Report),
+		error:             make(chan error),
 	}
 }
 
 func (task *task) run() {
+	defer close(task.response)
+	defer close(task.error)
+
 	ruleSets, err := task.ruleSetRepository.ListByEntityId(task.ctx, task.transaction.EntityId)
 
 	if err != nil {
@@ -42,7 +43,13 @@ func (task *task) run() {
 	r := report.New()
 
 	for _, rs := range ruleSets {
-		switch rs.IsMatch(task.transaction) {
+		action, err := rs.Matches(task.transaction)
+		if err != nil {
+			task.error <- err
+			return
+		}
+
+		switch action {
 		case ruleSet.Block:
 			r.AppendBlockRuleSet(rs)
 		case ruleSet.Tag:
@@ -51,7 +58,6 @@ func (task *task) run() {
 	}
 
 	task.response <- r
-	close(task.response)
 }
 
 type ValidatorService struct {
@@ -77,11 +83,9 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository)
 }
 
 func (v *ValidatorService) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan error) {
-	reportChan := make(chan report.Report)
-	errorChan := make(chan error)
-
-	v.queue <- newTask(ctx, trx, v.ruleSetRepository, reportChan, errorChan)
-	return reportChan, errorChan
+	task := newTask(ctx, trx, v.ruleSetRepository)
+	v.queue <- task
+	return task.response, task.error
 }
 
 func (v *ValidatorService) ResizeWorkers(numOfWorkers int) {
@@ -112,9 +116,7 @@ func newWorker(queue chan task, id int) chan struct{} {
 		for {
 			select {
 			case task := <-queue:
-				if task.ctx.Err() != context.Canceled && task.ctx.Err() != context.DeadlineExceeded {
-					task.run()
-				}
+				task.run()
 			case <-done:
 				return
 			}

@@ -18,7 +18,7 @@ func newAmountValidator(operator operator, value string) (*amountValidator, erro
 		return nil, err
 	}
 
-	var amountComparator func(int) bool
+	var amountComparator compare.IntComparator
 
 	switch operator {
 	case less:
@@ -40,6 +40,6 @@ func newAmountValidator(operator operator, value string) (*amountValidator, erro
 	return &amountValidator{amountComparator}, nil
 }
 
-func (v amountValidator) IsMatch(transaction transaction.Transaction) bool {
+func (v amountValidator) Validate(transaction transaction.Transaction) bool {
 	return v.amountComparator(transaction.Amount)
 }

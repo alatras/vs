@@ -1,99 +1,105 @@
 package ruleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/entity"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
+	"context"
+	"sync"
 )
 
 type stubRuleSetRepository struct {
-	cache map[entity.Id][]RuleSet
+	cache map[string]map[string]RuleSet
+	lock  *sync.RWMutex
 }
 
 func NewStubRepository() (*stubRuleSetRepository, error) {
-	r := &stubRuleSetRepository{
-		cache: make(map[entity.Id][]RuleSet),
-	}
-
-	err := r.reloadCache()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r, nil
+	return &stubRuleSetRepository{
+		cache: make(map[string]map[string]RuleSet),
+		lock:  &sync.RWMutex{},
+	}, nil
 }
 
-func (r *stubRuleSetRepository) ListForEntity(entityId entity.Id) ([]RuleSet, error) {
-	if rules, ok := r.cache[entityId]; ok {
-		return rules, nil
+func (r *stubRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if _, ok := r.cache[ruleSet.EntityId]; !ok {
+		r.cache[ruleSet.EntityId] = make(map[string]RuleSet)
 	}
-
-	return nil, nil
-}
-
-func (r *stubRuleSetRepository) reloadCache() error {
-	org1Rules, err := r.fetchCacheForOrganization("1")
-
-	if err != nil {
-		return err
-	}
-
-	org2Rules, err := r.fetchCacheForOrganization("2")
-
-	if err != nil {
-		return err
-	}
-
-	r.cache = map[entity.Id][]RuleSet{
-		"1": org1Rules,
-		"2": org2Rules,
-	}
+	r.cache[ruleSet.EntityId][ruleSet.Id] = ruleSet
 
 	return nil
 }
 
-func (r *stubRuleSetRepository) fetchCacheForOrganization(organization string) ([]RuleSet, error) {
-	if organization == "1" {
-		r, err := New("1", "Is greater than 5 and less than 5000", Block, []rule.Metadata{
-			{
-				Property: "amount",
-				Operator: "<",
-				Value:    "5000",
-			},
-			{
-				Property: "amount",
-				Operator: ">",
-				Value:    "5",
-			},
-		})
+func (r *stubRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error) {
+	var ruleSet RuleSet
 
-		if err != nil {
-			return nil, err
-		}
+	r.lock.RLock()
+	defer r.lock.RUnlock()
 
-		return []RuleSet{r}, nil
+	entityMap, ok := r.cache[entityId]
+	if !ok {
+		return ruleSet, nil
 	}
 
-	if organization == "2" {
-		r, err := New("2", "Is greater than 500 and less than 1000", Tag, []rule.Metadata{
-			{
-				Property: "amount",
-				Operator: "<",
-				Value:    "1000",
-			},
-			{
-				Property: "amount",
-				Operator: ">",
-				Value:    "500",
-			},
-		})
-
-		if err != nil {
-			return nil, err
-		}
-
-		return []RuleSet{r}, nil
+	if cachedRuleSet, ok := entityMap[ruleSetId]; ok {
+		ruleSet = cachedRuleSet
 	}
 
-	return []RuleSet{}, nil
+	return ruleSet, nil
+}
+
+func (r *stubRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {
+	var ruleSets []RuleSet
+
+	r.lock.RLock()
+	defer r.lock.RUnlock()
+
+	if cachedRuleSetMap, ok := r.cache[entityId]; ok {
+		for _, ruleSet := range cachedRuleSetMap {
+			ruleSets = append(ruleSets, ruleSet)
+		}
+	}
+
+	return ruleSets, nil
+}
+
+func (r *stubRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	entityMap, ok := r.cache[entityId]
+
+	if !ok {
+		return false, nil
+	}
+
+	_, ok = entityMap[ruleSet.Id]
+
+	if !ok {
+		return false, nil
+	}
+
+	entityMap[ruleSet.Id] = ruleSet
+
+	return true, nil
+}
+
+func (r *stubRuleSetRepository) Delete(ctx context.Context, entityId string, ruleSetId string) (bool, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	entityMap, ok := r.cache[entityId]
+
+	if !ok {
+		return false, nil
+	}
+
+	_, ok = entityMap[ruleSetId]
+
+	if !ok {
+		return false, nil
+	}
+
+	delete(entityMap, ruleSetId)
+
+	return true, nil
 }
