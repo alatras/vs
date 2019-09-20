@@ -6,6 +6,7 @@ import (
 	"bitbucket.verifone.com/validation-service/transaction"
 	"context"
 	"encoding/json"
+	"github.com/google/uuid"
 	"net/http"
 )
 
@@ -49,9 +50,15 @@ func (h *HttpServer) validateHandler(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	if traceId := r.Header.Get("X-TRACE-ID"); traceId != "" {
-		ctx = context.WithValue(ctx, contextKey.TraceId, traceId)
+	var traceId string
+
+	if headerTraceId := r.Header.Get("X-TRACE-ID"); headerTraceId != "" {
+		traceId = headerTraceId
+	} else {
+		traceId = uuid.New().String()
 	}
+
+	ctx = context.WithValue(ctx, contextKey.TraceId, traceId)
 
 	report := <-h.validator.Enqueue(trx, ctx)
 	reportJson, marshalErr := json.Marshal(report)
