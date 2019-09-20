@@ -9,10 +9,10 @@ import (
 )
 
 type task struct {
-	ctx 			context.Context
-	transaction 	transaction.Transaction
-	ruleSets    	[]ruleSet.RuleSet
-	response    	chan report.Report
+	ctx             context.Context
+	transaction     transaction.Transaction
+	ruleSets        []ruleSet.RuleSet
+	response        chan report.Report
 	instrumentation *instrumentation
 }
 
@@ -27,14 +27,14 @@ func newTask(
 	instrumentation.setContext(ctx)
 	instrumentation.setMetadata(metadata{
 		"amount": t.Amount,
-		"organization": t.Organization,
+		"entity": t.Entity,
 	})
 
 	return task{
-		ctx: 		 	 ctx,
-		transaction: 	 t,
-		ruleSets:    	 ruleSets,
-		response:    	 response,
+		ctx:             ctx,
+		transaction:     t,
+		ruleSets:        ruleSets,
+		response:        response,
 		instrumentation: instrumentation,
 	}
 }
@@ -65,7 +65,7 @@ type ValidatorService struct {
 	queue             chan task
 	numOfWorkers      int
 	workers           []chan bool
-	logger			  *logger.Logger
+	logger            *logger.Logger
 }
 
 func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository, logger *logger.Logger) ValidatorService {
@@ -74,7 +74,7 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository,
 		queue:             make(chan task),
 		numOfWorkers:      numOfWorkers,
 		workers:           []chan bool{},
-		logger:			   logger,
+		logger:            logger,
 	}
 
 	for workerId := 0; workerId < v.numOfWorkers; workerId++ {
