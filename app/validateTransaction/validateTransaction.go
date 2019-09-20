@@ -1,6 +1,7 @@
-package app
+package validateTransaction
 
 import (
+	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/report"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/transaction"
@@ -13,23 +14,35 @@ type task struct {
 	ruleSetRepository ruleSet.Repository
 	response          chan report.Report
 	error             chan error
+	instrumentation *instrumentation
 }
 
 func newTask(
 	ctx context.Context,
 	trx transaction.Transaction,
 	ruleSetRepository ruleSet.Repository,
+	logger *logger.Logger,
 ) task {
+	instrumentation := newInstrumentation(logger)
+	instrumentation.setContext(ctx)
+	instrumentation.setMetadata(metadata{
+		"amount": t.Amount,
+		"organization": t.Organization,
+	})
+
 	return task{
 		ctx:               ctx,
 		transaction:       trx,
 		ruleSetRepository: ruleSetRepository,
 		response:          make(chan report.Report),
 		error:             make(chan error),
+		instrumentation: instrumentation,
 	}
 }
 
 func (task *task) run() {
+	task.instrumentation.startTransactionValidation()
+
 	defer close(task.response)
 	defer close(task.error)
 
@@ -57,6 +70,8 @@ func (task *task) run() {
 		}
 	}
 
+	task.instrumentation.endTransactionValidation()
+
 	task.response <- r
 }
 
@@ -65,14 +80,16 @@ type ValidatorService struct {
 	queue             chan task
 	numOfWorkers      int
 	workers           []chan struct{}
+	logger			  *logger.Logger
 }
 
-func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository) ValidatorService {
+func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository, logger *logger.Logger) ValidatorService {
 	v := ValidatorService{
 		ruleSetRepository: ruleSetRepository,
 		queue:             make(chan task),
 		numOfWorkers:      numOfWorkers,
 		workers:           []chan struct{}{},
+		logger:			   logger,
 	}
 
 	for workerId := 0; workerId < v.numOfWorkers; workerId++ {
@@ -83,7 +100,7 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository)
 }
 
 func (v *ValidatorService) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan error) {
-	task := newTask(ctx, trx, v.ruleSetRepository)
+	task := newTask(ctx, trx, v.ruleSetRepository, v.logger)
 	v.queue <- task
 	return task.response, task.error
 }
