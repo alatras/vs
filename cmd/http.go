@@ -1,18 +1,21 @@
 package cmd
 
 import (
-	"bitbucket.verifone.com/validation-service/app"
+	"bitbucket.verifone.com/validation-service/app/validateTransaction"
+	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/transaction"
+	"context"
 	"encoding/json"
+	"github.com/google/uuid"
 	"net/http"
 )
 
 type HttpServer struct {
 	port      string
-	validator app.ValidatorService
+	validator validateTransaction.ValidatorService
 }
 
-func NewHttpServer(port string, validator app.ValidatorService) *HttpServer {
+func NewHttpServer(port string, validator validateTransaction.ValidatorService) *HttpServer {
 	return &HttpServer{
 		port:      port,
 		validator: validator,
@@ -45,7 +48,19 @@ func (h *HttpServer) validateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	report := <-h.validator.Enqueue(trx)
+	ctx := r.Context()
+
+	var traceId string
+
+	if headerTraceId := r.Header.Get("X-TRACE-ID"); headerTraceId != "" {
+		traceId = headerTraceId
+	} else {
+		traceId = uuid.New().String()
+	}
+
+	ctx = context.WithValue(ctx, contextKey.TraceId, traceId)
+
+	report := <-h.validator.Enqueue(trx, ctx)
 	reportJson, marshalErr := json.Marshal(report)
 
 	if marshalErr != nil {
