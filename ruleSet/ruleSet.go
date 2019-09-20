@@ -16,12 +16,11 @@ const (
 )
 
 type RuleSet struct {
-	Id             string          `json:"id" bson:"id"`
-	EntityId       string          `json:"entityId" bson:"entityId"`
-	Action         Action          `bson:"action"`
-	Name           string          `json:"name" bson:"name"`
-	RuleMetadata   []rule.Metadata `json:"rules" bson:"validationRuleMetadata"`
-	ruleValidators []rule.Validator
+	Id           string          `json:"id" bson:"id"`
+	EntityId     string          `json:"entityId" bson:"entityId"`
+	Action       Action          `bson:"action"`
+	Name         string          `json:"name" bson:"name"`
+	RuleMetadata []rule.Metadata `json:"rules" bson:"validationRuleMetadata"`
 }
 
 type Repository interface {

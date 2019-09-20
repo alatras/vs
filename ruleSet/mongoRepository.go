@@ -40,13 +40,13 @@ func (r mongoRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 	var ruleSet RuleSet
 
 	err := r.ruleSetCollection.FindOne(context.TODO(), bson.D{
-		{
-			"entityId",
-			entityId,
+		bson.E{
+			Key:   "entityId",
+			Value: entityId,
 		},
-		{
-			"id",
-			ruleSetId,
+		bson.E{
+			Key:   "id",
+			Value: ruleSetId,
 		},
 	}).Decode(&ruleSet)
 
@@ -59,9 +59,9 @@ func (r mongoRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 
 func (r mongoRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {
 	cursor, err := r.ruleSetCollection.Find(ctx, bson.D{
-		{
-			"entityId",
-			entityId,
+		bson.E{
+			Key:   "entityId",
+			Value: entityId,
 		},
 	})
 
@@ -87,13 +87,13 @@ func (r mongoRuleSetRepository) Replace(ctx context.Context, entityId string, ru
 	var replaced bool
 
 	result, err := r.ruleSetCollection.ReplaceOne(ctx, bson.D{
-		{
-			"entityId",
-			entityId,
+		bson.E{
+			Key:   "entityId",
+			Value: entityId,
 		},
-		{
-			"id",
-			ruleSet.Id,
+		bson.E{
+			Key:   "id",
+			Value: ruleSet.Id,
 		},
 	}, ruleSet)
 
@@ -112,13 +112,13 @@ func (r mongoRuleSetRepository) Delete(ctx context.Context, entityId string, rul
 	var deleted bool
 
 	result, err := r.ruleSetCollection.DeleteMany(ctx, bson.D{
-		{
-			"entityId",
-			entityId,
+		bson.E{
+			Key:   "entityId",
+			Value: entityId,
 		},
-		{
-			"id",
-			ruleSetId,
+		bson.E{
+			Key:   "id",
+			Value: ruleSetId,
 		},
 	})
 
