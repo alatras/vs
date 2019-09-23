@@ -14,13 +14,13 @@ type MongoRuleSetRepository struct {
 	ruleSetCollection *mongo.Collection
 }
 
-func NewMongoRepository(hostname, port string) (*MongoRuleSetRepository, error) {
-	client, err := connectToMongo(hostname, port)
+func NewMongoRepository(url string, dbName string) (*MongoRuleSetRepository, error) {
+	client, err := connectToMongo(url)
 	if err != nil {
 		return nil, err
 	}
 
-	ruleSetCollection := client.Database("validationService").Collection("ruleSets")
+	ruleSetCollection := client.Database(dbName).Collection("ruleSets")
 	repository := MongoRuleSetRepository{client, ruleSetCollection}
 
 	return &repository, nil
@@ -136,11 +136,12 @@ func (r MongoRuleSetRepository) Delete(ctx context.Context, entityId string, rul
 	return deleted, nil
 }
 
-func connectToMongo(hostname, port string) (*mongo.Client, error) {
+func connectToMongo(url string) (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://"+hostname+":"+port))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(url))
+
 	if err != nil {
 		return nil, errors.New("error while establishing connection to MongoDB")
 	}
