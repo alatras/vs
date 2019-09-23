@@ -25,8 +25,8 @@ func (t validateTransactionPayload) Bind(r *http.Request) error {
 		return errors.New("amount required")
 	}
 
-	if t.Organization == "" {
-		return errors.New("organization required")
+	if t.Entity == "" {
+		return errors.New("entity required")
 	}
 
 	return nil
@@ -114,8 +114,8 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	validator := validateTransaction.NewValidatorService(numOfWorkers, ruleSetRepository, rs.logger)
 
 	trx := transaction.Transaction{
-		Amount:       trxPayload.Amount,
-		Organization: trxPayload.Organization,
+		Amount: trxPayload.Amount,
+		Entity: trxPayload.Entity,
 	}
 
 	rpt := <-validator.Enqueue(trx, ctx)
