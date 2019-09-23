@@ -1,94 +1,111 @@
 package ruleSet
 
-type stubRuleSetRepository struct {
-	cache map[string][]RuleSet
+import (
+	"context"
+	"sync"
+)
+
+type StubRuleSetRepository struct {
+	cache map[string]map[string]RuleSet
+	lock  *sync.RWMutex
 }
 
-func NewStubRuleSetRepository() (*stubRuleSetRepository, error) {
-	r := &stubRuleSetRepository{
-		cache: make(map[string][]RuleSet),
-	}
-
-	err := r.reloadCache()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r, nil
+func NewStubRepository() (*StubRuleSetRepository, error) {
+	return &StubRuleSetRepository{
+		cache: make(map[string]map[string]RuleSet),
+		lock:  &sync.RWMutex{},
+	}, nil
 }
 
-func (r *stubRuleSetRepository) ListForEntity(entity string) []RuleSet {
-	if rules, ok := r.cache[entity]; ok {
-		return rules
+func (r *StubRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if _, ok := r.cache[ruleSet.EntityId]; !ok {
+		r.cache[ruleSet.EntityId] = make(map[string]RuleSet)
 	}
+	r.cache[ruleSet.EntityId][ruleSet.Id] = ruleSet
 
 	return nil
 }
 
-func (r *stubRuleSetRepository) reloadCache() error {
-	entity1Rules, err := r.fetchCacheForEntity("1")
+func (r *StubRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error) {
+	var ruleSet RuleSet
 
-	if err != nil {
-		return err
+	r.lock.RLock()
+	defer r.lock.RUnlock()
+
+	entityMap, ok := r.cache[entityId]
+	if !ok {
+		return ruleSet, nil
 	}
 
-	entity2Rules, err := r.fetchCacheForEntity("2")
-
-	if err != nil {
-		return err
+	if cachedRuleSet, ok := entityMap[ruleSetId]; ok {
+		ruleSet = cachedRuleSet
 	}
 
-	r.cache = map[string][]RuleSet{
-		"1": entity1Rules,
-		"2": entity2Rules,
-	}
-
-	return nil
+	return ruleSet, nil
 }
 
-func (r *stubRuleSetRepository) fetchCacheForEntity(entity string) ([]RuleSet, error) {
-	if entity == "1" {
-		r, err := New("Is greater than 5 and less than 5000", "1", Block, []Metadata{
-			{
-				Key:      "amount",
-				Operator: "<",
-				Value:    "5000",
-			},
-			{
-				Key:      "amount",
-				Operator: ">",
-				Value:    "5",
-			},
-		})
+func (r *StubRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {
+	var ruleSets []RuleSet
 
-		if err != nil {
-			return nil, err
+	r.lock.RLock()
+	defer r.lock.RUnlock()
+
+	if cachedRuleSetMap, ok := r.cache[entityId]; ok {
+		for _, ruleSet := range cachedRuleSetMap {
+			ruleSets = append(ruleSets, ruleSet)
 		}
-
-		return []RuleSet{r}, nil
 	}
 
-	if entity == "2" {
-		r, err := New("Is greater than 500 and less than 1000", "2", Tag, []Metadata{
-			{
-				Key:      "amount",
-				Operator: "<",
-				Value:    "1000",
-			},
-			{
-				Key:      "amount",
-				Operator: ">",
-				Value:    "500",
-			},
-		})
+	return ruleSets, nil
+}
 
-		if err != nil {
-			return nil, err
-		}
+func (r *StubRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
 
-		return []RuleSet{r}, nil
+	entityMap, ok := r.cache[entityId]
+
+	if !ok {
+		return false, nil
 	}
 
-	return []RuleSet{}, nil
+	_, ok = entityMap[ruleSet.Id]
+
+	if !ok {
+		return false, nil
+	}
+
+	entityMap[ruleSet.Id] = ruleSet
+
+	return true, nil
+}
+
+func (r *StubRuleSetRepository) Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	entityMap, ok := r.cache[entityId]
+
+	if !ok {
+		return false, nil
+	}
+
+	var ruleSetsExist bool
+
+	for _, ruleSetId := range ruleSetIds {
+		_, ruleSetsExist = entityMap[ruleSetId]
+	}
+
+	if !ruleSetsExist {
+		return false, nil
+	}
+
+	for _, ruleSetId := range ruleSetIds {
+		delete(entityMap, ruleSetId)
+	}
+
+	return true, nil
 }

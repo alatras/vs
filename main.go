@@ -5,10 +5,12 @@ import (
 	"bitbucket.verifone.com/validation-service/cmd"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
+	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"log"
 	"os"
+	"runtime"
 )
 
 var version = "unknown"
@@ -26,14 +28,25 @@ func main() {
 		log.Panic("Failed to initialize logger")
 	}
 
-	ruleSetRepository, err := ruleSet.NewStubRuleSetRepository()
+	mongoHost := os.Getenv("MONGO_HOST")
+	if mongoHost == "" {
+		_, _ = fmt.Fprintln(os.Stderr, errors.New("mongo host undefined"))
+		return
+	}
 
+	mongoPort := os.Getenv("MONGO_PORT")
+	if mongoPort == "" {
+		_, _ = fmt.Fprintln(os.Stderr, errors.New("mongo port undefined"))
+		return
+	}
+
+	ruleSetRepository, err := ruleSet.NewMongoRepository(mongoHost, mongoPort)
 	if err != nil {
 		logger.Error.WithError(err).Error("Failed to initialize RuleSetRepository")
 		os.Exit(1)
 	}
 
-	validatorService := validateTransaction.NewValidatorService(6, ruleSetRepository, logger)
+	validatorService := validateTransaction.NewValidatorService(runtime.NumCPU(), ruleSetRepository, logger)
 
 	serverPort := 8080
 	serverAddress := fmt.Sprintf(":%d", serverPort)

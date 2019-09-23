@@ -9,43 +9,60 @@ import (
 )
 
 type task struct {
-	ctx             context.Context
-	transaction     transaction.Transaction
-	ruleSets        []ruleSet.RuleSet
-	response        chan report.Report
-	instrumentation *instrumentation
+	ctx               context.Context
+	transaction       transaction.Transaction
+	ruleSetRepository ruleSet.Repository
+	response          chan report.Report
+	error             chan error
+	instrumentation   *instrumentation
 }
 
 func newTask(
-	t transaction.Transaction,
-	ruleSets []ruleSet.RuleSet,
-	response chan report.Report,
-	logger *logger.Logger,
 	ctx context.Context,
+	trx transaction.Transaction,
+	ruleSetRepository ruleSet.Repository,
+	logger *logger.Logger,
 ) task {
 	instrumentation := newInstrumentation(logger)
 	instrumentation.setContext(ctx)
 	instrumentation.setMetadata(metadata{
-		"amount": t.Amount,
-		"entity": t.Entity,
+		"amount": trx.Amount,
+		"entity": trx.EntityId,
 	})
 
 	return task{
-		ctx:             ctx,
-		transaction:     t,
-		ruleSets:        ruleSets,
-		response:        response,
-		instrumentation: instrumentation,
+		ctx:               ctx,
+		transaction:       trx,
+		ruleSetRepository: ruleSetRepository,
+		response:          make(chan report.Report),
+		error:             make(chan error),
+		instrumentation:   instrumentation,
 	}
 }
 
 func (task *task) run() {
 	task.instrumentation.startTransactionValidation()
 
+	defer close(task.response)
+	defer close(task.error)
+
+	ruleSets, err := task.ruleSetRepository.ListByEntityId(task.ctx, task.transaction.EntityId)
+
+	if err != nil {
+		task.error <- err
+		return
+	}
+
 	r := report.New()
 
-	for _, rs := range task.ruleSets {
-		switch rs.EvaluateTransaction(task.transaction) {
+	for _, rs := range ruleSets {
+		action, err := rs.Matches(task.transaction)
+		if err != nil {
+			task.error <- err
+			return
+		}
+
+		switch action {
 		case ruleSet.Block:
 			r.AppendBlockRuleSet(rs)
 		case ruleSet.Tag:
@@ -56,15 +73,13 @@ func (task *task) run() {
 	task.instrumentation.endTransactionValidation()
 
 	task.response <- r
-
-	close(task.response)
 }
 
 type ValidatorService struct {
 	ruleSetRepository ruleSet.Repository
 	queue             chan task
 	numOfWorkers      int
-	workers           []chan bool
+	workers           []chan struct{}
 	logger            *logger.Logger
 }
 
@@ -73,7 +88,7 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository,
 		ruleSetRepository: ruleSetRepository,
 		queue:             make(chan task),
 		numOfWorkers:      numOfWorkers,
-		workers:           []chan bool{},
+		workers:           []chan struct{}{},
 		logger:            logger,
 	}
 
@@ -84,13 +99,10 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository,
 	return v
 }
 
-func (v *ValidatorService) Enqueue(trx transaction.Transaction, ctx context.Context) chan report.Report {
-	ruleSets := v.ruleSetRepository.ListForEntity(trx.Entity)
-	response := make(chan report.Report, 1)
-
-	v.queue <- newTask(trx, ruleSets, response, v.logger, ctx)
-
-	return response
+func (v *ValidatorService) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan error) {
+	task := newTask(ctx, trx, v.ruleSetRepository, v.logger)
+	v.queue <- task
+	return task.response, task.error
 }
 
 func (v *ValidatorService) ResizeWorkers(numOfWorkers int) {
@@ -98,7 +110,7 @@ func (v *ValidatorService) ResizeWorkers(numOfWorkers int) {
 
 	if delta > 0 {
 		for _, worker := range v.workers[numOfWorkers:] {
-			worker <- true
+			worker <- struct{}{}
 		}
 	} else if delta < 0 {
 		workerId := v.numOfWorkers
@@ -113,8 +125,8 @@ func (v *ValidatorService) ResizeWorkers(numOfWorkers int) {
 	v.numOfWorkers = numOfWorkers
 }
 
-func newWorker(queue chan task, id int) chan bool {
-	done := make(chan bool)
+func newWorker(queue chan task, id int) chan struct{} {
+	done := make(chan struct{})
 
 	go func() {
 		defer close(done)

@@ -1,8 +1,10 @@
 package ruleSet
 
 import (
+	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"bitbucket.verifone.com/validation-service/transaction"
-	"strconv"
+	"context"
+	"github.com/google/uuid"
 )
 
 type Action int
@@ -13,78 +15,49 @@ const (
 	Tag
 )
 
-type Operator string
-
-const (
-	Less           Operator = "<"
-	LessOrEqual    Operator = "<="
-	Equal          Operator = "=="
-	NotEqual       Operator = "!="
-	GreaterOrEqual Operator = ">="
-	Greater        Operator = ">"
-)
-
-type Metadata struct {
-	Key      string   `json:"key"`
-	Operator Operator `json:"operator"`
-	Value    string   `json:"value"`
-}
-
-type rule interface {
-	Eval(transaction transaction.Transaction) bool
-}
-
 type RuleSet struct {
-	Name     string `json:"name"`
-	Entity   string `json:"entity"`
-	action   Action
-	Metadata []Metadata `json:"rules"`
-	rules    []rule
+	Id           string          `json:"id" bson:"id"`
+	EntityId     string          `json:"entityId" bson:"entityId"`
+	Action       Action          `bson:"action"`
+	Name         string          `json:"name" bson:"name"`
+	RuleMetadata []rule.Metadata `json:"rules" bson:"validationRuleMetadata"`
 }
 
-func New(name string, entity string, action Action, metadata []Metadata) (RuleSet, error) {
+type Repository interface {
+	Create(ctx context.Context, ruleSet RuleSet) error
+	GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error)
+	ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error)
+	Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error)
+	Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error)
+}
+
+func New(entityId string, name string, action Action, metadata []rule.Metadata) (RuleSet, error) {
 	ruleSet := RuleSet{
-		Name:     name,
-		Entity:	  entity,
-		action:   action,
-		Metadata: metadata,
-		rules:    []rule{},
-	}
-
-	for _, m := range metadata {
-		switch m.Key {
-		case "amount":
-			value, err := strconv.Atoi(m.Value)
-
-			if err != nil {
-				return ruleSet, err
-			}
-
-			rule, err := newAmountRule(m.Operator, value)
-
-			if err != nil {
-				return ruleSet, err
-			}
-
-			ruleSet.rules = append(ruleSet.rules, rule)
-		}
+		Id:           uuid.New().String(),
+		EntityId:     entityId,
+		Name:         name,
+		Action:       action,
+		RuleMetadata: metadata,
 	}
 
 	return ruleSet, nil
 }
 
-func (r RuleSet) EvaluateTransaction(trx transaction.Transaction) Action {
-	for _, rule := range r.rules {
-		match := rule.Eval(trx)
+func (ruleSet RuleSet) Matches(trx transaction.Transaction) (Action, error) {
+	if len(ruleSet.RuleMetadata) == 0 {
+		return Pass, nil
+	}
 
-		if !match {
-			return Pass
+	for _, metadata := range ruleSet.RuleMetadata {
+		validator, err := rule.NewValidator(metadata)
+		if err != nil {
+			return Pass, err
+		}
+
+		if !validator.Validate(trx) {
+			return Pass, nil
 		}
 	}
 
-	return r.action
-}
-
-type Repository interface {
-	ListForEntity(entity string) []RuleSet
+	return ruleSet.Action, nil
 }
