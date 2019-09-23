@@ -3,13 +3,13 @@ package http
 import (
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
-	"bitbucket.verifone.com/validation-service/http/plugin"
+	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
 	"bitbucket.verifone.com/validation-service/http/ruleset"
 	"bitbucket.verifone.com/validation-service/http/transaction"
 	"bitbucket.verifone.com/validation-service/logger"
 	"fmt"
 	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
+	chiMiddleware "github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
 	"net/http"
 )
@@ -33,9 +33,9 @@ func NewServer(port string, r chi.Router, l *logger.Logger, v *validateTransacti
 func (s *Server) Start() error {
 	r := s.router
 
-	r.Use(middleware.Logger)
-	r.Use(middleware.URLFormat)
-	r.Use(plugin.SetContextWithTraceId)
+	r.Use(chiMiddleware.Logger)
+	r.Use(chiMiddleware.URLFormat)
+	r.Use(httpMiddleware.SetContextWithTraceId)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	r.Mount("/healthCheck", healthCheck.NewResource(s.logger).Routes())

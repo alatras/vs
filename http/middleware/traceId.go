@@ -1,4 +1,4 @@
-package plugin
+package middleware
 
 import (
 	"bitbucket.verifone.com/validation-service/enums/contextKey"
