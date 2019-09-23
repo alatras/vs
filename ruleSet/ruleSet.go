@@ -31,7 +31,7 @@ type Repository interface {
 	Delete(ctx context.Context, entityId string, ruleSetId string) (bool, error)
 }
 
-func New(entityId string, name string, action Action, metadata []rule.Metadata) (RuleSet, error) {
+func New(entityId string, name string, entity string, action Action, metadata []rule.Metadata) (RuleSet, error) {
 	ruleSet := RuleSet{
 		Id:           uuid.New().String(),
 		EntityId:     entityId,
