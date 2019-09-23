@@ -1,4 +1,4 @@
-package httpError
+package rest
 
 import (
 	"github.com/go-chi/render"

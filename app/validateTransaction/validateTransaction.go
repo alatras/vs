@@ -70,8 +70,8 @@ type ValidatorService struct {
 	logger            *logger.Logger
 }
 
-func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository, logger *logger.Logger) *ValidatorService {
-	v := &ValidatorService{
+func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository, logger *logger.Logger) ValidatorService {
+	v := ValidatorService{
 		ruleSetRepository: ruleSetRepository,
 		queue:             make(chan task),
 		numOfWorkers:      numOfWorkers,
