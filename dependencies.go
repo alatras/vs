@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"log"
 	"os"
+	"runtime"
 )
 
 func createLogger(app string, version string) *logger.Logger {
@@ -22,14 +23,14 @@ func createLogger(app string, version string) *logger.Logger {
 	return l
 }
 
-func createValidateTransactionApp(logger *logger.Logger) *validateTransaction.ValidatorService {
-	ruleSetRepository, err := ruleSet.NewStubRuleSetRepository()
+func createValidateTransactionApp(logger *logger.Logger, mongoHost string, mongoPort string) *validateTransaction.ValidatorService {
+	ruleSetRepository, err := ruleSet.NewMongoRepository(mongoHost, mongoPort)
 
 	if err != nil {
 		logger.Error.WithError(err).Error("Failed to initialize RuleSetRepository")
 		os.Exit(1)
 	}
 
-	validator := validateTransaction.NewValidatorService(6, ruleSetRepository, logger)
+	validator := validateTransaction.NewValidatorService(runtime.NumCPU(), ruleSetRepository, logger)
 	return &validator
 }

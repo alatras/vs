@@ -30,49 +30,7 @@ func (t ValidateTransactionResponse) Render(w http.ResponseWriter, r *http.Reque
 }
 
 func response(report report.Report) *ValidateTransactionResponse {
-
-	blocked := []RuleSetResponse{}
-
-	tagged := []RuleSetResponse{}
-
-	for i := 0; i < len(report.BlockedRuleSets); i++ {
-		brs := RuleSetResponse{
-			Name: report.BlockedRuleSets[i].Name,
-		}
-		var md []Metadata
-
-		for j := 0; j < len(report.BlockedRuleSets[i].Metadata); j++ {
-			md = append(md, Metadata(report.BlockedRuleSets[i].Metadata[j]))
-		}
-
-		brs.Metadata = md
-
-		blocked = append(blocked, brs)
-	}
-
-	for i := 0; i < len(report.TaggedRuleSets); i++ {
-		trs := RuleSetResponse{
-			Name: report.TaggedRuleSets[i].Name,
-		}
-
-		var md []Metadata
-
-		for j := 0; j < len(report.TaggedRuleSets[i].Metadata); j++ {
-			md = append(md, Metadata(report.TaggedRuleSets[i].Metadata[j]))
-		}
-
-		trs.Metadata = md
-
-		tagged = append(tagged, trs)
-	}
-
-	resp := &ValidateTransactionResponse{
-		Action:          report.Action,
-		BlockedRuleSets: blocked,
-		TaggedRuleSets:  tagged,
-	}
-
-	return resp
+	return &ValidateTransactionResponse{report}
 }
 
 func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
@@ -89,12 +47,24 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	ctx := rest.GetContextWithTraceId(r)
 
 	trx := transaction.Transaction{
-		Amount: trxPayload.Amount,
-		Entity: trxPayload.Entity,
+		Amount:   trxPayload.Amount,
+		EntityId: trxPayload.Entity,
 	}
 
-	rpt := <-rs.app.Enqueue(trx, ctx)
+	reportChan, errChan := rs.app.Enqueue(ctx, trx)
 
-	render.Status(r, http.StatusOK)
-	_ = render.Render(w, r, response(rpt))
+	select {
+	case rep := <-reportChan:
+		render.Status(r, http.StatusOK)
+		err := render.Render(w, r, response(rep))
+		if err != nil {
+			rs.logger.Error.WithError(err).Error("error rendering response")
+		}
+	case err := <-errChan:
+		rs.logger.Error.WithError(err).Error("error validating transaction")
+		e := render.Render(w, r, rest.UnexpectedError(details))
+		if e != nil {
+			rs.logger.Error.WithError(e).Error("error rendering response")
+		}
+	}
 }
