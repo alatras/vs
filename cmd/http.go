@@ -60,16 +60,24 @@ func (h *HttpServer) validateHandler(w http.ResponseWriter, r *http.Request) {
 
 	ctx = context.WithValue(ctx, contextKey.TraceId, traceId)
 
-	report := <-h.validator.Enqueue(trx, ctx)
-	reportJson, marshalErr := json.Marshal(report)
+	reportChan, errChan := h.validator.Enqueue(ctx, trx)
 
-	if marshalErr != nil {
+	select {
+	case report := <-reportChan:
+		reportJson, marshalErr := json.Marshal(report)
+
+		if marshalErr != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte("Internal Server Error"))
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write(reportJson)
+	case err := <-errChan:
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("Internal Server Error"))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(reportJson)
 }

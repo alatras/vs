@@ -5,10 +5,12 @@ import (
 	"bitbucket.verifone.com/validation-service/cmd"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
+	"errors"
 	"fmt"
 	"github.com/jessevdk/go-flags"
 	"log"
 	"os"
+	"runtime"
 )
 
 var version = "unknown"
@@ -57,12 +59,13 @@ func setupLogger(logConfig cmd.LogGroup) *logger.Logger {
 func setupServer(logger *logger.Logger, opts cmd.Options) *cmd.HttpServer {
 	ruleSetRepository, err := ruleSet.NewStubRuleSetRepository()
 
+	ruleSetRepository, err := ruleSet.NewMongoRepository(mongoHost, mongoPort)
 	if err != nil {
 		logger.Error.WithError(err).Error("Failed to initialize RuleSetRepository")
 		os.Exit(1)
 	}
 
-	validatorService := validateTransaction.NewValidatorService(6, ruleSetRepository, logger)
+	validatorService := validateTransaction.NewValidatorService(runtime.NumCPU(), ruleSetRepository, logger)
 
 	serverAddress := fmt.Sprintf(":%d", opts.HTTPPort)
 
