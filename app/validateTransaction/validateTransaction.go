@@ -1,26 +1,49 @@
-package app
+package validateTransaction
 
 import (
+	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/report"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/transaction"
+	"context"
 )
 
+const appName = "validateTransaction"
+
 type task struct {
-	transaction transaction.Transaction
-	ruleSets    []ruleSet.RuleSet
-	response    chan report.Report
+	ctx             context.Context
+	transaction     transaction.Transaction
+	ruleSets        []ruleSet.RuleSet
+	response        chan report.Report
+	instrumentation *instrumentation
 }
 
-func newTask(t transaction.Transaction, ruleSets []ruleSet.RuleSet, response chan report.Report) task {
+func newTask(
+	t transaction.Transaction,
+	ruleSets []ruleSet.RuleSet,
+	response chan report.Report,
+	logger *logger.Logger,
+	ctx context.Context,
+) task {
+	instrumentation := newInstrumentation(logger)
+	instrumentation.setContext(ctx)
+	instrumentation.setMetadata(metadata{
+		"amount": t.Amount,
+		"entity": t.Entity,
+	})
+
 	return task{
-		transaction: t,
-		ruleSets:    ruleSets,
-		response:    response,
+		ctx:             ctx,
+		transaction:     t,
+		ruleSets:        ruleSets,
+		response:        response,
+		instrumentation: instrumentation,
 	}
 }
 
 func (task *task) run() {
+	task.instrumentation.startTransactionValidation()
+
 	r := report.New()
 
 	for _, rs := range task.ruleSets {
@@ -32,7 +55,10 @@ func (task *task) run() {
 		}
 	}
 
+	task.instrumentation.endTransactionValidation()
+
 	task.response <- r
+
 	close(task.response)
 }
 
@@ -41,14 +67,16 @@ type ValidatorService struct {
 	queue             chan task
 	numOfWorkers      int
 	workers           []chan bool
+	logger            *logger.Logger
 }
 
-func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository) *ValidatorService {
+func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository, logger *logger.Logger) *ValidatorService {
 	v := &ValidatorService{
 		ruleSetRepository: ruleSetRepository,
 		queue:             make(chan task),
 		numOfWorkers:      numOfWorkers,
 		workers:           []chan bool{},
+		logger:            logger.Scoped(appName),
 	}
 
 	for workerId := 0; workerId < v.numOfWorkers; workerId++ {
@@ -58,11 +86,11 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository)
 	return v
 }
 
-func (v *ValidatorService) Enqueue(trx transaction.Transaction) chan report.Report {
-	ruleSets := v.ruleSetRepository.ListForOrganization(trx.Organization)
+func (v *ValidatorService) Enqueue(trx transaction.Transaction, ctx context.Context) chan report.Report {
+	ruleSets := v.ruleSetRepository.ListForEntity(trx.Entity)
 	response := make(chan report.Report, 1)
 
-	v.queue <- newTask(trx, ruleSets, response)
+	v.queue <- newTask(trx, ruleSets, response, v.logger, ctx)
 
 	return response
 }
