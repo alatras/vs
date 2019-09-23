@@ -5,24 +5,24 @@ import (
 	"bitbucket.verifone.com/validation-service/ruleSet"
 )
 
-type validateTransactionPayload struct {
+type ValidateTransactionPayload struct {
 	Amount int    `json:"amount"`
 	Entity string `json:"entity"`
 }
 
-type metadata struct {
+type Metadata struct {
 	Key      string           `json:"key"`
 	Operator ruleSet.Operator `json:"operator"`
 	Value    string           `json:"value"`
 }
 
-type ruleSetResponse struct {
+type RuleSetResponse struct {
 	Name     string     `json:"name"`
-	Metadata []metadata `json:"rules"`
+	Metadata []Metadata `json:"rules"`
 }
 
-type validateTransactionResponse struct {
+type ValidateTransactionResponse struct {
 	Action          report.Action     `json:"action"`
-	BlockedRuleSets []ruleSetResponse `json:"block"`
-	TaggedRuleSets  []ruleSetResponse `json:"tags"`
+	BlockedRuleSets []RuleSetResponse `json:"block"`
+	TaggedRuleSets  []RuleSetResponse `json:"tags"`
 }

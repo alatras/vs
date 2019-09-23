@@ -20,7 +20,7 @@ const numOfWorkers = 6
 	Required to be implemented so that chi can bind the data to the payload struct
 	Validate the request and return error if validation fails
 */
-func (t validateTransactionPayload) Bind(r *http.Request) error {
+func (t ValidateTransactionPayload) Bind(r *http.Request) error {
 	if t.Amount == 0 {
 		return errors.New("amount required")
 	}
@@ -32,24 +32,24 @@ func (t validateTransactionPayload) Bind(r *http.Request) error {
 	return nil
 }
 
-func (t validateTransactionResponse) Render(w http.ResponseWriter, r *http.Request) error {
+func (t ValidateTransactionResponse) Render(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func response(report report.Report) *validateTransactionResponse {
+func response(report report.Report) *ValidateTransactionResponse {
 
-	blocked := []ruleSetResponse{}
+	blocked := []RuleSetResponse{}
 
-	tagged := []ruleSetResponse{}
+	tagged := []RuleSetResponse{}
 
 	for i := 0; i < len(report.BlockedRuleSets); i++ {
-		brs := ruleSetResponse{
+		brs := RuleSetResponse{
 			Name: report.BlockedRuleSets[i].Name,
 		}
-		var md []metadata
+		var md []Metadata
 
 		for j := 0; j < len(report.BlockedRuleSets[i].Metadata); j++ {
-			md = append(md, metadata(report.BlockedRuleSets[i].Metadata[j]))
+			md = append(md, Metadata(report.BlockedRuleSets[i].Metadata[j]))
 		}
 
 		brs.Metadata = md
@@ -58,14 +58,14 @@ func response(report report.Report) *validateTransactionResponse {
 	}
 
 	for i := 0; i < len(report.TaggedRuleSets); i++ {
-		trs := ruleSetResponse{
+		trs := RuleSetResponse{
 			Name: report.TaggedRuleSets[i].Name,
 		}
 
-		var md []metadata
+		var md []Metadata
 
 		for j := 0; j < len(report.TaggedRuleSets[i].Metadata); j++ {
-			md = append(md, metadata(report.TaggedRuleSets[i].Metadata[j]))
+			md = append(md, Metadata(report.TaggedRuleSets[i].Metadata[j]))
 		}
 
 		trs.Metadata = md
@@ -73,7 +73,7 @@ func response(report report.Report) *validateTransactionResponse {
 		tagged = append(tagged, trs)
 	}
 
-	resp := &validateTransactionResponse{
+	resp := &ValidateTransactionResponse{
 		Action:          report.Action,
 		BlockedRuleSets: blocked,
 		TaggedRuleSets:  tagged,
@@ -91,7 +91,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		_ = render.Render(w, r, httpError.UnexpectedError(details))
 	}
 
-	trxPayload := validateTransactionPayload{}
+	trxPayload := ValidateTransactionPayload{}
 
 	if err := render.Bind(r, &trxPayload); err != nil {
 		details["error"] = err.Error()

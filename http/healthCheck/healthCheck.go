@@ -25,5 +25,9 @@ func (rs Resource) Routes() chi.Router {
 }
 
 func (rs Resource) HealthCheck(w http.ResponseWriter, r *http.Request) {
-	_, _ = w.Write([]byte("Service is Up"))
+	_, err := w.Write([]byte(""))
+
+	if err != nil {
+		rs.logger.Error.WithError(err).Error("Health check failed")
+	}
 }

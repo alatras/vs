@@ -5,6 +5,7 @@ import (
 	"bitbucket.verifone.com/validation-service/http/ruleset"
 	"bitbucket.verifone.com/validation-service/http/transaction"
 	"bitbucket.verifone.com/validation-service/logger"
+	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
@@ -39,7 +40,8 @@ func (s *Server) Start() error {
 	err := http.ListenAndServe(s.port, r)
 
 	if err != nil {
-		return err
+		e := fmt.Errorf("failed to the router %v", err)
+		return e
 	}
 
 	return nil
