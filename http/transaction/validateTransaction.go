@@ -1,7 +1,7 @@
 package transaction
 
 import (
-	"bitbucket.verifone.com/validation-service/common/rest"
+	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"bitbucket.verifone.com/validation-service/report"
 	"bitbucket.verifone.com/validation-service/transaction"
 	"errors"
@@ -40,11 +40,11 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 
 	if err := render.Bind(r, &trxPayload); err != nil {
 		details["error"] = err.Error()
-		_ = render.Render(w, r, rest.MalformedParameters(details))
+		_ = render.Render(w, r, errorResponse.MalformedParameters(details))
 		return
 	}
 
-	ctx := rest.GetContextWithTraceId(r)
+	ctx := r.Context()
 
 	trx := transaction.Transaction{
 		Amount:   trxPayload.Amount,
@@ -62,7 +62,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		}
 	case err := <-errChan:
 		rs.logger.Error.WithError(err).Error("error validating transaction")
-		e := render.Render(w, r, rest.UnexpectedError(details))
+		e := render.Render(w, r, errorResponse.UnexpectedError(details))
 		if e != nil {
 			rs.logger.Error.WithError(e).Error("error rendering response")
 		}

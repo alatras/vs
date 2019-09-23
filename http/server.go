@@ -3,6 +3,7 @@ package http
 import (
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
+	"bitbucket.verifone.com/validation-service/http/plugin"
 	"bitbucket.verifone.com/validation-service/http/ruleset"
 	"bitbucket.verifone.com/validation-service/http/transaction"
 	"bitbucket.verifone.com/validation-service/logger"
@@ -34,6 +35,7 @@ func (s *Server) Start() error {
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.URLFormat)
+	r.Use(plugin.SetContextWithTraceId)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	r.Mount("/healthCheck", healthCheck.NewResource(s.logger).Routes())

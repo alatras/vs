@@ -1,4 +1,4 @@
-package rest
+package errorResponse
 
 import (
 	"github.com/go-chi/render"
