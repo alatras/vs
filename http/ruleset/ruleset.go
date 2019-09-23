@@ -1,11 +1,20 @@
 package ruleset
 
 import (
+	"bitbucket.verifone.com/validation-service/logger"
 	"github.com/go-chi/chi"
 	"net/http"
 )
 
-type Resource struct {}
+type Resource struct {
+	logger *logger.Logger
+}
+
+func NewResource(l *logger.Logger) Resource {
+	return Resource{
+		logger: l,
+	}
+}
 
 func (rs Resource) Routes() chi.Router {
 	r := chi.NewRouter()
@@ -13,8 +22,8 @@ func (rs Resource) Routes() chi.Router {
 	r.Post("/{id}/rulesets", rs.Create)
 
 	r.Route("/{id}/rulesets/{rulesetId}", func(r chi.Router) {
-		r.Get("/",rs.Get)
-		r.Put("/",rs.Update)
+		r.Get("/", rs.Get)
+		r.Put("/", rs.Update)
 		r.Delete("/", rs.Delete)
 	})
 
@@ -22,21 +31,21 @@ func (rs Resource) Routes() chi.Router {
 }
 
 func (rs Resource) List(w http.ResponseWriter, r *http.Request) {
-	_, _ =w.Write([]byte("List rule sets"))
+	_, _ = w.Write([]byte("List rule sets"))
 }
 
 func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
-	_, _ =w.Write([]byte("Create rule sets"))
+	_, _ = w.Write([]byte("Create rule sets"))
 }
 
 func (rs Resource) Get(w http.ResponseWriter, r *http.Request) {
-	_, _ =w.Write([]byte("Get rule sets"))
+	_, _ = w.Write([]byte("Get rule sets"))
 }
 
 func (rs Resource) Update(w http.ResponseWriter, r *http.Request) {
-	_, _ =w.Write([]byte("Update rule sets"))
+	_, _ = w.Write([]byte("Update rule sets"))
 }
 
 func (rs Resource) Delete(w http.ResponseWriter, r *http.Request) {
-	_, _ =w.Write([]byte("Delete rule sets"))
+	_, _ = w.Write([]byte("Delete rule sets"))
 }

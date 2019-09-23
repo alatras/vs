@@ -1,13 +1,16 @@
 package transaction
 
 import (
-	"bitbucket.verifone.com/validation-service/app"
+	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/common/httpError"
+	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/report"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/transaction"
+	"context"
 	"errors"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"net/http"
 )
 
@@ -96,14 +99,26 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	validator := app.NewValidatorService(numOfWorkers, ruleSetRepository)
+	ctx := r.Context()
+
+	var traceId string
+
+	if headerTraceId := r.Header.Get("X-TRACE-ID"); headerTraceId != "" {
+		traceId = headerTraceId
+	} else {
+		traceId = uuid.New().String()
+	}
+
+	ctx = context.WithValue(ctx, contextKey.TraceId, traceId)
+
+	validator := validateTransaction.NewValidatorService(numOfWorkers, ruleSetRepository, rs.logger)
 
 	trx := transaction.Transaction{
 		Amount:       trxPayload.Amount,
 		Organization: trxPayload.Organization,
 	}
 
-	rpt := <-validator.Enqueue(trx)
+	rpt := <-validator.Enqueue(trx, ctx)
 
 	render.Status(r, http.StatusOK)
 	_ = render.Render(w, r, response(rpt))
