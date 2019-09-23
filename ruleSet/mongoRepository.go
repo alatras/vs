@@ -9,24 +9,24 @@ import (
 	"time"
 )
 
-type mongoRuleSetRepository struct {
+type MongoRuleSetRepository struct {
 	mongoClient       *mongo.Client
 	ruleSetCollection *mongo.Collection
 }
 
-func NewMongoRepository(hostname, port string) (*mongoRuleSetRepository, error) {
+func NewMongoRepository(hostname, port string) (*MongoRuleSetRepository, error) {
 	client, err := connectToMongo(hostname, port)
 	if err != nil {
 		return nil, err
 	}
 
 	ruleSetCollection := client.Database("validationService").Collection("ruleSets")
-	repository := mongoRuleSetRepository{client, ruleSetCollection}
+	repository := MongoRuleSetRepository{client, ruleSetCollection}
 
 	return &repository, nil
 }
 
-func (r mongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) error {
+func (r MongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) error {
 	_, err := r.ruleSetCollection.InsertOne(ctx, ruleSet)
 
 	if err != nil {
@@ -36,7 +36,7 @@ func (r mongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) err
 	return nil
 }
 
-func (r mongoRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error) {
+func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error) {
 	var ruleSet RuleSet
 
 	err := r.ruleSetCollection.FindOne(context.TODO(), bson.D{
@@ -57,7 +57,7 @@ func (r mongoRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 	return ruleSet, nil
 }
 
-func (r mongoRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {
+func (r MongoRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {
 	cursor, err := r.ruleSetCollection.Find(ctx, bson.D{
 		bson.E{
 			Key:   "entityId",
@@ -83,7 +83,7 @@ func (r mongoRuleSetRepository) ListByEntityId(ctx context.Context, entityId str
 	return ruleSets, nil
 }
 
-func (r mongoRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
+func (r MongoRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
 	var replaced bool
 
 	result, err := r.ruleSetCollection.ReplaceOne(ctx, bson.D{
@@ -108,7 +108,7 @@ func (r mongoRuleSetRepository) Replace(ctx context.Context, entityId string, ru
 	return replaced, nil
 }
 
-func (r mongoRuleSetRepository) Delete(ctx context.Context, entityId string, ruleSetId string) (bool, error) {
+func (r MongoRuleSetRepository) Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error) {
 	var deleted bool
 
 	result, err := r.ruleSetCollection.DeleteMany(ctx, bson.D{
@@ -117,8 +117,11 @@ func (r mongoRuleSetRepository) Delete(ctx context.Context, entityId string, rul
 			Value: entityId,
 		},
 		bson.E{
-			Key:   "id",
-			Value: ruleSetId,
+			Key: "id",
+			Value: bson.E{
+				Key:   "$in",
+				Value: ruleSetIds,
+			},
 		},
 	})
 

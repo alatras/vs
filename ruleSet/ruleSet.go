@@ -28,10 +28,10 @@ type Repository interface {
 	GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error)
 	ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error)
 	Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error)
-	Delete(ctx context.Context, entityId string, ruleSetId string) (bool, error)
+	Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error)
 }
 
-func New(entityId string, name string, entity string, action Action, metadata []rule.Metadata) (RuleSet, error) {
+func New(entityId string, name string, action Action, metadata []rule.Metadata) (RuleSet, error) {
 	ruleSet := RuleSet{
 		Id:           uuid.New().String(),
 		EntityId:     entityId,

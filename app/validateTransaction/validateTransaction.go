@@ -14,7 +14,7 @@ type task struct {
 	ruleSetRepository ruleSet.Repository
 	response          chan report.Report
 	error             chan error
-	instrumentation *instrumentation
+	instrumentation   *instrumentation
 }
 
 func newTask(
@@ -26,8 +26,8 @@ func newTask(
 	instrumentation := newInstrumentation(logger)
 	instrumentation.setContext(ctx)
 	instrumentation.setMetadata(metadata{
-		"amount": t.Amount,
-		"entity": t.Entity,
+		"amount": trx.Amount,
+		"entity": trx.EntityId,
 	})
 
 	return task{
@@ -36,7 +36,7 @@ func newTask(
 		ruleSetRepository: ruleSetRepository,
 		response:          make(chan report.Report),
 		error:             make(chan error),
-		instrumentation: instrumentation,
+		instrumentation:   instrumentation,
 	}
 }
 

@@ -5,19 +5,19 @@ import (
 	"sync"
 )
 
-type stubRuleSetRepository struct {
+type StubRuleSetRepository struct {
 	cache map[string]map[string]RuleSet
 	lock  *sync.RWMutex
 }
 
-func NewStubRepository() (*stubRuleSetRepository, error) {
-	return &stubRuleSetRepository{
+func NewStubRepository() (*StubRuleSetRepository, error) {
+	return &StubRuleSetRepository{
 		cache: make(map[string]map[string]RuleSet),
 		lock:  &sync.RWMutex{},
 	}, nil
 }
 
-func (r *stubRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) error {
+func (r *StubRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -29,7 +29,7 @@ func (r *stubRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) err
 	return nil
 }
 
-func (r *stubRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error) {
+func (r *StubRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error) {
 	var ruleSet RuleSet
 
 	r.lock.RLock()
@@ -47,7 +47,7 @@ func (r *stubRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 	return ruleSet, nil
 }
 
-func (r *stubRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {
+func (r *StubRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {
 	var ruleSets []RuleSet
 
 	r.lock.RLock()
@@ -62,7 +62,7 @@ func (r *stubRuleSetRepository) ListByEntityId(ctx context.Context, entityId str
 	return ruleSets, nil
 }
 
-func (r *stubRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
+func (r *StubRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -83,7 +83,7 @@ func (r *stubRuleSetRepository) Replace(ctx context.Context, entityId string, ru
 	return true, nil
 }
 
-func (r *stubRuleSetRepository) Delete(ctx context.Context, entityId string, ruleSetId string) (bool, error) {
+func (r *StubRuleSetRepository) Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -93,13 +93,19 @@ func (r *stubRuleSetRepository) Delete(ctx context.Context, entityId string, rul
 		return false, nil
 	}
 
-	_, ok = entityMap[ruleSetId]
+	var ruleSetsExist bool
 
-	if !ok {
+	for _, ruleSetId := range ruleSetIds {
+		_, ruleSetsExist = entityMap[ruleSetId]
+	}
+
+	if !ruleSetsExist {
 		return false, nil
 	}
 
-	delete(entityMap, ruleSetId)
+	for _, ruleSetId := range ruleSetIds {
+		delete(entityMap, ruleSetId)
+	}
 
 	return true, nil
 }
