@@ -36,14 +36,16 @@ type rule interface {
 
 type RuleSet struct {
 	Name     string `json:"name"`
+	Entity   string `json:"entity"`
 	action   Action
 	Metadata []Metadata `json:"rules"`
 	rules    []rule
 }
 
-func New(name string, action Action, metadata []Metadata) (RuleSet, error) {
+func New(name string, entity string, action Action, metadata []Metadata) (RuleSet, error) {
 	ruleSet := RuleSet{
 		Name:     name,
+		Entity:	  entity,
 		action:   action,
 		Metadata: metadata,
 		rules:    []rule{},
@@ -84,5 +86,5 @@ func (r RuleSet) EvaluateTransaction(trx transaction.Transaction) Action {
 }
 
 type Repository interface {
-	ListForOrganization(organization string) []RuleSet
+	ListForEntity(entity string) []RuleSet
 }

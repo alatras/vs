@@ -9,10 +9,10 @@ $ git clone ssh://git@bitbucket.verifone.com:7999/cpdb/validation-service.git $G
 
 ## Rule sets in stub repository
 
-### Organisation 1
+### Entity 1
 * Is greater than 5 and less than 5000
 
-### Organisation 2
+### Entity 2
 * Is greater than 500 and less than 1000
 
 ## Getting started
@@ -29,7 +29,7 @@ request:
 ```json
 {
 	"amount": 4000,
-	"organization": "1"
+	"entity": "1"
 }
 ```
 
@@ -48,7 +48,7 @@ request:
 ```json
 {
 	"amount": 900,
-	"organization": "1"
+	"entity": "1"
 }
 ```
 
@@ -83,7 +83,7 @@ request:
 ```json
 {
 	"amount": 900,
-	"organization": "2"
+	"entity": "2"
 }
 ```
 
