@@ -5,7 +5,6 @@ import (
 	"bitbucket.verifone.com/validation-service/http"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
-	"fmt"
 	"github.com/go-chi/chi"
 	"log"
 	"os"
@@ -53,7 +52,6 @@ func (s *ServerCommand) Execute(args []string) error {
 }
 
 func (s *ServerCommand) setupLogger() *logger.Logger {
-	fmt.Println(s.Log, "aaaaa")
 	l, err := logger.NewLogger(
 		AppName,
 		Version,
