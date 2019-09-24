@@ -7,11 +7,11 @@ import (
 )
 
 type Response struct {
-	HttpStatusCode int                    `json:"-"`
-	Code           int                    `json:"code"`
-	Details        map[string]interface{} `json:"details"`
-	Message        string                 `json:"message"`
-	Timestamp      time.Time              `json:"timestamp"`
+	HttpStatusCode int         `json:"-"`
+	Code           int         `json:"code"`
+	Details        interface{} `json:"details"`
+	Message        string      `json:"message"`
+	Timestamp      time.Time   `json:"timestamp"`
 }
 
 var unexpectedErrorMessage = "Unexpected error: if the error persists, please contact an " +
@@ -26,7 +26,7 @@ var malformedParametersMessage = "At least one parameter is invalid. Examine the
 	"submitted in the request's body, query for parameters appended to the request's URL, and params for " +
 	"templated parameters of the request's URL."
 
-func UnexpectedError(details map[string]interface{}) *Response {
+func UnexpectedError(details interface{}) *Response {
 	return &Response{
 		HttpStatusCode: http.StatusInternalServerError,
 		Code:           100,
@@ -36,7 +36,7 @@ func UnexpectedError(details map[string]interface{}) *Response {
 	}
 }
 
-func NotFound(details map[string]interface{}) *Response {
+func NotFound(details interface{}) *Response {
 	return &Response{
 		HttpStatusCode: http.StatusNotFound,
 		Code:           101,
@@ -46,7 +46,7 @@ func NotFound(details map[string]interface{}) *Response {
 	}
 }
 
-func MalformedParameters(details map[string]interface{}) *Response {
+func MalformedParameters(details interface{}) *Response {
 	return &Response{
 		HttpStatusCode: http.StatusBadRequest,
 		Code:           107,

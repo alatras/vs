@@ -34,13 +34,12 @@ func response(report report.Report) *ValidateTransactionResponse {
 }
 
 func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
-	details := make(map[string]interface{})
+	var details interface{}
 
 	trxPayload := ValidateTransactionPayload{}
 
 	if err := render.Bind(r, &trxPayload); err != nil {
-		details["error"] = err.Error()
-		_ = render.Render(w, r, errorResponse.MalformedParameters(details))
+		_ = render.Render(w, r, errorResponse.MalformedParameters(err))
 		return
 	}
 
