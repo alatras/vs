@@ -5,24 +5,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Options all configuration parameters
-type Options struct {
-	HTTPPort int `long:"httpPort" env:"HTTP_PORT" default:"8080" description:"HTTP port"`
+var Version = "unknown"
+var AppName = "Validation Service"
 
-	Log   LogGroup   `group:"log" namespace:"log"`
-	Mongo MongoGroup `group:"mongo" namespace:"mongo"`
-}
-
-// MongoGroup MongoDB configuration parameters
-type MongoGroup struct {
-	URL string `long:"url" env:"MONGO_URL" required:"MongoDB url required" description:"MongoDB url"`
-	DB  string `long:"db" env:"MONGO_DB" default:"validationService" description:"MongoDB database name"`
+// CommonOptionsCommander extends flags.Commander with SetCommon
+// All commands should implement this interfaces
+type CommonOptionsCommander interface {
+	SetCommon(commonOpts CommonOpts)
+	Execute(args []string) error
 }
 
 // LogGroup logging configuration parameters
 type LogGroup struct {
 	Level  string `long:"level" env:"LOG_LEVEL" default:"info" choice:"trace" choice:"debug" choice:"info" choice:"warn" choice:"error" choice:"fatal" description:"Logging level"`
 	Format string `long:"format" env:"LOG_FORMAT" default:"json" choice:"json" choice:"text" description:"Logging format"`
+}
+
+type CommonOpts struct {
+	Log LogGroup
 }
 
 func (log LogGroup) LevelValue() logrus.Level {
@@ -51,4 +51,9 @@ func (log LogGroup) FormatValue() logger.LogFormat {
 	default:
 		return logger.JsonFormat
 	}
+}
+
+// SetCommon satisfies CommonOptionsCommander interface and sets common option fields
+func (c *CommonOpts) SetCommon(commonOpts CommonOpts) {
+	c.Log = commonOpts.Log
 }

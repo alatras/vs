@@ -8,6 +8,8 @@ import (
 	"context"
 )
 
+const appName = "validateTransaction"
+
 type task struct {
 	ctx               context.Context
 	transaction       transaction.Transaction
@@ -89,7 +91,7 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository,
 		queue:             make(chan task),
 		numOfWorkers:      numOfWorkers,
 		workers:           []chan struct{}{},
-		logger:            logger,
+		logger:            logger.Scoped(appName),
 	}
 
 	for workerId := 0; workerId < v.numOfWorkers; workerId++ {

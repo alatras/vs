@@ -4,15 +4,15 @@ import (
 	"bitbucket.verifone.com/validation-service/ruleSet"
 )
 
-type action string
+type Action string
 
 const (
-	Pass  action = "PASS"
+	Pass  Action = "PASS"
 	Block        = "BLOCK"
 )
 
 type Report struct {
-	Action          action            `json:"action"`
+	Action          Action            `json:"action"`
 	BlockedRuleSets []ruleSet.RuleSet `json:"block"`
 	TaggedRuleSets  []ruleSet.RuleSet `json:"tags"`
 }

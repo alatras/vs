@@ -1,24 +1,47 @@
 package main
 
 import (
-	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/cmd"
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"fmt"
 	"github.com/jessevdk/go-flags"
 	"log"
 	"os"
-	"runtime"
 )
 
 var version = "unknown"
 var appName = "Validation Service"
 
+// Opts with all cli commands and flags
+type Opts struct {
+	ServerCmd cmd.ServerCommand `command:"server"`
+	cmd.CommonOpts
+}
+
 func main() {
-	var opts cmd.Options
+	var opts Opts
+	cmd.AppName = appName
+	cmd.Version = version
 
 	p := flags.NewParser(&opts, flags.Default)
+
+	if len(os.Args) == 1 {
+		os.Args = append(os.Args, "server")
+	}
+
+	p.CommandHandler = func(command flags.Commander, args []string) error {
+		commonOpts := cmd.CommonOpts{Log: opts.Log}
+
+		c := command.(cmd.CommonOptionsCommander)
+
+		c.SetCommon(commonOpts)
+
+		err := c.Execute(args)
+
+		if err != nil {
+			log.Printf("[ERROR] failed with %+v", err)
+		}
+
+		return err
+	}
 
 	if _, err := p.Parse(); err != nil {
 		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
@@ -28,46 +51,4 @@ func main() {
 		}
 	}
 
-	logger := setupLogger(opts.Log)
-
-	server := setupServer(logger, opts)
-
-	err := server.Start()
-
-	if err != nil {
-		logger.Error.WithError(err).Error("Failed to start REST API server")
-		os.Exit(1)
-	}
-}
-
-func setupLogger(logConfig cmd.LogGroup) *logger.Logger {
-	logger, err := logger.NewLogger(
-		appName,
-		version,
-		logConfig.FormatValue(),
-		logConfig.LevelValue(),
-	)
-
-	if err != nil {
-		log.Panic("Failed to initialize logger")
-	}
-
-	return logger
-}
-
-func setupServer(logger *logger.Logger, opts cmd.Options) *cmd.HttpServer {
-	ruleSetRepository, err := ruleSet.NewMongoRepository(opts.Mongo.URL, opts.Mongo.DB)
-
-	if err != nil {
-		logger.Error.WithError(err).Error("Failed to initialize RuleSetRepository")
-		os.Exit(1)
-	}
-
-	validatorService := validateTransaction.NewValidatorService(runtime.NumCPU(), ruleSetRepository, logger)
-
-	serverAddress := fmt.Sprintf(":%d", opts.HTTPPort)
-
-	logger.Output.Infof("Starting REST API server at port %d", opts.HTTPPort)
-
-	return cmd.NewHttpServer(serverAddress, validatorService)
 }
