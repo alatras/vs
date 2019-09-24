@@ -4,6 +4,7 @@ ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
 ENV GOPATH /go
+ENV HTTP_PORT=8080
 
 RUN apk add --no-cache --update tzdata git bash && \
     rm -rf /var/cache/apk/*
@@ -18,4 +19,4 @@ WORKDIR /go/src/bitbucket.verifone.com/validation-service
 
 COPY . .
 
-CMD gin --immediate --appPort 8080 --bin validation-service run
+CMD gin --immediate --appPort $HTTP_PORT --bin validation-service run

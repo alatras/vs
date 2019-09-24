@@ -5,9 +5,8 @@ import (
 	"bitbucket.verifone.com/validation-service/cmd"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
-	"errors"
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"github.com/jessevdk/go-flags"
 	"log"
 	"os"
 	"runtime"
@@ -17,30 +16,48 @@ var version = "unknown"
 var appName = "Validation Service"
 
 func main() {
+	var opts cmd.Options
+
+	p := flags.NewParser(&opts, flags.Default)
+
+	if _, err := p.Parse(); err != nil {
+		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
+			os.Exit(0)
+		} else {
+			os.Exit(1)
+		}
+	}
+
+	logger := setupLogger(opts.Log)
+
+	server := setupServer(logger, opts)
+
+	err := server.Start()
+
+	if err != nil {
+		logger.Error.WithError(err).Error("Failed to start REST API server")
+		os.Exit(1)
+	}
+}
+
+func setupLogger(logConfig cmd.LogGroup) *logger.Logger {
 	logger, err := logger.NewLogger(
 		appName,
 		version,
-		logger.TextFormat,
-		logrus.TraceLevel,
+		logConfig.FormatValue(),
+		logConfig.LevelValue(),
 	)
 
 	if err != nil {
 		log.Panic("Failed to initialize logger")
 	}
 
-	mongoHost := os.Getenv("MONGO_HOST")
-	if mongoHost == "" {
-		_, _ = fmt.Fprintln(os.Stderr, errors.New("mongo host undefined"))
-		return
-	}
+	return logger
+}
 
-	mongoPort := os.Getenv("MONGO_PORT")
-	if mongoPort == "" {
-		_, _ = fmt.Fprintln(os.Stderr, errors.New("mongo port undefined"))
-		return
-	}
+func setupServer(logger *logger.Logger, opts cmd.Options) *cmd.HttpServer {
+	ruleSetRepository, err := ruleSet.NewMongoRepository(opts.Mongo.URL, opts.Mongo.DB)
 
-	ruleSetRepository, err := ruleSet.NewMongoRepository(mongoHost, mongoPort)
 	if err != nil {
 		logger.Error.WithError(err).Error("Failed to initialize RuleSetRepository")
 		os.Exit(1)
@@ -48,15 +65,9 @@ func main() {
 
 	validatorService := validateTransaction.NewValidatorService(runtime.NumCPU(), ruleSetRepository, logger)
 
-	serverPort := 8080
-	serverAddress := fmt.Sprintf(":%d", serverPort)
+	serverAddress := fmt.Sprintf(":%d", opts.HTTPPort)
 
-	logger.Output.Infof("Starting REST API server at port %d", serverPort)
+	logger.Output.Infof("Starting REST API server at port %d", opts.HTTPPort)
 
-	err = cmd.NewHttpServer(serverAddress, validatorService).Start()
-
-	if err != nil {
-		logger.Error.WithError(err).Error("Failed to start REST API server")
-		os.Exit(1)
-	}
+	return cmd.NewHttpServer(serverAddress, validatorService)
 }

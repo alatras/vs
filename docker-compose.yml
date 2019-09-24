@@ -15,6 +15,10 @@ services:
       - mongo
     depends_on:
       - mongo
+    environment:
+      - MONGO_URL=mongodb://mongo
+      - LOG_FORMAT=text
+      - LOG_LEVEL=trace
   mongo:
     image: mongo:4.0.12
     restart: always
