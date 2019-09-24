@@ -7,7 +7,6 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"net/http"
-	"strings"
 )
 
 func (payload CreateRulesetPayload) Bind(r *http.Request) error {
@@ -42,7 +41,7 @@ func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
 		ruleMetadataArray[index] = ruleMetadata
 	}
 
-	action := ruleSet.Action(strings.ToLower(payload.Action))
+	action := ruleSet.Action(payload.Action)
 
 	newRuleSet, err := ruleSet.New(
 		entityId,

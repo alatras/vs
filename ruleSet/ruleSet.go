@@ -10,9 +10,9 @@ import (
 type Action string
 
 const (
-	Pass  Action = "pass"
-	Block Action = "block"
-	Tag   Action = "tag"
+	Pass  Action = "PASS"
+	Block Action = "BLOCK"
+	Tag   Action = "TAG"
 )
 
 type RuleSet struct {
@@ -60,13 +60,4 @@ func (ruleSet RuleSet) Matches(trx transaction.Transaction) (Action, error) {
 	}
 
 	return ruleSet.Action, nil
-}
-
-func (a Action) IsValid() bool {
-	switch a {
-	case Pass, Block, Tag:
-		return true
-	default:
-		return false
-	}
 }

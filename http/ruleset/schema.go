@@ -5,7 +5,6 @@ import (
 	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"errors"
 	"fmt"
-	"strings"
 )
 
 type RulePayload struct {
@@ -49,10 +48,10 @@ func (payload CreateRulesetPayload) Validate() error {
 		return errors.New("body.action: should be present")
 	}
 
-	action := ruleSet.Action(strings.ToLower(payload.Action))
+	action := ruleSet.Action(payload.Action)
 
-	if !action.IsValid() {
-		return errors.New("body.action: should be a valid action")
+	if action != ruleSet.Tag && action != ruleSet.Block {
+		return errors.New("body.action: should be TAG or BLOCK")
 	}
 
 	if len(payload.Rules) == 0 {
