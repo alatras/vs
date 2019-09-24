@@ -15,13 +15,13 @@ import (
 )
 
 type Server struct {
-	port                   string
+	port                   int
 	router                 chi.Router
 	logger                 *logger.Logger
 	validateTransactionApp *validateTransaction.ValidatorService
 }
 
-func NewServer(port string, r chi.Router, l *logger.Logger, v *validateTransaction.ValidatorService) *Server {
+func NewServer(port int, r chi.Router, l *logger.Logger, v *validateTransaction.ValidatorService) *Server {
 	return &Server{
 		port:                   port,
 		router:                 r,
@@ -42,7 +42,7 @@ func (s *Server) Start() error {
 	r.Mount("/", transaction.NewResource(s.logger, s.validateTransactionApp).Routes())
 	r.Mount("/entities", ruleset.NewResource(s.logger).Routes())
 
-	err := http.ListenAndServe(s.port, r)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", s.port), r)
 
 	if err != nil {
 		e := fmt.Errorf("failed to the router %v", err)

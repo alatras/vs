@@ -1,46 +1,54 @@
 package main
 
 import (
-	"bitbucket.verifone.com/validation-service/http"
-	"errors"
-	"fmt"
-	"github.com/go-chi/chi"
+	"bitbucket.verifone.com/validation-service/cmd"
+	"github.com/jessevdk/go-flags"
+	"log"
 	"os"
 )
 
 var version = "unknown"
 var appName = "Validation Service"
 
-const port = ":8080"
+// Opts with all cli commands and flags
+type Opts struct {
+	ServerCmd cmd.ServerCommand `command:"server"`
+	cmd.CommonOpts
+}
 
 func main() {
-	logger := createLogger(appName, version)
+	var opts Opts
+	cmd.AppName = appName
+	cmd.Version = version
 
-	mongoHost := os.Getenv("MONGO_HOST")
+	p := flags.NewParser(&opts, flags.Default)
 
-	if mongoHost == "" {
-		_, _ = fmt.Fprintln(os.Stderr, errors.New("mongo host undefined"))
-		return
+	if len(os.Args) == 1 {
+		os.Args = append(os.Args, "server")
 	}
 
-	mongoPort := os.Getenv("MONGO_PORT")
+	p.CommandHandler = func(command flags.Commander, args []string) error {
+		commonOpts := cmd.CommonOpts{Log: opts.Log}
 
-	if mongoPort == "" {
-		_, _ = fmt.Fprintln(os.Stderr, errors.New("mongo port undefined"))
-		return
+		c := command.(cmd.CommonOptionsCommander)
+
+		c.SetCommon(commonOpts)
+
+		err := c.Execute(args)
+
+		if err != nil {
+			log.Printf("[ERROR] failed with %+v", err)
+		}
+
+		return err
 	}
 
-	logger.Output.Infof("Starting REST API server at port %s", port)
-
-	err := http.NewServer(
-		port,
-		chi.NewRouter(),
-		logger,
-		createValidateTransactionApp(logger, mongoHost, mongoPort),
-	).Start()
-
-	if err != nil {
-		logger.Error.WithError(err).Error("Failed to start REST API server")
-		os.Exit(1)
+	if _, err := p.Parse(); err != nil {
+		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
+			os.Exit(0)
+		} else {
+			os.Exit(1)
+		}
 	}
+
 }
