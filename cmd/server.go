@@ -28,23 +28,24 @@ type MongoGroup struct {
 
 // Execute is the entry point for "server" command
 func (s *ServerCommand) Execute(args []string) error {
-	l := s.setupLogger()
+	logger := s.setupLogger()
 
-	ruleSetRepo := s.createRuleSetRepository(l)
+	ruleSetRepo := s.createRuleSetRepository(logger)
 
-	validateTransactionApp := s.createValidateTransactionApp(ruleSetRepo, l)
+	validateTransactionApp := s.createValidateTransactionApp(ruleSetRepo, logger)
 
-	l.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
+	logger.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
 
 	err := http.NewServer(
-		s.HTTPPort, //":8080"
+		s.HTTPPort,
 		chi.NewRouter(),
-		l,
+		logger,
+		ruleSetRepo,
 		validateTransactionApp,
 	).Start()
 
 	if err != nil {
-		l.Error.WithError(err).Error("Failed to start REST API server")
+		logger.Error.WithError(err).Error("Failed to start REST API server")
 		os.Exit(1)
 	}
 

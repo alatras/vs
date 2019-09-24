@@ -7,12 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type Action int
+type Action string
 
 const (
-	Pass Action = iota
-	Block
-	Tag
+	Pass  Action = "pass"
+	Block Action = "block"
+	Tag   Action = "tag"
 )
 
 type RuleSet struct {
@@ -60,4 +60,13 @@ func (ruleSet RuleSet) Matches(trx transaction.Transaction) (Action, error) {
 	}
 
 	return ruleSet.Action, nil
+}
+
+func (a Action) IsValid() bool {
+	switch a {
+	case Pass, Block, Tag:
+		return true
+	default:
+		return false
+	}
 }
