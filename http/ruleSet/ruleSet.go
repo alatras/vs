@@ -1,21 +1,24 @@
-package ruleset
+package ruleSet
 
 import (
+	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"github.com/go-chi/chi"
 	"net/http"
 )
 
 type Resource struct {
-	logger            *logger.Logger
-	ruleSetRepository ruleSet.Repository
+	logger                  *logger.Logger
+	createRulesetAppFactory func() createRuleSet.CreateRuleset
 }
 
-func NewResource(logger *logger.Logger, ruleSetRepository ruleSet.Repository) Resource {
+func NewResource(
+	logger *logger.Logger,
+	createRulesetAppFactory func() createRuleSet.CreateRuleset,
+) Resource {
 	return Resource{
-		logger:            logger,
-		ruleSetRepository: ruleSetRepository,
+		logger:                  logger,
+		createRulesetAppFactory: createRulesetAppFactory,
 	}
 }
 

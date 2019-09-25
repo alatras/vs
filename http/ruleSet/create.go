@@ -1,9 +1,8 @@
-package ruleset
+package ruleSet
 
 import (
+	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"net/http"
@@ -19,6 +18,8 @@ func (t CreateRulesetResponse) Render(w http.ResponseWriter, r *http.Request) er
 }
 
 func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
+	app := rs.createRulesetAppFactory()
+
 	ctx := r.Context()
 	entityId := chi.URLParam(r, "id")
 
@@ -29,42 +30,35 @@ func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ruleMetadataArray := make([]rule.Metadata, len(payload.Rules))
+	rules := make([]createRuleSet.Rule, len(payload.Rules))
 
-	for index, payloadRule := range payload.Rules {
-		ruleMetadata := rule.Metadata{
-			Property: rule.Property(payloadRule.Key),
-			Operator: rule.Operator(payloadRule.Operator),
-			Value:    payloadRule.Value,
+	for index, currentRule := range payload.Rules {
+		appRule := createRuleSet.Rule{
+			Key:      currentRule.Key,
+			Operator: currentRule.Operator,
+			Value:    currentRule.Value,
 		}
 
-		ruleMetadataArray[index] = ruleMetadata
+		rules[index] = appRule
 	}
 
-	action := ruleSet.Action(payload.Action)
-
-	newRuleSet, err := ruleSet.New(
-		entityId,
-		payload.Name,
-		action,
-		ruleMetadataArray,
-	)
+	ruleSet, err := app.Execute(ctx, entityId, payload.Name, payload.Action, rules)
 
 	if err != nil {
-		_ = render.Render(w, r, errorResponse.UnexpectedError(err))
-		return
-	}
-
-	err = rs.ruleSetRepository.Create(ctx, newRuleSet)
-
-	if err != nil {
-		_ = render.Render(w, r, errorResponse.UnexpectedError(err))
+		switch err {
+		case createRuleSet.InvalidAction:
+			_ = render.Render(w, r, errorResponse.MalformedParameters(err.Error()))
+		case createRuleSet.InvalidRule:
+			_ = render.Render(w, r, errorResponse.MalformedParameters(err.Error()))
+		case createRuleSet.UnexpectedError:
+			_ = render.Render(w, r, errorResponse.UnexpectedError(err.Error()))
+		}
 		return
 	}
 
 	response := CreateRulesetResponse{
 		CreateRulesetPayload: payload,
-		Id:                   newRuleSet.Id,
+		Id:                   ruleSet.Id,
 		Entity:               entityId,
 	}
 

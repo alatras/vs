@@ -1,8 +1,6 @@
-package ruleset
+package ruleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"errors"
 	"fmt"
 )
@@ -26,17 +24,19 @@ type CreateRulesetResponse struct {
 }
 
 func (r RulePayload) Validate() error {
+	if r.Key == "" {
+		return errors.New("key should be present")
+	}
+
+	if r.Operator == "" {
+		return errors.New("operator should be present")
+	}
+
 	if r.Value == "" {
 		return errors.New("value should be present")
 	}
 
-	_, err := rule.NewValidator(rule.Metadata{
-		Property: rule.Property(r.Key),
-		Operator: rule.Operator(r.Operator),
-		Value:    r.Value,
-	})
-
-	return err
+	return nil
 }
 
 func (payload CreateRulesetPayload) Validate() error {
@@ -46,12 +46,6 @@ func (payload CreateRulesetPayload) Validate() error {
 
 	if payload.Action == "" {
 		return errors.New("body.action: should be present")
-	}
-
-	action := ruleSet.Action(payload.Action)
-
-	if action != ruleSet.Tag && action != ruleSet.Block {
-		return errors.New("body.action: should be TAG or BLOCK")
 	}
 
 	if len(payload.Rules) == 0 {

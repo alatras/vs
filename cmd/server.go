@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http"
 	"bitbucket.verifone.com/validation-service/logger"
@@ -28,24 +29,29 @@ type MongoGroup struct {
 
 // Execute is the entry point for "server" command
 func (s *ServerCommand) Execute(args []string) error {
-	logger := s.setupLogger()
+	log := s.setupLogger()
 
-	ruleSetRepo := s.createRuleSetRepository(logger)
+	ruleSetRepo := s.createRuleSetRepository(log)
 
-	validateTransactionApp := s.createValidateTransactionApp(ruleSetRepo, logger)
+	validateTransactionApp := s.createValidateTransactionApp(ruleSetRepo, log)
 
-	logger.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
+	log.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
+
+	createRuleSetAppFactory := func() createRuleSet.CreateRuleset {
+		return createRuleSet.NewCreateRuleset(log, ruleSetRepo)
+	}
 
 	err := http.NewServer(
 		s.HTTPPort,
 		chi.NewRouter(),
-		logger,
+		log,
 		ruleSetRepo,
 		validateTransactionApp,
+		createRuleSetAppFactory,
 	).Start()
 
 	if err != nil {
-		logger.Error.WithError(err).Error("Failed to start REST API server")
+		log.Error.WithError(err).Error("Failed to start REST API server")
 		os.Exit(1)
 	}
 
