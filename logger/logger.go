@@ -18,12 +18,12 @@ type Metadata = map[string]interface{}
 
 type Logger struct {
 	Output *logrus.Entry
-	Error *logrus.Entry
+	Error  *logrus.Entry
 }
 
 func NewLogger(appName string, appVersion string, format LogFormat, level logrus.Level) (*Logger, error) {
 	logFields := logrus.Fields{
-		"name": appName,
+		"name":    appName,
 		"version": appVersion,
 	}
 
@@ -56,7 +56,7 @@ func NewLogger(appName string, appVersion string, format LogFormat, level logrus
 
 	return &Logger{
 		Output: logger.WithFields(logFields),
-		Error: errorLogger.WithFields(logFields),
+		Error:  errorLogger.WithFields(logFields),
 	}, nil
 }
 

@@ -15,7 +15,7 @@ func newAmountValidator(operator operator, value string) (*amountValidator, erro
 	amount, err := strconv.Atoi(value)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.New("invalid value format")
 	}
 
 	var amountComparator compare.IntComparator

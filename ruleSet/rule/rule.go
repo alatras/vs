@@ -8,7 +8,8 @@ import (
 type property string
 
 const (
-	amount property = "amount"
+	amount      property = "amount"
+	countryCode property = "countryCode"
 )
 
 type operator string
@@ -33,14 +34,21 @@ type Validator interface {
 }
 
 func NewValidator(metadata Metadata) (Validator, error) {
+	var validator Validator
+	var err error
+
 	switch metadata.Property {
 	case amount:
-		validator, err := newAmountValidator(metadata.Operator, metadata.Value)
-		if err != nil {
-			return nil, err
-		}
-		return validator, nil
+		validator, err = newAmountValidator(metadata.Operator, metadata.Value)
+	case countryCode:
+		validator, err = newCountryCodeValidator(metadata.Operator, metadata.Value)
 	default:
-		return nil, errors.New("invalid property")
+		return nil, errors.New("invalid validator property")
 	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return validator, nil
 }
