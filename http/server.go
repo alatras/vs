@@ -39,7 +39,7 @@ func (s *Server) Start() error {
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	r.Mount("/healthCheck", healthCheck.NewResource(s.logger).Routes())
-	r.Mount("/", transaction.NewResource(s.logger, s.validateTransactionApp).Routes())
+	r.Mount("/", transactionHandlers.NewResource(s.logger, s.validateTransactionApp).Routes())
 	r.Mount("/entities", ruleset.NewResource(s.logger).Routes())
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", s.port), r)

@@ -3,7 +3,7 @@ package transaction
 import (
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"bitbucket.verifone.com/validation-service/report"
-	"bitbucket.verifone.com/validation-service/transaction"
+	trx "bitbucket.verifone.com/validation-service/transaction"
 	"errors"
 	"github.com/go-chi/render"
 	"net/http"
@@ -14,11 +14,11 @@ import (
 	Validate the request and return error if validation fails
 */
 func (t ValidateTransactionPayload) Bind(r *http.Request) error {
-	if t.Amount == 0 {
+	if t.Transaction.Amount.Value == 0 {
 		return errors.New("amount required")
 	}
 
-	if t.Entity == "" {
+	if t.Transaction.Entity == "" {
 		return errors.New("entity required")
 	}
 
@@ -45,12 +45,13 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	trx := transaction.Transaction{
-		Amount:   trxPayload.Amount,
-		EntityId: trxPayload.Entity,
+	t := trx.Transaction{
+		Amount:       trxPayload.Transaction.Amount.Value,
+		CurrencyCode: trxPayload.Transaction.Amount.CurrencyCode,
+		EntityId:     trxPayload.Transaction.Entity,
 	}
 
-	reportChan, errChan := rs.app.Enqueue(ctx, trx)
+	reportChan, errChan := rs.app.Enqueue(ctx, t)
 
 	select {
 	case rep := <-reportChan:

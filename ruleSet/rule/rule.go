@@ -23,9 +23,17 @@ const (
 	greater        operator = ">"
 )
 
+type Operator interface {
+	Operator() operator
+}
+
+func (o operator) Operator() operator {
+	return o
+}
+
 type Metadata struct {
 	Property property `json:"key"`
-	Operator operator `json:"operator"`
+	Operator Operator `json:"operator"`
 	Value    string   `json:"value"`
 }
 

@@ -10,7 +10,7 @@ type countryCodeValidator struct {
 	countryCodeComparator compare.StringComparator
 }
 
-func newCountryCodeValidator(operator operator, value string) (*countryCodeValidator, error) {
+func newCountryCodeValidator(operator Operator, value string) (*countryCodeValidator, error) {
 	var countryCodeComparator compare.StringComparator
 
 	switch operator {
