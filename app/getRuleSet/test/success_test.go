@@ -2,7 +2,6 @@ package test
 
 import (
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
-	"bitbucket.verifone.com/validation-service/app/test"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
@@ -43,5 +42,5 @@ func Test_App_GetRuleSet_Success(t *testing.T) {
 		return
 	}
 
-	test.AssertRuleSet(t, mockRuleSet, *fetchedRuleSet)
+	assertRuleSet(t, mockRuleSet, *fetchedRuleSet)
 }

@@ -3,7 +3,6 @@ package create
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	ruleSetTest "bitbucket.verifone.com/validation-service/http/ruleSet/test"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
 	"fmt"
@@ -18,7 +17,7 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 	log := logger.NewStubLogger()
 
 	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleset {
-		return &SuccessApp{}
+		return &successApp{}
 	}, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
@@ -69,8 +68,8 @@ func Test_HTTP_RuleSet_Create_Success(t *testing.T) {
 				}
 			]
 		}`,
-		ruleSetTest.MockRuleSet.Id,
+		mockRuleSet.Id,
 	)
 
-	AssertJSONEqual(t, "Response body expected to be", expected, body)
+	assertJSONEqual(t, "Response body expected to be", expected, body)
 }
