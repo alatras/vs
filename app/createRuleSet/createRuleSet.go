@@ -20,7 +20,7 @@ type Rule struct {
 	Value    string
 }
 
-type CreateRuleset interface {
+type CreateRuleSet interface {
 	Execute(ctx context.Context, entityId string, name string, action string, rules []Rule) (*ruleSet.RuleSet, error)
 }
 
@@ -29,7 +29,7 @@ type App struct {
 	ruleSetRepository ruleSet.Repository
 }
 
-func NewCreateRuleset(logger *logger.Logger, ruleSetRepository ruleSet.Repository) *App {
+func NewCreateRuleSet(logger *logger.Logger, ruleSetRepository ruleSet.Repository) *App {
 	return &App{
 		instrumentation:   newInstrumentation(logger),
 		ruleSetRepository: ruleSetRepository,

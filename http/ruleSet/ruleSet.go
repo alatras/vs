@@ -2,6 +2,7 @@ package ruleSet
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"github.com/go-chi/chi"
@@ -10,19 +11,22 @@ import (
 
 type Resource struct {
 	logger                  *logger.Logger
-	createRulesetAppFactory func() createRuleSet.CreateRuleset
-	getRuleSetAppFactory func() getRuleSet.GetRuleSet
+	createRulesetAppFactory func() createRuleSet.CreateRuleSet
+	getRuleSetAppFactory    func() getRuleSet.GetRuleSet
+	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet
 }
 
 func NewResource(
 	logger *logger.Logger,
-	createRulesetAppFactory func() createRuleSet.CreateRuleset,
+	createRulesetAppFactory func() createRuleSet.CreateRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
+	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
 ) Resource {
 	return Resource{
 		logger:                  logger,
 		createRulesetAppFactory: createRulesetAppFactory,
-		getRuleSetAppFactory: getRuleSetAppFactory,
+		getRuleSetAppFactory:    getRuleSetAppFactory,
+		deleteRuleSetAppFactory: deleteRuleSetAppFactory,
 	}
 }
 
@@ -46,8 +50,4 @@ func (rs Resource) List(w http.ResponseWriter, r *http.Request) {
 
 func (rs Resource) Update(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("Update rule sets"))
-}
-
-func (rs Resource) Delete(w http.ResponseWriter, r *http.Request) {
-	_, _ = w.Write([]byte("Delete rule sets"))
 }
