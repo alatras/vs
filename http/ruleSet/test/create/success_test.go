@@ -1,4 +1,4 @@
-package test
+package create
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
@@ -18,14 +18,14 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 
 	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleset {
 		return &successApp{}
-	})
+	}, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_CreateSuccess(t *testing.T) {
+func Test_HTTP_RuleSet_Create_Success(t *testing.T) {
 	requestBody :=
 		`{
 			"name": "Test",
@@ -71,5 +71,5 @@ func Test_HTTP_RuleSet_CreateSuccess(t *testing.T) {
 		mockRuleSet.Id,
 	)
 
-	AssertJSONEqual(t, "Response body expected to be", expected, body)
+	assertJSONEqual(t, "Response body expected to be", expected, body)
 }

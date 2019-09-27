@@ -1,4 +1,4 @@
-package test
+package create
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
@@ -9,6 +9,7 @@ import (
 
 const (
 	malformedParametersErrorMessage = "At least one parameter is invalid. Examine the details property for more information. Invalid parameters are listed and prefixed accordingly: body for parameters submitted in the request's body, query for parameters appended to the request's URL, and params for templated parameters of the request's URL."
+	unexpectedErrorMessage          = "Unexpected error: if the error persists, please contact an administrator, quoting the code and timestamp of this error"
 )
 
 var (

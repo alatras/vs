@@ -2,10 +2,11 @@ package http
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
 	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
-	httpRuleset "bitbucket.verifone.com/validation-service/http/ruleSet"
+	httpRuleSet "bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/http/transaction"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
@@ -24,6 +25,7 @@ type Server struct {
 	ruleSetRepository          ruleSet.Repository
 	validateTransactionService *validateTransaction.ValidatorService
 	createRulesetAppFactory    func() createRuleSet.CreateRuleset
+	getRuleSetAppFactory       func() getRuleSet.GetRuleSet
 }
 
 func NewServer(
@@ -33,6 +35,7 @@ func NewServer(
 	ruleSetRepository ruleSet.Repository,
 	validateTransactionService *validateTransaction.ValidatorService,
 	createRulesetAppFactory func() createRuleSet.CreateRuleset,
+	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 ) *Server {
 	return &Server{
 		port:                       port,
@@ -41,6 +44,7 @@ func NewServer(
 		ruleSetRepository:          ruleSetRepository,
 		validateTransactionService: validateTransactionService,
 		createRulesetAppFactory:    createRulesetAppFactory,
+		getRuleSetAppFactory:       getRuleSetAppFactory,
 	}
 }
 
@@ -54,7 +58,14 @@ func (s *Server) Start() error {
 
 	r.Mount("/healthCheck", healthCheck.NewResource(s.logger).Routes())
 	r.Mount("/", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
-	r.Mount("/entities", httpRuleset.NewResource(s.logger, s.createRulesetAppFactory).Routes())
+	r.Mount(
+		"/entities",
+		httpRuleSet.NewResource(
+			s.logger,
+			s.createRulesetAppFactory,
+			s.getRuleSetAppFactory,
+		).Routes(),
+	)
 
 	httpServer := &http.Server{
 		Addr:              fmt.Sprintf(":%d", s.port),

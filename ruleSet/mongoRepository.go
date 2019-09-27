@@ -3,6 +3,7 @@ package ruleSet
 import (
 	"context"
 	"errors"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -36,7 +37,7 @@ func (r MongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) err
 	return nil
 }
 
-func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error) {
+func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (*RuleSet, error) {
 	var ruleSet RuleSet
 
 	err := r.ruleSetCollection.FindOne(context.TODO(), bson.D{
@@ -50,11 +51,15 @@ func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 		},
 	}).Decode(&ruleSet)
 
-	if err != nil {
-		return ruleSet, errors.New("error while getting rule set by id")
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
 	}
 
-	return ruleSet, nil
+	if err != nil {
+		return nil, fmt.Errorf("error while getting rule set by id: %v", err)
+	}
+
+	return &ruleSet, nil
 }
 
 func (r MongoRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {

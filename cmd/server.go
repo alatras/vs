@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http"
 	"bitbucket.verifone.com/validation-service/logger"
@@ -41,6 +42,10 @@ func (s *ServerCommand) Execute(args []string) error {
 		return createRuleSet.NewCreateRuleset(log, ruleSetRepo)
 	}
 
+	getRuleSetAppFactory := func() getRuleSet.GetRuleSet {
+		return getRuleSet.NewGetRuleSet(log, ruleSetRepo)
+	}
+
 	err := http.NewServer(
 		s.HTTPPort,
 		chi.NewRouter(),
@@ -48,6 +53,7 @@ func (s *ServerCommand) Execute(args []string) error {
 		ruleSetRepo,
 		validateTransactionApp,
 		createRuleSetAppFactory,
+		getRuleSetAppFactory,
 	).Start()
 
 	if err != nil {

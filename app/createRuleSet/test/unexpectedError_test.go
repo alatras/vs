@@ -37,7 +37,7 @@ func (s *StubRepository) Create(ctx context.Context, ruleSet ruleSet.RuleSet) er
 	return errors.New("unexpected error")
 }
 
-func (s *StubRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (ruleSet.RuleSet, error) {
+func (s *StubRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (*ruleSet.RuleSet, error) {
 	panic("implement me")
 }
 

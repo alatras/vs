@@ -25,7 +25,7 @@ type RuleSet struct {
 
 type Repository interface {
 	Create(ctx context.Context, ruleSet RuleSet) error
-	GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error)
+	GetById(ctx context.Context, entityId string, ruleSetId string) (*RuleSet, error)
 	ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error)
 	Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error)
 	Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error)
