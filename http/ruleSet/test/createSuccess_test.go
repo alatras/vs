@@ -4,7 +4,6 @@ import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/test"
 	"bytes"
 	"fmt"
 	"net/http"
@@ -49,8 +48,8 @@ func Test_HTTP_RuleSet_CreateSuccess(t *testing.T) {
 
 	recorder := setupSuccessRecorder(t, req)
 
-	if status := recorder.Code; status != http.StatusOK {
-		t.Errorf("Status code expected to be %d but got %d", http.StatusOK, status)
+	if status := recorder.Code; status != http.StatusCreated {
+		t.Errorf("Status code expected to be %d but got %d", http.StatusCreated, status)
 	}
 
 	body := recorder.Body.String()
@@ -72,5 +71,5 @@ func Test_HTTP_RuleSet_CreateSuccess(t *testing.T) {
 		mockRuleSet.Id,
 	)
 
-	test.AssertJSONEqual(t, "Response body expected to be", expected, body)
+	AssertJSONEqual(t, "Response body expected to be", expected, body)
 }
