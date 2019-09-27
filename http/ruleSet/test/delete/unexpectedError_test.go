@@ -1,53 +1,38 @@
-package create
+package delete
 
 import (
-	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
-	"bytes"
 	"github.com/bitly/go-simplejson"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-func setupUnknownErrorRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
+func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleSet {
-		return &errorApp{error: createRuleSet.UnexpectedError}
-	}, nil, nil)
+	resource := ruleSet.NewResource(log, nil, nil, func() deleteRuleSet.DeleteRuleSet {
+		return &errorApp{error: deleteRuleSet.UnexpectedError}
+	})
 
 	resource.Routes().ServeHTTP(recorder, request)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_Create_UnexpectedError(t *testing.T) {
-	requestBody :=
-		`{
-			"name": "test",
-			"action": "TEST",
-			"rules": [
-				{
-					"key": "amount",
-					"operator": "==",
-					"value": "1000"
-				}
-			]
-		}`
-
-	req, err := http.NewRequest("POST", "/12345/rulesets", bytes.NewBuffer([]byte(requestBody)))
-	req.Header.Set("Content-Type", "application/json")
+func Test_HTTP_RuleSet_Delete_UnexpectedError(t *testing.T) {
+	req, err := http.NewRequest("DELETE", "/12345/rulesets/"+mockRuleSet.Id, nil)
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
 		return
 	}
 
-	recorder := setupUnknownErrorRecorder(t, req)
+	recorder := setupUnexpectedErrorRecorder(t, req)
 
 	if status := recorder.Code; status != http.StatusInternalServerError {
 		t.Errorf("Status code expected to be %d but got %d", http.StatusInternalServerError, status)

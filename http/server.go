@@ -2,6 +2,7 @@ package http
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
@@ -24,8 +25,9 @@ type Server struct {
 	logger                     *logger.Logger
 	ruleSetRepository          ruleSet.Repository
 	validateTransactionService *validateTransaction.ValidatorService
-	createRulesetAppFactory    func() createRuleSet.CreateRuleset
+	createRuleSetAppFactory    func() createRuleSet.CreateRuleSet
 	getRuleSetAppFactory       func() getRuleSet.GetRuleSet
+	deleteRuleSetAppFactory    func() deleteRuleSet.DeleteRuleSet
 }
 
 func NewServer(
@@ -34,8 +36,9 @@ func NewServer(
 	logger *logger.Logger,
 	ruleSetRepository ruleSet.Repository,
 	validateTransactionService *validateTransaction.ValidatorService,
-	createRulesetAppFactory func() createRuleSet.CreateRuleset,
+	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
+	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
 ) *Server {
 	return &Server{
 		port:                       port,
@@ -43,8 +46,9 @@ func NewServer(
 		logger:                     logger,
 		ruleSetRepository:          ruleSetRepository,
 		validateTransactionService: validateTransactionService,
-		createRulesetAppFactory:    createRulesetAppFactory,
+		createRuleSetAppFactory:    createRuleSetAppFactory,
 		getRuleSetAppFactory:       getRuleSetAppFactory,
+		deleteRuleSetAppFactory:    deleteRuleSetAppFactory,
 	}
 }
 
@@ -62,8 +66,9 @@ func (s *Server) Start() error {
 		"/entities",
 		httpRuleSet.NewResource(
 			s.logger,
-			s.createRulesetAppFactory,
+			s.createRuleSetAppFactory,
 			s.getRuleSetAppFactory,
+			s.deleteRuleSetAppFactory,
 		).Routes(),
 	)
 

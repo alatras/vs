@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func Test_App_GetRuleSet_UnknownError(t *testing.T) {
+func Test_App_GetRuleSet_UnexpectedError(t *testing.T) {
 	log := logger.NewStubLogger()
 	repo := &stubRepository{}
 
@@ -22,9 +22,9 @@ func Test_App_GetRuleSet_UnknownError(t *testing.T) {
 	)
 
 	if err == nil {
-		t.Error("RuleSet fetch succeeded but should fail with not found error")
+		t.Error("RuleSet fetch succeeded but should fail with unexpected error")
 	} else if err != getRuleSet.UnexpectedError {
-		t.Errorf("RuleSet fetch failed but not with not found error: %v", err)
+		t.Errorf("RuleSet fetch failed but not with unexpected error: %v", err)
 	}
 }
 
