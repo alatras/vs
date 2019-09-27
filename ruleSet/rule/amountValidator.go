@@ -8,31 +8,31 @@ import (
 )
 
 type amountValidator struct {
-	amountComparator compare.IntComparator
+	amountComparator compare.Uint64Comparator
 }
 
-func newAmountValidator(operator Operator, value string) (*amountValidator, error) {
-	amount, err := strconv.Atoi(value)
+func newAmountValidator(operator operator, value string) (*amountValidator, error) {
+	amount, err := strconv.ParseUint(value, 10, 64)
 
 	if err != nil {
 		return nil, errors.New("invalid value format")
 	}
 
-	var amountComparator compare.IntComparator
+	var amountComparator compare.Uint64Comparator
 
 	switch operator {
 	case less:
-		amountComparator = compare.LessThanInt(amount)
+		amountComparator = compare.LessThanUint64(amount)
 	case lessOrEqual:
-		amountComparator = compare.LessThanOrEqualInt(amount)
+		amountComparator = compare.LessThanOrEqualUint64(amount)
 	case equal:
-		amountComparator = compare.EqualInt(amount)
+		amountComparator = compare.EqualUint64(amount)
 	case notEqual:
-		amountComparator = compare.NotEqualInt(amount)
+		amountComparator = compare.NotEqualUint64(amount)
 	case greaterOrEqual:
-		amountComparator = compare.GreaterThanOrEqualInt(amount)
+		amountComparator = compare.GreaterThanOrEqualUint64(amount)
 	case greater:
-		amountComparator = compare.GreaterThanInt(amount)
+		amountComparator = compare.GreaterThanUint64(amount)
 	default:
 		return nil, errors.New("invalid operator")
 	}

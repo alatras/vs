@@ -47,7 +47,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 
 	t := trx.Transaction{
 		Amount:       trxPayload.Transaction.Amount.Value,
-		CurrencyCode: trxPayload.Transaction.Amount.CurrencyCode,
+		CurrencyCode: trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
 		EntityId:     trxPayload.Transaction.Entity,
 	}
 

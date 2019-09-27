@@ -2,7 +2,6 @@ package transaction
 
 import (
 	"bitbucket.verifone.com/validation-service/report"
-	trx "bitbucket.verifone.com/validation-service/transaction"
 )
 
 type ValidateTransactionPayload struct {
@@ -15,8 +14,8 @@ type transaction struct {
 }
 
 type amount struct {
-	Value        uint             `json:"value"`
-	CurrencyCode trx.CurrencyCode `json:"currencyCode"`
+	Value        uint64 `json:"value"`
+	CurrencyCode string `json:"currencyCode"`
 }
 
 type ValidateTransactionResponse struct {

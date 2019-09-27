@@ -7,10 +7,10 @@ import (
 	"github.com/google/uuid"
 )
 
-type Action int
+type action int
 
 const (
-	Pass Action = iota
+	Pass action = iota
 	Block
 	Tag
 )
@@ -18,7 +18,7 @@ const (
 type RuleSet struct {
 	Id           string          `json:"id" bson:"id"`
 	EntityId     string          `json:"entityId" bson:"entityId"`
-	Action       Action          `bson:"action"`
+	Action       action          `bson:"action"`
 	Name         string          `json:"name" bson:"name"`
 	RuleMetadata []rule.Metadata `json:"rules" bson:"validationRuleMetadata"`
 }
@@ -31,7 +31,7 @@ type Repository interface {
 	Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error)
 }
 
-func New(entityId string, name string, action Action, metadata []rule.Metadata) (RuleSet, error) {
+func New(entityId string, name string, action action, metadata []rule.Metadata) (RuleSet, error) {
 	ruleSet := RuleSet{
 		Id:           uuid.New().String(),
 		EntityId:     entityId,
@@ -43,7 +43,7 @@ func New(entityId string, name string, action Action, metadata []rule.Metadata) 
 	return ruleSet, nil
 }
 
-func (ruleSet RuleSet) Matches(trx transaction.Transaction) (Action, error) {
+func (ruleSet RuleSet) Matches(trx transaction.Transaction) (action, error) {
 	if len(ruleSet.RuleMetadata) == 0 {
 		return Pass, nil
 	}

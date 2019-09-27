@@ -9,24 +9,17 @@ func TestNewCountryCodeValidator(t *testing.T) {
 	var err error
 
 	// Should create a new country code validator where validation equals value
-	_, err = newCountryCodeValidator("==", "NL")
+	_, err = newCountryCodeValidator(equal, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new country code validator", err.Error())
 	}
 
 	// Should create a new country code validator where validation does not equal value
-	_, err = newCountryCodeValidator("!=", "NL")
+	_, err = newCountryCodeValidator(notEqual, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new country code validator", err.Error())
-	}
-
-	// Should return an error when factory receives an invalid operator
-	_, err = newCountryCodeValidator("!", "NL")
-
-	if err == nil || err.Error() != "invalid operator" {
-		t.Error("expected error while creating new country code validator with invalid operator")
 	}
 }
 
@@ -35,7 +28,7 @@ func TestCountryCodeValidator_Validate(t *testing.T) {
 	var err error
 
 	// Equal
-	validator, err = newCountryCodeValidator("==", "NL")
+	validator, err = newCountryCodeValidator(equal, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new country code validator:", err.Error())
@@ -59,7 +52,7 @@ func TestCountryCodeValidator_Validate(t *testing.T) {
 	}
 
 	// Not equal
-	validator, err = newCountryCodeValidator("!=", "NL")
+	validator, err = newCountryCodeValidator(notEqual, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new country code validator:", err.Error())
