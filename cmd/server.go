@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http"
@@ -37,15 +38,21 @@ func (s *ServerCommand) Execute(args []string) error {
 
 	log.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
 
+	createRuleSetAppFactory := func() createRuleSet.CreateRuleset {
+		return createRuleSet.NewCreateRuleset(log, ruleSetRepo)
+	}
+
 	getRuleSetAppFactory := func() getRuleSet.GetRuleSet {
 		return getRuleSet.NewGetRuleSet(log, ruleSetRepo)
 	}
 
 	err := http.NewServer(
-		s.HTTPPort, //":8080"
+		s.HTTPPort,
 		chi.NewRouter(),
 		log,
+		ruleSetRepo,
 		validateTransactionApp,
+		createRuleSetAppFactory,
 		getRuleSetAppFactory,
 	).Start()
 
