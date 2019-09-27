@@ -3,7 +3,6 @@ package get
 import (
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/http/ruleSet/test"
 	"bitbucket.verifone.com/validation-service/logger"
 	"github.com/bitly/go-simplejson"
 	"net/http"
@@ -17,7 +16,7 @@ func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest
 	log := logger.NewStubLogger()
 
 	resource := ruleSet.NewResource(log, nil, func() getRuleSet.GetRuleSet {
-		return &ErrorApp{Error: getRuleSet.UnexpectedError}
+		return &errorApp{error: getRuleSet.UnexpectedError}
 	}, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
@@ -26,7 +25,7 @@ func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest
 }
 
 func Test_HTTP_RuleSet_Get_UnexpectedError(t *testing.T) {
-	req, err := http.NewRequest("GET", "/12345/rulesets/"+test.MockRuleSet.Id, nil)
+	req, err := http.NewRequest("GET", "/12345/rulesets/"+mockRuleSet.Id, nil)
 	req.Header.Set("Content-Type", "application/json")
 
 	if err != nil {
@@ -60,8 +59,8 @@ func Test_HTTP_RuleSet_Get_UnexpectedError(t *testing.T) {
 		return
 	}
 
-	if message != test.UnexpectedErrorMessage {
-		t.Errorf("Expected message %s but got %s", test.UnexpectedErrorMessage, message)
+	if message != unexpectedErrorMessage {
+		t.Errorf("Expected message %s but got %s", unexpectedErrorMessage, message)
 		return
 	}
 }

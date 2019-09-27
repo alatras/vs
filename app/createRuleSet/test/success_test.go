@@ -2,7 +2,6 @@ package test
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
-	"bitbucket.verifone.com/validation-service/app/test"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/ruleSet/rule"
@@ -34,7 +33,7 @@ func Test_App_CreateRuleSet_Success(t *testing.T) {
 		return
 	}
 
-	test.AssertRuleSet(t, mockRuleSet, *newRuleSet)
+	AssertRuleSet(t, mockRuleSet, *newRuleSet)
 }
 
 func Test_App_CreateRuleSet_Success_Amount_AllOperators(t *testing.T) {
@@ -85,6 +84,6 @@ func Test_App_CreateRuleSet_Success_Amount_AllOperators(t *testing.T) {
 			return
 		}
 
-		test.AssertRuleSet(t, mockRuleSet, *newRuleSet)
+		AssertRuleSet(t, mockRuleSet, *newRuleSet)
 	}
 }

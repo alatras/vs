@@ -1,4 +1,4 @@
-package test
+package create
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ const (
 	successColorFormat = "\033[0;36m%s\033[0m"
 )
 
-func AssertJSONEqual(t *testing.T, message, expected, actual string) {
+func assertJSONEqual(t *testing.T, message, expected, actual string) {
 	var jsonExpected, jsonActual interface{}
 
 	if err := json.Unmarshal([]byte(expected), &jsonExpected); err != nil {

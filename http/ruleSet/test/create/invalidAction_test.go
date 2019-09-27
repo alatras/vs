@@ -3,7 +3,6 @@ package create
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	ruleSetTest "bitbucket.verifone.com/validation-service/http/ruleSet/test"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
 	"github.com/bitly/go-simplejson"
@@ -17,8 +16,8 @@ func setupInvalidActionRecorder(t *testing.T, request *http.Request) *httptest.R
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleSet {
-		return &ErrorApp{Error: createRuleSet.InvalidAction}
+	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleset {
+		return &errorApp{error: createRuleSet.InvalidAction}
 	}, nil, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
@@ -82,8 +81,8 @@ func Test_HTTP_RuleSet_Create_InvalidAction(t *testing.T) {
 		return
 	}
 
-	if message != ruleSetTest.MalformedParametersErrorMessage {
-		t.Errorf("Expected message %s but got %s", ruleSetTest.MalformedParametersErrorMessage, message)
+	if message != malformedParametersErrorMessage {
+		t.Errorf("Expected message %s but got %s", malformedParametersErrorMessage, message)
 		return
 	}
 }

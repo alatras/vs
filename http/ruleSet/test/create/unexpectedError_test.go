@@ -3,7 +3,6 @@ package create
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	ruleSetTest "bitbucket.verifone.com/validation-service/http/ruleSet/test"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
 	"github.com/bitly/go-simplejson"
@@ -18,7 +17,7 @@ func setupUnknownErrorRecorder(t *testing.T, request *http.Request) *httptest.Re
 	log := logger.NewStubLogger()
 
 	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleSet {
-		return &ErrorApp{Error: createRuleSet.UnexpectedError}
+		return &errorApp{error: createRuleSet.UnexpectedError}
 	}, nil, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
@@ -74,8 +73,8 @@ func Test_HTTP_RuleSet_Create_UnexpectedError(t *testing.T) {
 		return
 	}
 
-	if message != ruleSetTest.UnexpectedErrorMessage {
-		t.Errorf("Expected message %s but got %s", ruleSetTest.UnexpectedErrorMessage, message)
+	if message != unexpectedErrorMessage {
+		t.Errorf("Expected message %s but got %s", unexpectedErrorMessage, message)
 		return
 	}
 }
