@@ -1,8 +1,9 @@
-package test
+package create
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
+	ruleSetTest "bitbucket.verifone.com/validation-service/http/ruleSet/test"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
 	"github.com/bitly/go-simplejson"
@@ -11,13 +12,13 @@ import (
 	"testing"
 )
 
-func setupInvalidActionRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
+func setupInvalidRuleRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 
 	log := logger.NewStubLogger()
 
 	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleset {
-		return &errorApp{error: createRuleSet.InvalidAction}
+		return &ErrorApp{Error: createRuleSet.InvalidRule}
 	}, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
@@ -25,15 +26,15 @@ func setupInvalidActionRecorder(t *testing.T, request *http.Request) *httptest.R
 	return recorder
 }
 
-func Test_HTTP_RuleSet_CreateInvalidAction(t *testing.T) {
+func Test_HTTP_RuleSet_Create_InvalidRule(t *testing.T) {
 	requestBody :=
 		`{
 			"name": "test",
-			"action": "TEST",
+			"action": "TAG",
 			"rules": [
 				{
-					"key": "amount",
-					"operator": "==",
+					"key": "name",
+					"operator": ">=",
 					"value": "1000"
 				}
 			]
@@ -47,7 +48,7 @@ func Test_HTTP_RuleSet_CreateInvalidAction(t *testing.T) {
 		return
 	}
 
-	recorder := setupInvalidActionRecorder(t, req)
+	recorder := setupInvalidRuleRecorder(t, req)
 
 	if status := recorder.Code; status != http.StatusBadRequest {
 		t.Errorf("Status code expected to be %d but got %d", http.StatusBadRequest, status)
@@ -74,15 +75,15 @@ func Test_HTTP_RuleSet_CreateInvalidAction(t *testing.T) {
 		return
 	}
 
-	expectedDetails := "action should be TAG or BLOCK"
+	expectedDetails := "invalid rule"
 
 	if details != expectedDetails {
 		t.Errorf("Expected details %s but got %s", expectedDetails, details)
 		return
 	}
 
-	if message != malformedParametersErrorMessage {
-		t.Errorf("Expected message %s but got %s", malformedParametersErrorMessage, message)
+	if message != ruleSetTest.MalformedParametersErrorMessage {
+		t.Errorf("Expected message %s but got %s", ruleSetTest.MalformedParametersErrorMessage, message)
 		return
 	}
 }
