@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func assertRuleSet(t *testing.T, expected, actual ruleSet.RuleSet) {
+func AssertRuleSet(t *testing.T, expected, actual ruleSet.RuleSet) {
 	if actual.EntityId != expected.EntityId {
 		t.Errorf("Expected entity id to be %s but got %s", expected.EntityId, actual.EntityId)
 		return

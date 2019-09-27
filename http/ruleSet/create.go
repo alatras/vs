@@ -62,7 +62,7 @@ func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
 		Entity:               entityId,
 	}
 
-	render.Status(r, http.StatusOK)
+	render.Status(r, http.StatusCreated)
 
 	err = render.Render(w, r, response)
 
