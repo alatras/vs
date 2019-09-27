@@ -25,7 +25,7 @@ type Server struct {
 	ruleSetRepository          ruleSet.Repository
 	validateTransactionService *validateTransaction.ValidatorService
 	createRulesetAppFactory    func() createRuleSet.CreateRuleset
-	getRuleSetAppFactory   func() getRuleSet.GetRuleSet
+	getRuleSetAppFactory       func() getRuleSet.GetRuleSet
 }
 
 func NewServer(
@@ -44,7 +44,7 @@ func NewServer(
 		ruleSetRepository:          ruleSetRepository,
 		validateTransactionService: validateTransactionService,
 		createRulesetAppFactory:    createRulesetAppFactory,
-		getRuleSetAppFactory:   getRuleSetAppFactory,
+		getRuleSetAppFactory:       getRuleSetAppFactory,
 	}
 }
 
@@ -58,7 +58,14 @@ func (s *Server) Start() error {
 
 	r.Mount("/healthCheck", healthCheck.NewResource(s.logger).Routes())
 	r.Mount("/", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
-	r.Mount("/entities", httpRuleset.NewResource(s.logger, s.createRulesetAppFactory, s.getRuleSetAppFactory).Routes())
+	r.Mount(
+		"/entities",
+		httpRuleSet.NewResource(
+			s.logger,
+			s.createRulesetAppFactory,
+			s.getRuleSetAppFactory,
+		).Routes(),
+	)
 
 	httpServer := &http.Server{
 		Addr:              fmt.Sprintf(":%d", s.port),

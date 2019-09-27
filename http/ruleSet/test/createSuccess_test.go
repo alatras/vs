@@ -19,7 +19,7 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 
 	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleset {
 		return &successApp{}
-	})
+	}, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
 
@@ -49,8 +49,8 @@ func Test_HTTP_RuleSet_CreateSuccess(t *testing.T) {
 
 	recorder := setupSuccessRecorder(t, req)
 
-	if status := recorder.Code; status != http.StatusOK {
-		t.Errorf("Status code expected to be %d but got %d", http.StatusOK, status)
+	if status := recorder.Code; status != http.StatusCreated {
+		t.Errorf("Status code expected to be %d but got %d", http.StatusCreated, status)
 	}
 
 	body := recorder.Body.String()

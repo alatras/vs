@@ -5,7 +5,7 @@ import (
 	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 )
 
-var mockRuleSet, _ = ruleSet.New(
+var mockRuleSet = ruleSet.New(
 	"12345",
 	"Test",
 	ruleSet.Block,
