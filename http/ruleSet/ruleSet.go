@@ -1,18 +1,24 @@
-package ruleset
+package ruleSet
 
 import (
+	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"github.com/go-chi/chi"
 	"net/http"
 )
 
 type Resource struct {
-	logger *logger.Logger
+	logger                  *logger.Logger
+	createRulesetAppFactory func() createRuleSet.CreateRuleset
 }
 
-func NewResource(l *logger.Logger) Resource {
+func NewResource(
+	logger *logger.Logger,
+	createRulesetAppFactory func() createRuleSet.CreateRuleset,
+) Resource {
 	return Resource{
-		logger: l,
+		logger:                  logger,
+		createRulesetAppFactory: createRulesetAppFactory,
 	}
 }
 
@@ -32,10 +38,6 @@ func (rs Resource) Routes() chi.Router {
 
 func (rs Resource) List(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("List rule sets"))
-}
-
-func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
-	_, _ = w.Write([]byte("Create rule sets"))
 }
 
 func (rs Resource) Get(w http.ResponseWriter, r *http.Request) {

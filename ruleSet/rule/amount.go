@@ -11,11 +11,11 @@ type amountValidator struct {
 	amountComparator compare.IntComparator
 }
 
-func newAmountValidator(operator operator, value string) (*amountValidator, error) {
+func newAmountValidator(operator Operator, value string) (*amountValidator, error) {
 	amount, err := strconv.Atoi(value)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.New("value is not a number")
 	}
 
 	var amountComparator compare.IntComparator

@@ -7,12 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type Action int
+type Action string
 
 const (
-	Pass Action = iota
-	Block
-	Tag
+	Pass  Action = "PASS"
+	Block Action = "BLOCK"
+	Tag   Action = "TAG"
 )
 
 type RuleSet struct {
@@ -31,7 +31,7 @@ type Repository interface {
 	Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error)
 }
 
-func New(entityId string, name string, action Action, metadata []rule.Metadata) (RuleSet, error) {
+func New(entityId string, name string, action Action, metadata []rule.Metadata) RuleSet {
 	ruleSet := RuleSet{
 		Id:           uuid.New().String(),
 		EntityId:     entityId,
@@ -40,7 +40,7 @@ func New(entityId string, name string, action Action, metadata []rule.Metadata) 
 		RuleMetadata: metadata,
 	}
 
-	return ruleSet, nil
+	return ruleSet
 }
 
 func (ruleSet RuleSet) Matches(trx transaction.Transaction) (Action, error) {
