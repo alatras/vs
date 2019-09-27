@@ -1,6 +1,7 @@
 package ruleSet
 
 import (
+	"bitbucket.verifone.com/validation-service/ruleSet"
 	"errors"
 	"fmt"
 )
@@ -59,4 +60,8 @@ func (payload CreateRulesetPayload) Validate() error {
 	}
 
 	return nil
+}
+
+type ListRulesetResponse struct {
+	ruleSet.RuleSet
 }

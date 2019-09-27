@@ -2,6 +2,7 @@ package http
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
 	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
@@ -24,6 +25,7 @@ type Server struct {
 	ruleSetRepository          ruleSet.Repository
 	validateTransactionService *validateTransaction.ValidatorService
 	createRulesetAppFactory    func() createRuleSet.CreateRuleset
+	listRulesetAppFactory      func() listRuleSet.ListRuleSet
 }
 
 func NewServer(
@@ -33,6 +35,7 @@ func NewServer(
 	ruleSetRepository ruleSet.Repository,
 	validateTransactionService *validateTransaction.ValidatorService,
 	createRulesetAppFactory func() createRuleSet.CreateRuleset,
+	listRulesetAppFactory func() listRuleSet.ListRuleSet,
 ) *Server {
 	return &Server{
 		port:                       port,
@@ -41,6 +44,7 @@ func NewServer(
 		ruleSetRepository:          ruleSetRepository,
 		validateTransactionService: validateTransactionService,
 		createRulesetAppFactory:    createRulesetAppFactory,
+		listRulesetAppFactory:      listRulesetAppFactory,
 	}
 }
 
@@ -54,7 +58,10 @@ func (s *Server) Start() error {
 
 	r.Mount("/healthCheck", healthCheck.NewResource(s.logger).Routes())
 	r.Mount("/", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
-	r.Mount("/entities", httpRuleset.NewResource(s.logger, s.createRulesetAppFactory).Routes())
+	r.Mount("/entities", httpRuleset.NewResource(s.logger,
+		s.createRulesetAppFactory,
+		s.listRulesetAppFactory,
+	).Routes())
 
 	httpServer := &http.Server{
 		Addr:              fmt.Sprintf(":%d", s.port),
