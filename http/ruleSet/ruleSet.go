@@ -1,18 +1,24 @@
-package ruleset
+package ruleSet
 
 import (
+	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"github.com/go-chi/chi"
 	"net/http"
 )
 
 type Resource struct {
-	logger *logger.Logger
+	logger               *logger.Logger
+	getRuleSetAppFactory func() getRuleSet.GetRuleSet
 }
 
-func NewResource(l *logger.Logger) Resource {
+func NewResource(
+	l *logger.Logger,
+	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
+) Resource {
 	return Resource{
-		logger: l,
+		logger:               l,
+		getRuleSetAppFactory: getRuleSetAppFactory,
 	}
 }
 
@@ -21,7 +27,7 @@ func (rs Resource) Routes() chi.Router {
 	r.Get("/{id}/rulesets", rs.List)
 	r.Post("/{id}/rulesets", rs.Create)
 
-	r.Route("/{id}/rulesets/{rulesetId}", func(r chi.Router) {
+	r.Route("/{id}/rulesets/{ruleSetId}", func(r chi.Router) {
 		r.Get("/", rs.Get)
 		r.Put("/", rs.Update)
 		r.Delete("/", rs.Delete)
@@ -36,10 +42,6 @@ func (rs Resource) List(w http.ResponseWriter, r *http.Request) {
 
 func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("Create rule sets"))
-}
-
-func (rs Resource) Get(w http.ResponseWriter, r *http.Request) {
-	_, _ = w.Write([]byte("Get rule sets"))
 }
 
 func (rs Resource) Update(w http.ResponseWriter, r *http.Request) {
