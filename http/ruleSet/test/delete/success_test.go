@@ -3,7 +3,6 @@ package delete
 import (
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	ruleSetTest "bitbucket.verifone.com/validation-service/http/ruleSet/test"
 	"bitbucket.verifone.com/validation-service/logger"
 	"net/http"
 	"net/http/httptest"
@@ -16,7 +15,7 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 	log := logger.NewStubLogger()
 
 	resource := ruleSet.NewResource(log, nil, nil, func() deleteRuleSet.DeleteRuleSet {
-		return &SuccessApp{}
+		return &successApp{}
 	})
 
 	resource.Routes().ServeHTTP(recorder, request)
@@ -25,7 +24,7 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 }
 
 func Test_HTTP_RuleSet_Delete_Success(t *testing.T) {
-	req, err := http.NewRequest("DELETE", "/12345/rulesets/"+ruleSetTest.MockRuleSet.Id, nil)
+	req, err := http.NewRequest("DELETE", "/12345/rulesets/"+mockRuleSet.Id, nil)
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)

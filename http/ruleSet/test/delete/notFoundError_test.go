@@ -3,7 +3,6 @@ package delete
 import (
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/http/ruleSet/test"
 	"bitbucket.verifone.com/validation-service/logger"
 	"github.com/bitly/go-simplejson"
 	"net/http"
@@ -17,7 +16,7 @@ func setupNotFoundErrorRecorder(t *testing.T, request *http.Request) *httptest.R
 	log := logger.NewStubLogger()
 
 	resource := ruleSet.NewResource(log, nil, nil, func() deleteRuleSet.DeleteRuleSet {
-		return &ErrorApp{Error: deleteRuleSet.NotFound}
+		return &errorApp{error: deleteRuleSet.NotFound}
 	})
 
 	resource.Routes().ServeHTTP(recorder, request)
@@ -26,7 +25,7 @@ func setupNotFoundErrorRecorder(t *testing.T, request *http.Request) *httptest.R
 }
 
 func Test_HTTP_RuleSet_Delete_NotFoundError(t *testing.T) {
-	req, err := http.NewRequest("DELETE", "/12345/rulesets/"+test.MockRuleSet.Id, nil)
+	req, err := http.NewRequest("DELETE", "/12345/rulesets/"+mockRuleSet.Id, nil)
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
@@ -66,13 +65,13 @@ func Test_HTTP_RuleSet_Delete_NotFoundError(t *testing.T) {
 		return
 	}
 
-	if detailsId != test.MockRuleSet.Id {
-		t.Errorf("Expected details id %s but got %s", test.MockRuleSet.Id, detailsId)
+	if detailsId != mockRuleSet.Id {
+		t.Errorf("Expected details id %s but got %s", mockRuleSet.Id, detailsId)
 		return
 	}
 
-	if message != test.NotFoundErrorMessage {
-		t.Errorf("Expected message %s but got %s", test.NotFoundErrorMessage, message)
+	if message != notFoundErrorMessage {
+		t.Errorf("Expected message %s but got %s", notFoundErrorMessage, message)
 		return
 	}
 }

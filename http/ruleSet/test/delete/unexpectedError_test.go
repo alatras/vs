@@ -3,7 +3,6 @@ package delete
 import (
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/http/ruleSet/test"
 	"bitbucket.verifone.com/validation-service/logger"
 	"github.com/bitly/go-simplejson"
 	"net/http"
@@ -17,7 +16,7 @@ func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest
 	log := logger.NewStubLogger()
 
 	resource := ruleSet.NewResource(log, nil, nil, func() deleteRuleSet.DeleteRuleSet {
-		return &ErrorApp{Error: deleteRuleSet.UnexpectedError}
+		return &errorApp{error: deleteRuleSet.UnexpectedError}
 	})
 
 	resource.Routes().ServeHTTP(recorder, request)
@@ -26,7 +25,7 @@ func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest
 }
 
 func Test_HTTP_RuleSet_Delete_UnexpectedError(t *testing.T) {
-	req, err := http.NewRequest("DELETE", "/12345/rulesets/"+test.MockRuleSet.Id, nil)
+	req, err := http.NewRequest("DELETE", "/12345/rulesets/"+mockRuleSet.Id, nil)
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
@@ -59,8 +58,8 @@ func Test_HTTP_RuleSet_Delete_UnexpectedError(t *testing.T) {
 		return
 	}
 
-	if message != test.UnexpectedErrorMessage {
-		t.Errorf("Expected message %s but got %s", test.UnexpectedErrorMessage, message)
+	if message != unexpectedErrorMessage {
+		t.Errorf("Expected message %s but got %s", unexpectedErrorMessage, message)
 		return
 	}
 }
