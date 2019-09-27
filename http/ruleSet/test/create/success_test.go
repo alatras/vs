@@ -5,7 +5,6 @@ import (
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	ruleSetTest "bitbucket.verifone.com/validation-service/http/ruleSet/test"
 	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/test"
 	"bytes"
 	"fmt"
 	"net/http"
@@ -73,5 +72,5 @@ func Test_HTTP_RuleSet_Create_Success(t *testing.T) {
 		ruleSetTest.MockRuleSet.Id,
 	)
 
-	test.AssertJSONEqual(t, "Response body expected to be", expected, body)
+	AssertJSONEqual(t, "Response body expected to be", expected, body)
 }
