@@ -18,7 +18,7 @@ func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest
 
 	resource := ruleSet.NewResource(log, nil, func() getRuleSet.GetRuleSet {
 		return &ErrorApp{Error: getRuleSet.UnexpectedError}
-	})
+	}, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
 
@@ -30,7 +30,7 @@ func Test_HTTP_RuleSet_Get_UnexpectedError(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 
 	if err != nil {
-		t.Errorf("Failed to get request: %v", err)
+		t.Errorf("Failed to create request: %v", err)
 		return
 	}
 

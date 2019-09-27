@@ -1,7 +1,7 @@
-package get
+package delete
 
 import (
-	"bitbucket.verifone.com/validation-service/app/getRuleSet"
+	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet/test"
 	"bitbucket.verifone.com/validation-service/logger"
@@ -16,18 +16,17 @@ func setupNotFoundErrorRecorder(t *testing.T, request *http.Request) *httptest.R
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, nil, func() getRuleSet.GetRuleSet {
-		return &ErrorApp{Error: getRuleSet.NotFound}
-	}, nil)
+	resource := ruleSet.NewResource(log, nil, nil, func() deleteRuleSet.DeleteRuleSet {
+		return &ErrorApp{Error: deleteRuleSet.NotFound}
+	})
 
 	resource.Routes().ServeHTTP(recorder, request)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_Get_NotFoundError(t *testing.T) {
-	req, err := http.NewRequest("GET", "/12345/rulesets/"+test.MockRuleSet.Id, nil)
-	req.Header.Set("Content-Type", "application/json")
+func Test_HTTP_RuleSet_Delete_NotFoundError(t *testing.T) {
+	req, err := http.NewRequest("DELETE", "/12345/rulesets/"+test.MockRuleSet.Id, nil)
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
