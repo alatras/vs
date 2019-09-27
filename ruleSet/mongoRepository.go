@@ -40,15 +40,9 @@ func (r MongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) err
 func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (*RuleSet, error) {
 	var ruleSet RuleSet
 
-	err := r.ruleSetCollection.FindOne(context.TODO(), bson.D{
-		bson.E{
-			Key:   "entityId",
-			Value: entityId,
-		},
-		bson.E{
-			Key:   "id",
-			Value: ruleSetId,
-		},
+	err := r.ruleSetCollection.FindOne(context.TODO(), bson.M{
+		"entityId": entityId,
+		"id":       ruleSetId,
 	}).Decode(&ruleSet)
 
 	if err == mongo.ErrNoDocuments {
@@ -63,11 +57,8 @@ func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 }
 
 func (r MongoRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {
-	cursor, err := r.ruleSetCollection.Find(ctx, bson.D{
-		bson.E{
-			Key:   "entityId",
-			Value: entityId,
-		},
+	cursor, err := r.ruleSetCollection.Find(ctx, bson.M{
+		"entityId": entityId,
 	})
 
 	if err != nil {
@@ -91,15 +82,9 @@ func (r MongoRuleSetRepository) ListByEntityId(ctx context.Context, entityId str
 func (r MongoRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
 	var replaced bool
 
-	result, err := r.ruleSetCollection.ReplaceOne(ctx, bson.D{
-		bson.E{
-			Key:   "entityId",
-			Value: entityId,
-		},
-		bson.E{
-			Key:   "id",
-			Value: ruleSet.Id,
-		},
+	result, err := r.ruleSetCollection.ReplaceOne(ctx, bson.M{
+		"entityId": entityId,
+		"id":       ruleSet.Id,
 	}, ruleSet)
 
 	if err != nil {
@@ -116,17 +101,10 @@ func (r MongoRuleSetRepository) Replace(ctx context.Context, entityId string, ru
 func (r MongoRuleSetRepository) Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error) {
 	var deleted bool
 
-	result, err := r.ruleSetCollection.DeleteMany(ctx, bson.D{
-		bson.E{
-			Key:   "entityId",
-			Value: entityId,
-		},
-		bson.E{
-			Key: "id",
-			Value: bson.E{
-				Key:   "$in",
-				Value: ruleSetIds,
-			},
+	result, err := r.ruleSetCollection.DeleteMany(ctx, bson.M{
+		"entityId": entityId,
+		"id": bson.M{
+			"$in": ruleSetIds,
 		},
 	})
 
