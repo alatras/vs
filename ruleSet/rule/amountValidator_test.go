@@ -50,10 +50,17 @@ func TestNewAmountValidator(t *testing.T) {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
 	}
 
+	// Should return an error when factory receives an invalid operator
+	_, err = newAmountValidator("foo", "10")
+
+	if err != InvalidOperatorError {
+		t.Error("expected error while creating new amount validator with invalid operator")
+	}
+
 	// Should return an error when factory receives an invalid value
 	_, err = newAmountValidator(greater, "foo")
 
-	if err == nil || err.Error() != "invalid value format" {
+	if err != InvalidValueError {
 		t.Error("expected error while creating new amount validator with invalid operator")
 	}
 }
@@ -71,25 +78,19 @@ func TestAmountValidator_Validate(t *testing.T) {
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      1,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 1,
 	}); !ok {
 		t.Error("expected validation to pass")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      2,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 2,
 	}); ok {
 		t.Error("expected validation to fail")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      3,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 3,
 	}); ok {
 		t.Error("expected validation to fail")
 	}
@@ -103,25 +104,19 @@ func TestAmountValidator_Validate(t *testing.T) {
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      1,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 1,
 	}); !ok {
 		t.Error("expected validation to pass")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      2,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 2,
 	}); !ok {
 		t.Error("expected validation to pass")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      3,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 3,
 	}); ok {
 		t.Error("expected validation to fail")
 	}
@@ -135,25 +130,19 @@ func TestAmountValidator_Validate(t *testing.T) {
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      1,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 1,
 	}); ok {
 		t.Error("expected validation to fail")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      2,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 2,
 	}); !ok {
 		t.Error("expected validation to pass")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      3,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 3,
 	}); ok {
 		t.Error("expected validation to fail")
 	}
@@ -167,25 +156,19 @@ func TestAmountValidator_Validate(t *testing.T) {
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      1,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 1,
 	}); ok {
 		t.Error("expected validation to fail")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      2,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 2,
 	}); !ok {
 		t.Error("expected validation to pass")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      3,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 3,
 	}); !ok {
 		t.Error("expected validation to pass")
 	}
@@ -199,25 +182,54 @@ func TestAmountValidator_Validate(t *testing.T) {
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      1,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 1,
 	}); ok {
 		t.Error("expected validation to fail")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      2,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 2,
 	}); ok {
 		t.Error("expected validation to fail")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
-		Amount:      3,
-		CountryCode: "NL",
-		EntityId:    "1",
+		Amount: 3,
+	}); !ok {
+		t.Error("expected validation to pass")
+	}
+
+	// Minor units
+	validator, err = newAmountValidator(equal, "20")
+
+	if err != nil {
+		t.Error("unexpected error while creating new amount validator:", err.Error())
+		return
+	}
+
+	if ok := validator.Validate(transaction.Transaction{
+		Amount: 20,
+	}); !ok {
+		t.Error("expected validation to pass")
+	}
+
+	if ok := validator.Validate(transaction.Transaction{
+		Amount:     200,
+		MinorUnits: 1,
+	}); !ok {
+		t.Error("expected validation to pass")
+	}
+
+	if ok := validator.Validate(transaction.Transaction{
+		Amount:     2000,
+		MinorUnits: 2,
+	}); !ok {
+		t.Error("expected validation to pass")
+	}
+
+	if ok := validator.Validate(transaction.Transaction{
+		Amount:     20000,
+		MinorUnits: 3,
 	}); !ok {
 		t.Error("expected validation to pass")
 	}

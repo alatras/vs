@@ -1,8 +1,9 @@
 package transaction
 
 type Transaction struct {
-	Amount       uint64
-	CurrencyCode CurrencyCode
-	CountryCode  string
-	EntityId     string
+	EntityId            string
+	Amount              uint64
+	MinorUnits          uint64
+	CurrencyCode        CurrencyCode
+	CustomerCountryCode CountryCodeIso31661Alpha2
 }

@@ -3,43 +3,52 @@ package rule
 import (
 	"bitbucket.verifone.com/validation-service/ruleSet/compare"
 	"bitbucket.verifone.com/validation-service/transaction"
-	"errors"
 	"strconv"
 )
 
 type amountValidator struct {
-	amountComparator compare.Uint64Comparator
+	validator func(trxAmount, minorUnits uint64) bool
 }
 
 func newAmountValidator(operator operator, value string) (*amountValidator, error) {
-	amount, err := strconv.ParseUint(value, 10, 64)
-
-	if err != nil {
-		return nil, errors.New("invalid value format")
-	}
-
-	var amountComparator compare.Uint64Comparator
+	var amountComparator func(uint64) compare.Uint64Comparator
 
 	switch operator {
 	case less:
-		amountComparator = compare.LessThanUint64(amount)
+		amountComparator = compare.LessThanUint64
 	case lessOrEqual:
-		amountComparator = compare.LessThanOrEqualUint64(amount)
+		amountComparator = compare.LessThanOrEqualUint64
 	case equal:
-		amountComparator = compare.EqualUint64(amount)
+		amountComparator = compare.EqualUint64
 	case notEqual:
-		amountComparator = compare.NotEqualUint64(amount)
+		amountComparator = compare.NotEqualUint64
 	case greaterOrEqual:
-		amountComparator = compare.GreaterThanOrEqualUint64(amount)
+		amountComparator = compare.GreaterThanOrEqualUint64
 	case greater:
-		amountComparator = compare.GreaterThanUint64(amount)
+		amountComparator = compare.GreaterThanUint64
 	default:
-		return nil, errors.New("invalid operator")
+		return nil, InvalidOperatorError
 	}
 
-	return &amountValidator{amountComparator}, nil
+	compareAmount, err := strconv.ParseUint(value, 10, 64)
+
+	if err != nil {
+		return nil, InvalidValueError
+	}
+
+	validator := func(trxAmount, minorUnits uint64) bool {
+		compareAmountWithMinorUnits := compareAmount
+
+		for i := uint64(0); i < minorUnits; i++ {
+			compareAmountWithMinorUnits *= 10
+		}
+
+		return amountComparator(compareAmountWithMinorUnits)(trxAmount)
+	}
+
+	return &amountValidator{validator}, nil
 }
 
 func (v amountValidator) Validate(transaction transaction.Transaction) bool {
-	return v.amountComparator(transaction.Amount)
+	return v.validator(transaction.Amount, transaction.MinorUnits)
 }

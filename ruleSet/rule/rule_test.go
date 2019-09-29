@@ -25,7 +25,7 @@ func TestNewValidator(t *testing.T) {
 		Value:    "10",
 	})
 
-	if err == nil || err.Error() != "invalid validator property" {
+	if err != InvalidPropertyError {
 		t.Error("expected error while creating new undefined field validator")
 	}
 }

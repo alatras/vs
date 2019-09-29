@@ -13,13 +13,25 @@ import (
 	Required to be implemented so that chi can bind the data to the payload struct
 	Validate the request and return error if validation fails
 */
-func (t ValidateTransactionPayload) Bind(r *http.Request) error {
-	if t.Transaction.Amount.Value == 0 {
+func (body ValidateTransactionPayload) Bind(r *http.Request) error {
+	if body.Transaction.Amount.Value == 0 {
 		return errors.New("amount required")
 	}
 
-	if t.Transaction.Entity == "" {
-		return errors.New("entity required")
+	if body.Transaction.Amount.MinorUnits == 0 {
+		return errors.New("minor units required")
+	}
+
+	if body.Transaction.Amount.CurrencyCode == "" {
+		return errors.New("currency code required")
+	}
+
+	if body.Transaction.Merchant.Id == "" {
+		return errors.New("merchant ID required")
+	}
+
+	if body.Transaction.Customer.Country == "" {
+		return errors.New("customer country code required")
 	}
 
 	return nil
@@ -47,8 +59,9 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 
 	t := trx.Transaction{
 		Amount:       trxPayload.Transaction.Amount.Value,
+		MinorUnits:   trxPayload.Transaction.Amount.MinorUnits,
 		CurrencyCode: trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
-		EntityId:     trxPayload.Transaction.Entity,
+		EntityId:     trxPayload.Transaction.Merchant.Id,
 	}
 
 	reportChan, errChan := rs.app.Enqueue(ctx, t)

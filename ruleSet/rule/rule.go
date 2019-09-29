@@ -5,11 +5,18 @@ import (
 	"errors"
 )
 
+var (
+	InvalidPropertyError = errors.New("invalid property while constructing validator")
+	InvalidOperatorError = errors.New("invalid operator while constructing validator")
+	InvalidValueError    = errors.New("invalid value while constructing validator")
+)
+
 type property string
 
 const (
-	amount      property = "amount"
-	countryCode property = "countryCode"
+	amount              property = "amount"
+	currencyCode        property = "currencyCode"
+	customerCountryCode property = "customerCountryCode"
 )
 
 type operator string
@@ -40,10 +47,12 @@ func NewValidator(metadata Metadata) (Validator, error) {
 	switch metadata.Property {
 	case amount:
 		validator, err = newAmountValidator(metadata.Operator, metadata.Value)
-	case countryCode:
-		validator, err = newCountryCodeValidator(metadata.Operator, metadata.Value)
+	case currencyCode:
+		validator, err = newCurrencyCodeValidator(metadata.Operator, metadata.Value)
+	case customerCountryCode:
+		validator, err = newCustomerCountryCodeValidator(metadata.Operator, metadata.Value)
 	default:
-		return nil, errors.New("invalid validator property")
+		return nil, InvalidPropertyError
 	}
 
 	if err != nil {
