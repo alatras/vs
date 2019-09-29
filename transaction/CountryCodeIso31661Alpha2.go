@@ -1,13 +1,9 @@
 package transaction
 
-import "fmt"
-
 type CountryCodeIso31661Alpha2 string
 
 func IsCountryCodeIso31661Alpha2(countryCode string) bool {
-	res := countryCodeIso31661Alpha2Set[countryCode]
-	fmt.Println("res")
-	return !res
+	return countryCodeIso31661Alpha2Set[countryCode]
 }
 
 const (

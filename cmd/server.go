@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
+	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http"
 	"bitbucket.verifone.com/validation-service/logger"
@@ -28,23 +31,39 @@ type MongoGroup struct {
 
 // Execute is the entry point for "server" command
 func (s *ServerCommand) Execute(args []string) error {
-	l := s.setupLogger()
+	log := s.setupLogger()
 
-	ruleSetRepo := s.createRuleSetRepository(l)
+	ruleSetRepo := s.createRuleSetRepository(log)
 
-	validateTransactionApp := s.createValidateTransactionApp(ruleSetRepo, l)
+	validateTransactionApp := s.createValidateTransactionApp(ruleSetRepo, log)
 
-	l.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
+	log.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
+
+	createRuleSetAppFactory := func() createRuleSet.CreateRuleSet {
+		return createRuleSet.NewCreateRuleSet(log, ruleSetRepo)
+	}
+
+	getRuleSetAppFactory := func() getRuleSet.GetRuleSet {
+		return getRuleSet.NewGetRuleSet(log, ruleSetRepo)
+	}
+
+	deleteRuleSetAppFactory := func() deleteRuleSet.DeleteRuleSet {
+		return deleteRuleSet.NewDeleteRuleSet(log, ruleSetRepo)
+	}
 
 	err := http.NewServer(
-		s.HTTPPort, //":8080"
+		s.HTTPPort,
 		chi.NewRouter(),
-		l,
+		log,
+		ruleSetRepo,
 		validateTransactionApp,
+		createRuleSetAppFactory,
+		getRuleSetAppFactory,
+		deleteRuleSetAppFactory,
 	).Start()
 
 	if err != nil {
-		l.Error.WithError(err).Error("Failed to start REST API server")
+		log.Error.WithError(err).Error("Failed to start REST API server")
 		os.Exit(1)
 	}
 

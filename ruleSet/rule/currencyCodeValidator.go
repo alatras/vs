@@ -9,7 +9,11 @@ type currencyCodeValidator struct {
 	comparator compare.StringComparator
 }
 
-func newCurrencyCodeValidator(operator operator, value string) (*currencyCodeValidator, error) {
+func newCurrencyCodeValidator(operator Operator, value string) (*currencyCodeValidator, error) {
+	if !transaction.IsCurrencyCode(value) {
+		return nil, InvalidValueError
+	}
+
 	var comparator compare.StringComparator
 
 	switch operator {

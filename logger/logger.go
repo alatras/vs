@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -21,6 +20,19 @@ type Logger struct {
 	Error  *logrus.Entry
 }
 
+func NewStubLogger() *Logger {
+	logger := logrus.New()
+	logger.SetLevel(logrus.PanicLevel)
+
+	errorLogger := logrus.New()
+	errorLogger.SetLevel(logrus.PanicLevel)
+
+	return &Logger{
+		Output: logger.WithField("stub", true),
+		Error:  errorLogger.WithField("stub", true),
+	}
+}
+
 func NewLogger(appName string, appVersion string, format LogFormat, level logrus.Level) (*Logger, error) {
 	logFields := logrus.Fields{
 		"name":    appName,
@@ -36,7 +48,7 @@ func NewLogger(appName string, appVersion string, format LogFormat, level logrus
 	} else if format == JsonFormat {
 		formatter = &logrus.JSONFormatter{}
 	} else {
-		return nil, errors.New(fmt.Sprintf("Invalid log format %s", format))
+		return nil, fmt.Errorf("invalid log format %s", format)
 	}
 
 	logger := logrus.New()

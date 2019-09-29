@@ -9,7 +9,7 @@ type customerCountryCodeValidator struct {
 	comparator compare.StringComparator
 }
 
-func newCustomerCountryCodeValidator(operator operator, value string) (*customerCountryCodeValidator, error) {
+func newCustomerCountryCodeValidator(operator Operator, value string) (*customerCountryCodeValidator, error) {
 	if !transaction.IsCountryCodeIso31661Alpha2(value) {
 		return nil, InvalidValueError
 	}

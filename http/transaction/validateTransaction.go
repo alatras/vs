@@ -58,10 +58,11 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	t := trx.Transaction{
-		Amount:       trxPayload.Transaction.Amount.Value,
-		MinorUnits:   trxPayload.Transaction.Amount.MinorUnits,
-		CurrencyCode: trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
-		EntityId:     trxPayload.Transaction.Merchant.Id,
+		Amount:              trxPayload.Transaction.Amount.Value,
+		MinorUnits:          trxPayload.Transaction.Amount.MinorUnits,
+		CurrencyCode:        trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
+		CustomerCountryCode: trx.CountryCodeIso31661Alpha2(trxPayload.Transaction.Customer.Country),
+		EntityId:            trxPayload.Transaction.Merchant.Id,
 	}
 
 	reportChan, errChan := rs.app.Enqueue(ctx, t)

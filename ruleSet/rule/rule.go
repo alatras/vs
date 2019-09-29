@@ -11,28 +11,28 @@ var (
 	InvalidValueError    = errors.New("invalid value while constructing validator")
 )
 
-type property string
+type Property string
 
 const (
-	amount              property = "amount"
-	currencyCode        property = "currencyCode"
-	customerCountryCode property = "customerCountryCode"
+	amount              Property = "amount"
+	currencyCode        Property = "currencyCode"
+	customerCountryCode Property = "customerCountryCode"
 )
 
-type operator string
+type Operator string
 
 const (
-	less           operator = "<"
-	lessOrEqual    operator = "<="
-	equal          operator = "=="
-	notEqual       operator = "!="
-	greaterOrEqual operator = ">="
-	greater        operator = ">"
+	less           Operator = "<"
+	lessOrEqual    Operator = "<="
+	equal          Operator = "=="
+	notEqual       Operator = "!="
+	greaterOrEqual Operator = ">="
+	greater        Operator = ">"
 )
 
 type Metadata struct {
-	Property property `json:"key"`
-	Operator operator `json:"operator"`
+	Property Property `json:"key"`
+	Operator Operator `json:"operator"`
 	Value    string   `json:"value"`
 }
 

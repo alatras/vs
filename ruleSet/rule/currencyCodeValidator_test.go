@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestNewCountryCodeValidator(t *testing.T) {
+func TestNewCurrencyCodeValidator(t *testing.T) {
 	var err error
 
 	// Should create a new country code validator where validation equals value
@@ -37,7 +37,7 @@ func TestNewCountryCodeValidator(t *testing.T) {
 	}
 }
 
-func TestCountryCodeValidator_Validate(t *testing.T) {
+func TestCurrencyCodeValidator_Validate(t *testing.T) {
 	var validator Validator
 	var err error
 

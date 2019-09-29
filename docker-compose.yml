@@ -18,6 +18,8 @@ services:
       - LOG_LEVEL=trace
   mongo:
     image: mongo:4.0.12
+    ports:
+      - "27017:27017"
     restart: always
     environment:
       - MONGO_DATA_DIR=/data/db

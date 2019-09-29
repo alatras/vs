@@ -1,6 +1,6 @@
 package contextKey
 
-type ContextKey = string
+type ContextKey string
 
 const (
 	TraceId ContextKey = "traceId"

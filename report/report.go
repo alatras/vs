@@ -8,7 +8,7 @@ type Action string
 
 const (
 	Pass  Action = "PASS"
-	Block        = "BLOCK"
+	Block Action = "BLOCK"
 )
 
 type Report struct {

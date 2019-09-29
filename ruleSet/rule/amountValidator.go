@@ -10,7 +10,7 @@ type amountValidator struct {
 	validator func(trxAmount, minorUnits uint64) bool
 }
 
-func newAmountValidator(operator operator, value string) (*amountValidator, error) {
+func newAmountValidator(operator Operator, value string) (*amountValidator, error) {
 	var amountComparator func(uint64) compare.Uint64Comparator
 
 	switch operator {
