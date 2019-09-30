@@ -8,23 +8,23 @@ import (
 	"net/http"
 )
 
-func (resp ListRulesetResponse) Render(w http.ResponseWriter, r *http.Request) error {
+func (resp ListRuleSetResponse) Render(w http.ResponseWriter, r *http.Request) error {
 	render.Status(r, http.StatusOK)
 	return nil
 }
 
-func NewListRulesetResponse(ruleSets []ruleSet.RuleSet) []render.Renderer {
+func NewListRuleSetResponse(ruleSets []ruleSet.RuleSet) []render.Renderer {
 	list := make([]render.Renderer, len(ruleSets))
 
 	for i, r := range ruleSets {
-		list[i] = ListRulesetResponse{r}
+		list[i] = ListRuleSetResponse{r}
 	}
 
 	return list
 }
 
 func (rs Resource) List(w http.ResponseWriter, r *http.Request) {
-	app := rs.listRulesetAppFactory()
+	app := rs.listRuleSetAppFactory()
 
 	ctx := r.Context()
 
@@ -36,7 +36,7 @@ func (rs Resource) List(w http.ResponseWriter, r *http.Request) {
 		_ = render.Render(w, r, errorResponse.UnexpectedError(err.Error()))
 	}
 
-	if err := render.RenderList(w, r, NewListRulesetResponse(ruleSets)); err != nil {
+	if err := render.RenderList(w, r, NewListRuleSetResponse(ruleSets)); err != nil {
 		rs.logger.Error.WithError(err).Error("error rendering response")
 		return
 	}

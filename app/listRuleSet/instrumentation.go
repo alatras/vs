@@ -16,7 +16,7 @@ type instrumentation struct {
 
 func newInstrumentation(logger *logger.Logger) *instrumentation {
 	return &instrumentation{
-		logger: logger.Scoped("ListRuleset"),
+		logger: logger.Scoped("ListRuleSet"),
 	}
 }
 

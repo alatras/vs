@@ -32,7 +32,7 @@ func (i *instrumentation) setMetadata(metadata metadata) {
 	i.logger = i.logger.WithMetadata(metadata)
 }
 
-func (i *instrumentation) startCreatingRuleset() {
+func (i *instrumentation) startCreatingRuleSet() {
 	i.startedAt = time.Now()
 	i.logger.Output.Info("Starting creating a rule set")
 }
@@ -46,7 +46,7 @@ func (i *instrumentation) invalidAction(action string) {
 func (i *instrumentation) rulesetCreationFailed(error error) {
 	i.logger.Output.
 		WithError(error).
-		Error("Ruleset creation failed in repository")
+		Error("RuleSet creation failed in repository")
 }
 
 func (i *instrumentation) ruleMetadataInvalid(metadata rule.Metadata, error error) {
@@ -56,7 +56,7 @@ func (i *instrumentation) ruleMetadataInvalid(metadata rule.Metadata, error erro
 		Error("Rule metadata is invalid")
 }
 
-func (i *instrumentation) finishCreatingRuleset(ruleset ruleSet.RuleSet) {
+func (i *instrumentation) finishCreatingRuleSet(ruleset ruleSet.RuleSet) {
 	duration := time.Since(i.startedAt)
 
 	i.logger.Output.

@@ -12,23 +12,23 @@ import (
 
 type Resource struct {
 	logger                  *logger.Logger
-	createRulesetAppFactory func() createRuleSet.CreateRuleSet
-	listRulesetAppFactory   func() listRuleSet.ListRuleSet
+	createRuleSetAppFactory func() createRuleSet.CreateRuleSet
+	listRuleSetAppFactory   func() listRuleSet.ListRuleSet
 	getRuleSetAppFactory    func() getRuleSet.GetRuleSet
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet
 }
 
 func NewResource(
 	logger *logger.Logger,
-	createRulesetAppFactory func() createRuleSet.CreateRuleSet,
+	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
-	listRulesetAppFactory func() listRuleSet.ListRuleSet,
+	listRuleSetAppFactory func() listRuleSet.ListRuleSet,
 ) Resource {
 	return Resource{
 		logger:                  logger,
-		createRulesetAppFactory: createRulesetAppFactory,
-		listRulesetAppFactory:   listRulesetAppFactory,
+		createRuleSetAppFactory: createRuleSetAppFactory,
+		listRuleSetAppFactory:   listRuleSetAppFactory,
 		getRuleSetAppFactory:    getRuleSetAppFactory,
 		deleteRuleSetAppFactory: deleteRuleSetAppFactory,
 	}

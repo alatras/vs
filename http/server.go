@@ -27,7 +27,7 @@ type Server struct {
 	ruleSetRepository          ruleSet.Repository
 	validateTransactionService *validateTransaction.ValidatorService
 	createRuleSetAppFactory    func() createRuleSet.CreateRuleSet
-	listRulesetAppFactory      func() listRuleSet.ListRuleSet
+	listRuleSetAppFactory      func() listRuleSet.ListRuleSet
 	getRuleSetAppFactory       func() getRuleSet.GetRuleSet
 	deleteRuleSetAppFactory    func() deleteRuleSet.DeleteRuleSet
 }
@@ -39,7 +39,7 @@ func NewServer(
 	ruleSetRepository ruleSet.Repository,
 	validateTransactionService *validateTransaction.ValidatorService,
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
-	listRulesetAppFactory func() listRuleSet.ListRuleSet,
+	listRuleSetAppFactory func() listRuleSet.ListRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
 ) *Server {
@@ -50,7 +50,7 @@ func NewServer(
 		ruleSetRepository:          ruleSetRepository,
 		validateTransactionService: validateTransactionService,
 		createRuleSetAppFactory:    createRuleSetAppFactory,
-		listRulesetAppFactory:      listRulesetAppFactory,
+		listRuleSetAppFactory:      listRuleSetAppFactory,
 		getRuleSetAppFactory:       getRuleSetAppFactory,
 		deleteRuleSetAppFactory:    deleteRuleSetAppFactory,
 	}
@@ -73,7 +73,7 @@ func (s *Server) Start() error {
 			s.createRuleSetAppFactory,
 			s.getRuleSetAppFactory,
 			s.deleteRuleSetAppFactory,
-			s.listRulesetAppFactory,
+			s.listRuleSetAppFactory,
 		).Routes(),
 	)
 
