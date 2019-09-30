@@ -1,4 +1,4 @@
-package test
+package create
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
@@ -11,29 +11,29 @@ import (
 	"testing"
 )
 
-func setupInvalidRuleRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
+func setupInvalidActionRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleset {
-		return &errorApp{error: createRuleSet.InvalidRule}
-	})
+	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleSet {
+		return &errorApp{error: createRuleSet.InvalidAction}
+	}, nil, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_CreateInvalidRule(t *testing.T) {
+func Test_HTTP_RuleSet_Create_InvalidAction(t *testing.T) {
 	requestBody :=
 		`{
 			"name": "test",
-			"action": "TAG",
+			"action": "TEST",
 			"rules": [
 				{
-					"key": "name",
-					"operator": ">=",
+					"key": "amount",
+					"operator": "==",
 					"value": "1000"
 				}
 			]
@@ -47,7 +47,7 @@ func Test_HTTP_RuleSet_CreateInvalidRule(t *testing.T) {
 		return
 	}
 
-	recorder := setupInvalidRuleRecorder(t, req)
+	recorder := setupInvalidActionRecorder(t, req)
 
 	if status := recorder.Code; status != http.StatusBadRequest {
 		t.Errorf("Status code expected to be %d but got %d", http.StatusBadRequest, status)
@@ -74,7 +74,7 @@ func Test_HTTP_RuleSet_CreateInvalidRule(t *testing.T) {
 		return
 	}
 
-	expectedDetails := "invalid rule"
+	expectedDetails := "action should be TAG or BLOCK"
 
 	if details != expectedDetails {
 		t.Errorf("Expected details %s but got %s", expectedDetails, details)

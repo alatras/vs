@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
+	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http"
@@ -38,8 +40,16 @@ func (s *ServerCommand) Execute(args []string) error {
 
 	log.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
 
-	createRuleSetAppFactory := func() createRuleSet.CreateRuleset {
-		return createRuleSet.NewCreateRuleset(log, ruleSetRepo)
+	createRuleSetAppFactory := func() createRuleSet.CreateRuleSet {
+		return createRuleSet.NewCreateRuleSet(log, ruleSetRepo)
+	}
+
+	getRuleSetAppFactory := func() getRuleSet.GetRuleSet {
+		return getRuleSet.NewGetRuleSet(log, ruleSetRepo)
+	}
+
+	deleteRuleSetAppFactory := func() deleteRuleSet.DeleteRuleSet {
+		return deleteRuleSet.NewDeleteRuleSet(log, ruleSetRepo)
 	}
 
 	listRuleSetAppFactory := func() listRuleSet.ListRuleSet {
@@ -54,6 +64,8 @@ func (s *ServerCommand) Execute(args []string) error {
 		validateTransactionApp,
 		createRuleSetAppFactory,
 		listRuleSetAppFactory,
+		getRuleSetAppFactory,
+		deleteRuleSetAppFactory,
 	).Start()
 
 	if err != nil {

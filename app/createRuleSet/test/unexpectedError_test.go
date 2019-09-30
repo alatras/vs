@@ -13,7 +13,7 @@ func Test_App_CreateRuleSet_UnexpectedError(t *testing.T) {
 	log := logger.NewStubLogger()
 	repo := StubRepository{}
 
-	app := createRuleSet.NewCreateRuleset(log, &repo)
+	app := createRuleSet.NewCreateRuleSet(log, &repo)
 
 	_, err := app.Execute(
 		context.TODO(),
@@ -37,7 +37,7 @@ func (s *StubRepository) Create(ctx context.Context, ruleSet ruleSet.RuleSet) er
 	return errors.New("unexpected error")
 }
 
-func (s *StubRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (ruleSet.RuleSet, error) {
+func (s *StubRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (*ruleSet.RuleSet, error) {
 	panic("implement me")
 }
 

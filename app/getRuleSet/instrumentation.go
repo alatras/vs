@@ -1,10 +1,9 @@
-package createRuleSet
+package getRuleSet
 
 import (
 	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"context"
 	"time"
 )
@@ -18,7 +17,7 @@ type instrumentation struct {
 
 func newInstrumentation(logger *logger.Logger) *instrumentation {
 	return &instrumentation{
-		logger: logger.Scoped("CreateRuleSet"),
+		logger: logger.Scoped("GetRuleSet"),
 	}
 }
 
@@ -32,35 +31,27 @@ func (i *instrumentation) setMetadata(metadata metadata) {
 	i.logger = i.logger.WithMetadata(metadata)
 }
 
-func (i *instrumentation) startCreatingRuleset() {
+func (i *instrumentation) startFetchingRuleSet() {
 	i.startedAt = time.Now()
-	i.logger.Output.Info("Starting creating a rule set")
+	i.logger.Output.Info("Starting fetching a rule set")
 }
 
-func (i *instrumentation) invalidAction(action string) {
-	i.logger.Output.
-		WithField("action", action).
-		Error("Invalid action provided")
-}
-
-func (i *instrumentation) rulesetCreationFailed(error error) {
+func (i *instrumentation) ruleSetFetchFailed(error error) {
 	i.logger.Output.
 		WithError(error).
-		Error("Ruleset creation failed in repository")
+		Error("Failed to fetch a rule set from the repository")
 }
 
-func (i *instrumentation) ruleMetadataInvalid(metadata rule.Metadata, error error) {
+func (i *instrumentation) ruleSetNotFound() {
 	i.logger.Output.
-		WithError(error).
-		WithField("ruleMetadata", metadata).
-		Error("Rule metadata is invalid")
+		Error("A rule set was not found")
 }
 
-func (i *instrumentation) finishCreatingRuleset(ruleset ruleSet.RuleSet) {
+func (i *instrumentation) finishFetchingRuleSet(ruleSet *ruleSet.RuleSet) {
 	duration := time.Since(i.startedAt)
 
 	i.logger.Output.
 		WithField("duration", duration).
-		WithField("ruleSet", ruleset).
-		Info("Finished creating a rule set")
+		WithField("ruleSet", *ruleSet).
+		Info("Finished fetching a rule set")
 }

@@ -12,6 +12,14 @@ type RulePayload struct {
 	Value    string `json:"value"`
 }
 
+type GetRuleSetResponse struct {
+	Id     string        `json:"id"`
+	Entity string        `json:"entity"`
+	Name   string        `json:"name"`
+	Action string        `json:"action"`
+	Rules  []RulePayload `json:"rules"`
+}
+
 type CreateRulesetPayload struct {
 	Name   string        `json:"name"`
 	Action string        `json:"action"`

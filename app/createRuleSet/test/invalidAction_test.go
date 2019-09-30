@@ -17,7 +17,7 @@ func Test_App_CreateRuleSet_InvalidAction(t *testing.T) {
 		return
 	}
 
-	app := createRuleSet.NewCreateRuleset(log, repo)
+	app := createRuleSet.NewCreateRuleSet(log, repo)
 
 	_, err = app.Execute(
 		context.TODO(),

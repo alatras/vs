@@ -29,22 +29,21 @@ func (r *StubRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) err
 	return nil
 }
 
-func (r *StubRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (RuleSet, error) {
-	var ruleSet RuleSet
-
+func (r *StubRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (*RuleSet, error) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
 	entityMap, ok := r.cache[entityId]
+
 	if !ok {
-		return ruleSet, nil
+		return nil, nil
 	}
 
 	if cachedRuleSet, ok := entityMap[ruleSetId]; ok {
-		ruleSet = cachedRuleSet
+		return &cachedRuleSet, nil
+	} else {
+		return nil, nil
 	}
-
-	return ruleSet, nil
 }
 
 func (r *StubRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {
