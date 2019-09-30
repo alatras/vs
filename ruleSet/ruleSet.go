@@ -17,8 +17,8 @@ const (
 
 type RuleSet struct {
 	Id           string          `json:"id" bson:"id"`
-	EntityId     string          `json:"entityId" bson:"entityId"`
-	Action       Action          `bson:"action"`
+	EntityId     string          `json:"entity" bson:"entityId"`
+	Action       Action          `json:"action" bson:"action"`
 	Name         string          `json:"name" bson:"name"`
 	RuleMetadata []rule.Metadata `json:"rules" bson:"validationRuleMetadata"`
 }

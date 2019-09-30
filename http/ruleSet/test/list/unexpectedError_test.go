@@ -1,7 +1,7 @@
-package create
+package list
 
 import (
-	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
@@ -11,47 +11,34 @@ import (
 	"testing"
 )
 
-func setupUnknownErrorRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
+func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
-
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleSet {
-		return &errorApp{error: createRuleSet.UnexpectedError}
-	}, nil, nil, nil)
+	resource := ruleSet.NewResource(log, nil, nil, nil,
+		func() listRuleSet.ListRuleSet {
+			return &errorApp{error: listRuleSet.UnexpectedError}
+		})
 
-	resource.Routes().ServeHTTP(recorder, request)
+	resource.Routes().ServeHTTP(recorder, r)
 
 	return recorder
 }
 
 func Test_HTTP_RuleSet_Create_UnexpectedError(t *testing.T) {
-	requestBody :=
-		`{
-			"name": "test",
-			"action": "TEST",
-			"rules": [
-				{
-					"key": "amount",
-					"operator": "==",
-					"value": "1000"
-				}
-			]
-		}`
-
-	req, err := http.NewRequest("POST", "/12345/rulesets", bytes.NewBuffer([]byte(requestBody)))
-	req.Header.Set("Content-Type", "application/json")
+	req, err := http.NewRequest("GET", "/12345/rulesets", bytes.NewBuffer([]byte("")))
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
 		return
 	}
 
+	req.Header.Set("Content-Type", "application/json")
+
 	recorder := setupUnknownErrorRecorder(t, req)
 
 	if status := recorder.Code; status != http.StatusInternalServerError {
 		t.Errorf("Status code expected to be %d but got %d", http.StatusInternalServerError, status)
-		return
 	}
 
 	body := recorder.Body.String()

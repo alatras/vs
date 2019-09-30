@@ -7,6 +7,10 @@ import (
 	"errors"
 )
 
+var (
+	UnexpectedError = errors.New("unexpected error")
+)
+
 type ListRuleSet interface {
 	Execute(ctx context.Context, entityId string) ([]ruleSet.RuleSet, error)
 }
@@ -34,7 +38,7 @@ func (app *App) Execute(ctx context.Context, entityId string) ([]ruleSet.RuleSet
 
 	if err != nil {
 		app.instrumentation.failedListingRuleSet(err)
-		return nil, errors.New("unexpected error")
+		return nil, UnexpectedError
 	}
 
 	app.instrumentation.finishListingRuleSet()
