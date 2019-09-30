@@ -15,8 +15,7 @@ type transaction struct {
 }
 
 type amount struct {
-	Value        uint64 `json:"value"`
-	MinorUnits   uint64 `json:"minorUnits"`
+	Value        string `json:"value"`
 	CurrencyCode string `json:"currencyCode"`
 }
 

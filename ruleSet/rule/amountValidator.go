@@ -7,7 +7,7 @@ import (
 )
 
 type amountValidator struct {
-	validator func(trxAmount, minorUnits uint64) bool
+	validator func(trxAmount uint64, minorUnits int) bool
 }
 
 func newAmountValidator(operator Operator, value string) (*amountValidator, error) {
@@ -36,10 +36,10 @@ func newAmountValidator(operator Operator, value string) (*amountValidator, erro
 		return nil, InvalidValueError
 	}
 
-	validator := func(trxAmount, minorUnits uint64) bool {
+	validator := func(trxAmount uint64, minorUnits int) bool {
 		compareAmountWithMinorUnits := compareAmount
 
-		for i := uint64(0); i < minorUnits; i++ {
+		for i := 0; i < minorUnits; i++ {
 			compareAmountWithMinorUnits *= 10
 		}
 

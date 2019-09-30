@@ -26,14 +26,14 @@ func TestNewCustomerCountryCodeValidator(t *testing.T) {
 	_, err = newCustomerCountryCodeValidator("foo", "NL")
 
 	if err != InvalidOperatorError {
-		t.Error("expected error while creating new amount validator with invalid operator")
+		t.Error("expected error while creating new customer country code validator with invalid operator")
 	}
 
 	// Should return an error when factory receives an invalid value
 	_, err = newCustomerCountryCodeValidator(equal, "foo")
 
 	if err != InvalidValueError {
-		t.Error("expected error while creating new amount validator with invalid operator")
+		t.Error("expected error while creating new customer country code validator with invalid operator")
 	}
 }
 

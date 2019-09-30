@@ -7,6 +7,8 @@ import (
 	"errors"
 	"github.com/go-chi/render"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 /*
@@ -14,12 +16,8 @@ import (
 	Validate the request and return error if validation fails
 */
 func (body ValidateTransactionPayload) Bind(r *http.Request) error {
-	if body.Transaction.Amount.Value == 0 {
+	if body.Transaction.Amount.Value == "" {
 		return errors.New("amount required")
-	}
-
-	if body.Transaction.Amount.MinorUnits == 0 {
-		return errors.New("minor units required")
 	}
 
 	if body.Transaction.Amount.CurrencyCode == "" {
@@ -51,15 +49,50 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	trxPayload := ValidateTransactionPayload{}
 
 	if err := render.Bind(r, &trxPayload); err != nil {
-		_ = render.Render(w, r, errorResponse.MalformedParameters(err))
+		_ = render.Render(w, r, errorResponse.MalformedParameters(err.Error()))
 		return
 	}
 
 	ctx := r.Context()
 
+	minorUnits := 0
+
+	amountComponents := strings.Split(trxPayload.Transaction.Amount.Value, ".")
+
+	amount, err := strconv.ParseUint(amountComponents[0], 10, 64)
+
+	if err != nil {
+		_ = render.Render(w, r, errorResponse.MalformedParameters(err))
+		return
+	}
+
+	numberOfAmountComponents := len(amountComponents)
+
+	if numberOfAmountComponents == 2 {
+		decimalAmountString := amountComponents[1]
+
+		decimalAmount, err := strconv.ParseUint(decimalAmountString, 10, 64)
+
+		if err != nil {
+			_ = render.Render(w, r, errorResponse.MalformedParameters(err))
+			return
+		}
+
+		minorUnits = len(decimalAmountString)
+
+		for i := 0; i < minorUnits; i++ {
+			amount *= 10
+		}
+
+		amount += decimalAmount
+	} else if numberOfAmountComponents > 2 {
+		_ = render.Render(w, r, errorResponse.MalformedParameters("amount can contain only one decimal point"))
+		return
+	}
+
 	t := trx.Transaction{
-		Amount:              trxPayload.Transaction.Amount.Value,
-		MinorUnits:          trxPayload.Transaction.Amount.MinorUnits,
+		Amount:              amount,
+		MinorUnits:          minorUnits,
 		CurrencyCode:        trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
 		CustomerCountryCode: trx.CountryCodeIso31661Alpha2(trxPayload.Transaction.Customer.Country),
 		EntityId:            trxPayload.Transaction.Merchant.Id,

@@ -8,32 +8,32 @@ import (
 func TestNewCurrencyCodeValidator(t *testing.T) {
 	var err error
 
-	// Should create a new country code validator where validation equals value
+	// Should create a new currency code validator where validation equals value
 	_, err = newCurrencyCodeValidator(equal, "EUR")
 
 	if err != nil {
-		t.Error("unexpected error while creating new country code validator", err.Error())
+		t.Error("unexpected error while creating new currency code validator", err.Error())
 	}
 
-	// Should create a new country code validator where validation does not equal value
+	// Should create a new currency code validator where validation does not equal value
 	_, err = newCurrencyCodeValidator(notEqual, "EUR")
 
 	if err != nil {
-		t.Error("unexpected error while creating new country code validator", err.Error())
+		t.Error("unexpected error while creating new currency code validator", err.Error())
 	}
 
 	// Should return an error when factory receives an invalid operator
 	_, err = newCurrencyCodeValidator("foo", "EUR")
 
 	if err != InvalidOperatorError {
-		t.Error("expected error while creating new amount validator with invalid operator")
+		t.Error("expected error while creating new currency code validator with invalid operator")
 	}
 
 	// Should return an error when factory receives an invalid value
 	_, err = newCurrencyCodeValidator(equal, "a")
 
 	if err != InvalidValueError {
-		t.Error("expected error while creating new amount validator with invalid operator")
+		t.Error("expected error while creating new currency code validator with invalid operator")
 	}
 }
 
@@ -45,7 +45,7 @@ func TestCurrencyCodeValidator_Validate(t *testing.T) {
 	validator, err = newCurrencyCodeValidator(equal, "EUR")
 
 	if err != nil {
-		t.Error("unexpected error while creating new country code validator:", err.Error())
+		t.Error("unexpected error while creating new currency code validator:", err.Error())
 		return
 	}
 
@@ -69,7 +69,7 @@ func TestCurrencyCodeValidator_Validate(t *testing.T) {
 	validator, err = newCurrencyCodeValidator(notEqual, "EUR")
 
 	if err != nil {
-		t.Error("unexpected error while creating new country code validator:", err.Error())
+		t.Error("unexpected error while creating new currency code validator:", err.Error())
 		return
 	}
 
