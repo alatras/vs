@@ -1,9 +1,10 @@
-package get
+package update
 
 import (
-	"bitbucket.verifone.com/validation-service/app/getRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
+	"bytes"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -15,21 +16,36 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, nil, func() getRuleSet.GetRuleSet {
+	resource := ruleSet.NewResource(log, nil, nil, nil, nil, func() updateRuleSet.UpdateRuleSet {
 		return &successApp{}
-	}, nil, nil, nil)
+	})
 
 	resource.Routes().ServeHTTP(recorder, request)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_Get_Success(t *testing.T) {
-	req, err := http.NewRequest("GET", "/12345/rulesets/"+mockRuleSet.Id, nil)
+func Test_HTTP_RuleSet_Update_Success(t *testing.T) {
+	requestBody :=
+		`{
+			"name": "Test",
+			"action": "BLOCK",
+			"rules": [
+				{
+					"key": "amount",
+					"operator": ">=",
+					"value": "1000"
+				}
+			]
+		}`
+
+	req, err := http.NewRequest("PUT", "/12345/rulesets/"+mockRuleSet.Id, bytes.NewBuffer([]byte(requestBody)))
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
 	}
+
+	req.Header.Set("Content-Type", "application/json")
 
 	recorder := setupSuccessRecorder(t, req)
 

@@ -17,7 +17,7 @@ func setupNotFoundErrorRecorder(t *testing.T, request *http.Request) *httptest.R
 
 	resource := ruleSet.NewResource(log, nil, func() getRuleSet.GetRuleSet {
 		return &errorApp{error: getRuleSet.NotFound}
-	}, nil, nil)
+	}, nil, nil, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
 

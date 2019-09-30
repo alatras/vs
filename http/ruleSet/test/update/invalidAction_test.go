@@ -1,7 +1,7 @@
-package create
+package update
 
 import (
-	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
@@ -11,43 +11,43 @@ import (
 	"testing"
 )
 
-func setupInvalidRuleRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
+func setupInvalidActionRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleSet {
-		return &errorApp{error: createRuleSet.InvalidRule}
-	}, nil, nil, nil, nil)
+	resource := ruleSet.NewResource(log, nil, nil, nil, nil, func() updateRuleSet.UpdateRuleSet {
+		return &errorApp{error: updateRuleSet.InvalidAction}
+	})
 
 	resource.Routes().ServeHTTP(recorder, request)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_Create_InvalidRule(t *testing.T) {
+func Test_HTTP_RuleSet_Update_InvalidAction(t *testing.T) {
 	requestBody :=
 		`{
-			"name": "test",
-			"action": "TAG",
+			"name": "Test",
+			"action": "BLOCK",
 			"rules": [
 				{
-					"key": "name",
+					"key": "amount",
 					"operator": ">=",
 					"value": "1000"
 				}
 			]
 		}`
 
-	req, err := http.NewRequest("POST", "/12345/rulesets", bytes.NewBuffer([]byte(requestBody)))
-	req.Header.Set("Content-Type", "application/json")
+	req, err := http.NewRequest("PUT", "/12345/rulesets/"+mockRuleSet.Id, bytes.NewBuffer([]byte(requestBody)))
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
-		return
 	}
 
-	recorder := setupInvalidRuleRecorder(t, req)
+	req.Header.Set("Content-Type", "application/json")
+
+	recorder := setupInvalidActionRecorder(t, req)
 
 	if status := recorder.Code; status != http.StatusBadRequest {
 		t.Errorf("Status code expected to be %d but got %d", http.StatusBadRequest, status)
@@ -74,7 +74,7 @@ func Test_HTTP_RuleSet_Create_InvalidRule(t *testing.T) {
 		return
 	}
 
-	expectedDetails := "invalid rule"
+	expectedDetails := "action should be TAG or BLOCK"
 
 	if details != expectedDetails {
 		t.Errorf("Expected details %s but got %s", expectedDetails, details)
