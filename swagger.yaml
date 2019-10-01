@@ -407,7 +407,7 @@ components:
           enum:
             - amount
             - currencyCode
-            - countryCode
+            - customerCountryCode
         operator:
           type: string
           enum:
