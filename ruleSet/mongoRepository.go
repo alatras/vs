@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/x/bsonx"
 	"time"
 )
 
@@ -17,12 +18,19 @@ type MongoRuleSetRepository struct {
 
 func NewMongoRepository(url string, dbName string) (*MongoRuleSetRepository, error) {
 	client, err := connectToMongo(url)
+
 	if err != nil {
 		return nil, err
 	}
 
 	ruleSetCollection := client.Database(dbName).Collection("ruleSets")
 	repository := MongoRuleSetRepository{client, ruleSetCollection}
+
+	err = createIndexes(ruleSetCollection)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &repository, nil
 }
@@ -134,4 +142,17 @@ func connectToMongo(url string) (*mongo.Client, error) {
 	}
 
 	return client, nil
+}
+
+func createIndexes(collection *mongo.Collection) error {
+	indexOptions := options.Index()
+	indexOptions.SetBackground(true)
+	indexOptions.SetName("entity_index")
+
+	_, err := collection.Indexes().CreateOne(context.Background(), mongo.IndexModel{
+		Keys:    bsonx.Doc{{Key: "entity", Value: bsonx.Int32(1)}},
+		Options: indexOptions,
+	})
+
+	return err
 }
