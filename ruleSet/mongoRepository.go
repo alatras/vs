@@ -1,6 +1,7 @@
 package ruleSet
 
 import (
+	"bitbucket.verifone.com/validation-service/logger"
 	"context"
 	"errors"
 	"fmt"
@@ -14,9 +15,10 @@ import (
 type MongoRuleSetRepository struct {
 	mongoClient       *mongo.Client
 	ruleSetCollection *mongo.Collection
+	logger            *logger.Logger
 }
 
-func NewMongoRepository(url string, dbName string) (*MongoRuleSetRepository, error) {
+func NewMongoRepository(url string, dbName string, logger *logger.Logger) (*MongoRuleSetRepository, error) {
 	client, err := connectToMongo(url)
 
 	if err != nil {
@@ -24,7 +26,11 @@ func NewMongoRepository(url string, dbName string) (*MongoRuleSetRepository, err
 	}
 
 	ruleSetCollection := client.Database(dbName).Collection("ruleSets")
-	repository := MongoRuleSetRepository{client, ruleSetCollection}
+	repository := MongoRuleSetRepository{
+		mongoClient:       client,
+		ruleSetCollection: ruleSetCollection,
+		logger:            logger.Scoped("ruleSetRepo"),
+	}
 
 	err = createIndexes(ruleSetCollection)
 
@@ -151,7 +157,8 @@ func (r MongoRuleSetRepository) Ping(ctx context.Context) error {
 	err := r.mongoClient.Ping(ctx, nil)
 
 	if err != nil {
-		return err
+		r.logger.Output.WithError(err).Error("cannot connect to mongo")
+		return errors.New("cannot connect to mongo")
 	}
 
 	return nil

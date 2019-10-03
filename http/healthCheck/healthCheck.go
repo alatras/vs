@@ -14,7 +14,7 @@ type Resource struct {
 
 func NewResource(l *logger.Logger, r ruleSet.Repository) Resource {
 	return Resource{
-		logger: l,
+		logger: l.Scoped("healthCheck"),
 		repo:   r,
 	}
 }
@@ -38,9 +38,4 @@ func (rs Resource) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write([]byte(""))
-
-	if err != nil {
-		rs.logger.Error.WithError(err).Error("Health check failed")
-	}
 }
