@@ -50,3 +50,7 @@ func (s *StubRepository) Replace(ctx context.Context, entityId string, ruleSet r
 func (s *StubRepository) Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error) {
 	panic("implement me")
 }
+
+func (s *StubRepository) Ping(ctx context.Context) error {
+	panic("implement me")
+}

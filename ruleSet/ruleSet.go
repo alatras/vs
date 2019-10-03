@@ -29,6 +29,7 @@ type Repository interface {
 	ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error)
 	Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error)
 	Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error)
+	Ping(ctx context.Context) error
 }
 
 func New(entityId string, name string, action Action, metadata []rule.Metadata) RuleSet {

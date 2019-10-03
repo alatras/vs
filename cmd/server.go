@@ -56,6 +56,10 @@ func (s *ServerCommand) Execute(args []string) error {
 		return listRuleSet.NewListRuleSet(log, ruleSetRepo)
 	}
 
+	//mongoConnectFuncFactory := func(url string) (*mongo.Client, error) {
+	//	return ruleSet.ConnectToMongo(url)
+	//}
+
 	err := http.NewServer(
 		s.HTTPPort,
 		chi.NewRouter(),

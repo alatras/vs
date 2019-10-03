@@ -135,3 +135,16 @@ func connectToMongo(url string) (*mongo.Client, error) {
 
 	return client, nil
 }
+
+func (r MongoRuleSetRepository) Ping(ctx context.Context) error {
+	ctx, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+
+	err := r.mongoClient.Ping(ctx, nil)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -108,3 +108,7 @@ func (r *StubRuleSetRepository) Delete(ctx context.Context, entityId string, rul
 
 	return true, nil
 }
+
+func (r *StubRuleSetRepository) Ping(ctx context.Context) error {
+	return nil
+}
