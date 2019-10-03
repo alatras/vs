@@ -23,12 +23,24 @@ paths:
             schema:
               $ref: '#/components/schemas/ruleSet'
       responses:
-        '200':
+        '201':
           description: New rule set
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ruleSetResponse'
+        '400':
+          description: Malformed parameters in the body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/malformedParametersErrorResponse'
+        '500':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unexpectedErrorResponse'                
     get:
       tags:
         - ruleSets
@@ -50,6 +62,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ruleSetResponse'
+        '500':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unexpectedErrorResponse'                
   /entities/{entityId}/rulsets/{ruleSetId}:
     put:
       tags:
@@ -82,6 +100,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ruleSetResponse'
+        '404':
+          description: Rule set or entity was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ruleSetNotFoundErrorResponse'            
+        '400':
+          description: Malformed parameters in the body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/malformedParametersErrorResponse'
+        '500':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unexpectedErrorResponse'                
     get:
       tags:
         - ruleSets
@@ -107,6 +143,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ruleSetResponse'
+        '404':
+          description: Rule set or entity was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ruleSetNotFoundErrorResponse'
+        '500':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unexpectedErrorResponse'                
     delete:
       tags:
         - ruleSets
@@ -126,17 +174,25 @@ paths:
             type: string
           description: The unique ID of the rule set
       responses:
-        '200':
-          description: Deleted rule set
+        '204':
+          description: The rule set has been deleted
+        '404':
+          description: Rule set or entity was not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleSetResponse'
-  /validate:
+                $ref: '#/components/schemas/ruleSetNotFoundErrorResponse'
+        '500':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unexpectedErrorResponse'                
+  /transaction/validate:
     post:
       tags:
         - transactions
-      summary: validate a single transaction event.
+      summary: Validate a single transaction event.
       operationId: validateTransaction
       requestBody:
         description: The transaction event to be validated. An event contains a transaction in the PDSP format.
@@ -152,7 +208,7 @@ paths:
               schema:
                 type: object
                 required:
-                  - action
+                    - action
                 properties:
                   action:
                     type: string
@@ -199,7 +255,7 @@ paths:
                 pass:
                   value:
                     action: 'PASS'
-                'pass and tag':
+                pass_and_tag:
                   value:
                     action: PASS
                     tags:
@@ -223,7 +279,7 @@ paths:
                           - key: currency_code
                             operator: "=="
                             value: EUR
-                block and tag:
+                block_and_tag:
                   value:
                     action: BLOCK
                     block:
@@ -244,39 +300,103 @@ paths:
                           - key: currency_code
                             operator: "=="
                             value: SEK
-        default:
-          description: Error details
+        '400':
+          description: Malformed parameters in the body
           content:
-            text/html:
+            application/json:
               schema:
-                type: object
-                properties:
-                  code:
-                    type: string
-                  timestamp:
-                    $ref: '#/components/schemas/datetime'
+                $ref: '#/components/schemas/malformedParametersErrorResponse'
+        '500':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unexpectedErrorResponse'                
+                            
 components:
   schemas:
+    unexpectedErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+          example: 100
+        details:
+          type: string
+          description: Details about the error
+        message:
+          type: string
+          description: Error description
+        timestamp:
+          type: integer
+          example: 1569834344
+          description: Timestamp when error occurred
+    malformedParametersErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+          example: 107
+        details:
+          type: string
+          description: Details about the error
+        message:
+          type: string
+          description: Error description
+        timestamp:
+          type: integer
+          example: 1569834344
+          description: Timestamp when error occurred  
+    ruleSetNotFoundErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+          example: 109
+        details:
+          type: object
+          description: Details about the error
+          properties:
+            resource:
+              type: string
+              enum: 
+                - ruleSet
+                - entity
+              description: Type of resource which was not found
+            id:
+              type: string
+              description: ID of the rule set or entity which was not found
+        message:
+          type: string
+          description: Error description
+        timestamp:
+          type: integer
+          example: 1569834344
+          description: Timestamp when error occurred
     ruleSetResponse:
       type: object
       properties:
         id:
           type: string
           description: The unique ID of the rule set
+        entity:
+          type: string
+          description: The entity ID of the rule set
         name:
           type: string
           description: The name of the rule set
         action:
           type: string
           enum:
-            - PASS
+            - TAG
             - BLOCK
         rules:
           type: array
           items:
             $ref: '#/components/schemas/rule'
-            description: A list of rules with collectively make up the condition of the rule set.
-            uniqueItems: false
           minItems: 1
           uniqueItems: false
     rule:
@@ -286,7 +406,8 @@ components:
           type: string
           enum:
             - amount
-            - countryCode
+            - currencyCode
+            - customerCountryCode
         operator:
           type: string
           enum:
@@ -313,8 +434,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/rule'
-            description: A list of rules with collectively make up the condition of the rule set.
-            uniqueItems: false
           minItems: 1
           uniqueItems: false
     accounttype:
