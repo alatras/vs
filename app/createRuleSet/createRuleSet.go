@@ -45,7 +45,7 @@ func (app *App) Execute(ctx context.Context, entityId string, name string, actio
 		"rules":    rules,
 	})
 
-	app.instrumentation.startCreatingRuleset()
+	app.instrumentation.startCreatingRuleSet()
 
 	rulesetAction := ruleSet.Action(action)
 
@@ -83,7 +83,7 @@ func (app *App) Execute(ctx context.Context, entityId string, name string, actio
 		return nil, UnexpectedError
 	}
 
-	app.instrumentation.finishCreatingRuleset(newRuleSet)
+	app.instrumentation.finishCreatingRuleSet(newRuleSet)
 
 	return &newRuleSet, nil
 }
