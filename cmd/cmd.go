@@ -17,7 +17,9 @@ type CommonOptionsCommander interface {
 
 // LogGroup logging configuration parameters
 type LogGroup struct {
-	Level  string `long:"level" env:"LOG_LEVEL" default:"info" choice:"trace" choice:"debug" choice:"info" choice:"warn" choice:"error" choice:"fatal" description:"Logging level"`
+	///nolint:staticcheck
+	Level string `long:"level" env:"LOG_LEVEL" default:"info" choice:"trace" choice:"debug" choice:"info" choice:"warn" choice:"error" choice:"fatal" description:"Logging level"`
+	///nolint:staticcheck
 	Format string `long:"format" env:"LOG_FORMAT" default:"json" choice:"json" choice:"text" description:"Logging format"`
 }
 

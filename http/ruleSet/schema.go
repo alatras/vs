@@ -1,6 +1,7 @@
 package ruleSet
 
 import (
+	"bitbucket.verifone.com/validation-service/ruleSet"
 	"errors"
 	"fmt"
 )
@@ -19,14 +20,14 @@ type GetRuleSetResponse struct {
 	Rules  []RulePayload `json:"rules"`
 }
 
-type CreateRulesetPayload struct {
+type CreateRuleSetPayload struct {
 	Name   string        `json:"name"`
 	Action string        `json:"action"`
 	Rules  []RulePayload `json:"rules"`
 }
 
-type CreateRulesetResponse struct {
-	CreateRulesetPayload
+type CreateRuleSetResponse struct {
+	CreateRuleSetPayload
 	Id     string `json:"id"`
 	Entity string `json:"entity"`
 }
@@ -47,7 +48,7 @@ func (r RulePayload) Validate() error {
 	return nil
 }
 
-func (payload CreateRulesetPayload) Validate() error {
+func (payload CreateRuleSetPayload) Validate() error {
 	if payload.Name == "" {
 		return errors.New("body.name: should be present")
 	}
@@ -67,4 +68,8 @@ func (payload CreateRulesetPayload) Validate() error {
 	}
 
 	return nil
+}
+
+type ListRuleSetResponse struct {
+	ruleSet.RuleSet
 }

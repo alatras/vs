@@ -18,7 +18,7 @@ func setupInvalidRuleRecorder(t *testing.T, request *http.Request) *httptest.Res
 
 	resource := ruleSet.NewResource(log, nil, func() createRuleSet.CreateRuleSet {
 		return &errorApp{error: createRuleSet.InvalidRule}
-	}, nil, nil)
+	}, nil, nil, nil)
 
 	resource.Routes().ServeHTTP(recorder, request)
 

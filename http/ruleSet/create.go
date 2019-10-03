@@ -8,22 +8,22 @@ import (
 	"net/http"
 )
 
-func (payload CreateRulesetPayload) Bind(r *http.Request) error {
+func (payload CreateRuleSetPayload) Bind(r *http.Request) error {
 	err := payload.Validate()
 	return err
 }
 
-func (t CreateRulesetResponse) Render(w http.ResponseWriter, r *http.Request) error {
+func (t CreateRuleSetResponse) Render(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
 func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
-	app := rs.createRulesetAppFactory()
+	app := rs.createRuleSetAppFactory()
 
 	ctx := r.Context()
 	entityId := chi.URLParam(r, "id")
 
-	payload := CreateRulesetPayload{}
+	payload := CreateRuleSetPayload{}
 
 	if err := render.Bind(r, &payload); err != nil {
 		_ = render.Render(w, r, errorResponse.MalformedParameters(err.Error()))
@@ -56,8 +56,8 @@ func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := CreateRulesetResponse{
-		CreateRulesetPayload: payload,
+	response := CreateRuleSetResponse{
+		CreateRuleSetPayload: payload,
 		Id:                   ruleSet.Id,
 		Entity:               entityId,
 	}
