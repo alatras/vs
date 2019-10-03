@@ -42,11 +42,11 @@ func (s *ServerCommand) Execute(args []string) error {
 
 	ruleSetRepo := s.createRuleSetRepository(log)
 
-	validateTransactionApp := s.createValidateTransactionApp(ruleSetRepo, log)
+	entityServiceClient := entityService.NewClient(log, s.EntityService.URL)
+
+	validateTransactionApp := s.createValidateTransactionApp(entityServiceClient, ruleSetRepo, log)
 
 	log.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
-
-	entityServiceClient := entityService.NewClient(log, s.EntityService.URL)
 
 	createRuleSetAppFactory := func() createRuleSet.CreateRuleSet {
 		return createRuleSet.NewCreateRuleSet(log, ruleSetRepo)
@@ -105,7 +105,11 @@ func (s *ServerCommand) createRuleSetRepository(logger *logger.Logger) *ruleSet.
 	return ruleSetRepository
 }
 
-func (s *ServerCommand) createValidateTransactionApp(r *ruleSet.MongoRuleSetRepository, l *logger.Logger) *validateTransaction.ValidatorService {
-	validator := validateTransaction.NewValidatorService(runtime.NumCPU(), r, l)
+func (s *ServerCommand) createValidateTransactionApp(
+	e entityService.EntityService,
+	r *ruleSet.MongoRuleSetRepository,
+	l *logger.Logger,
+) *validateTransaction.ValidatorService {
+	validator := validateTransaction.NewValidatorService(runtime.NumCPU(), e, r, l)
 	return &validator
 }

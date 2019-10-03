@@ -79,6 +79,31 @@ func (r MongoRuleSetRepository) ListByEntityId(ctx context.Context, entityId str
 	return ruleSets, nil
 }
 
+func (r MongoRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds ...string) ([]RuleSet, error) {
+	cursor, err := r.ruleSetCollection.Find(ctx, bson.M{
+		"entityId": bson.M{
+			"$in": entityIds,
+		},
+	})
+
+	if err != nil {
+		return nil, errors.New("error while listing rule sets by entity ids")
+	}
+
+	var ruleSets []RuleSet
+
+	for cursor.Next(ctx) {
+		var ruleSet RuleSet
+		err := cursor.Decode(&ruleSet)
+		if err != nil {
+			return nil, errors.New("error while decoding rule set from db")
+		}
+		ruleSets = append(ruleSets, ruleSet)
+	}
+
+	return ruleSets, nil
+}
+
 func (r MongoRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
 	var replaced bool
 
