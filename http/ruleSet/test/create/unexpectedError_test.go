@@ -16,7 +16,7 @@ func setupUnknownErrorRecorder(t *testing.T, request *http.Request) *httptest.Re
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, func() createRuleSet.CreateRuleSet {
+	resource := ruleSet.NewResource(log, nil, func() createRuleSet.CreateRuleSet {
 		return &errorApp{error: createRuleSet.UnexpectedError}
 	}, nil, nil)
 

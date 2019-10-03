@@ -5,6 +5,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
+	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/http"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
@@ -16,7 +17,8 @@ import (
 
 // ServerCommand with command line flags and env
 type ServerCommand struct {
-	Mongo MongoGroup `group:"mongo" namespace:"mongo" env-namespace:"MONGO"`
+	Mongo         MongoGroup         `group:"mongo" namespace:"mongo"`
+	EntityService EntityServiceGroup `group:"entityService" namespace:"entityService"`
 
 	HTTPPort int `long:"httpPort" env:"HTTP_PORT" default:"8080" description:"HTTP port"`
 
@@ -29,6 +31,11 @@ type MongoGroup struct {
 	DB  string `long:"db" env:"MONGO_DB" default:"validationService" description:"MongoDB database name"`
 }
 
+// EntityServiceGroup Entity Service configuration parameters
+type EntityServiceGroup struct {
+	URL string `long:"url" env:"ENTITY_SERVICE_URL" required:"Entity Service url required" description:"Entity Service URL (without trailing slash)"`
+}
+
 // Execute is the entry point for "server" command
 func (s *ServerCommand) Execute(args []string) error {
 	log := s.setupLogger()
@@ -38,6 +45,8 @@ func (s *ServerCommand) Execute(args []string) error {
 	validateTransactionApp := s.createValidateTransactionApp(ruleSetRepo, log)
 
 	log.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
+
+	entityServiceClient := entityService.NewClient(log, s.EntityService.URL)
 
 	createRuleSetAppFactory := func() createRuleSet.CreateRuleSet {
 		return createRuleSet.NewCreateRuleSet(log, ruleSetRepo)
@@ -56,6 +65,7 @@ func (s *ServerCommand) Execute(args []string) error {
 		chi.NewRouter(),
 		log,
 		ruleSetRepo,
+		entityServiceClient,
 		validateTransactionApp,
 		createRuleSetAppFactory,
 		getRuleSetAppFactory,

@@ -15,7 +15,7 @@ func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, nil, nil, func() deleteRuleSet.DeleteRuleSet {
+	resource := ruleSet.NewResource(log, nil, nil, nil, func() deleteRuleSet.DeleteRuleSet {
 		return &errorApp{error: deleteRuleSet.UnexpectedError}
 	})
 
