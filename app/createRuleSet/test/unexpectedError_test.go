@@ -41,10 +41,6 @@ func (s *StubRepository) GetById(ctx context.Context, entityId string, ruleSetId
 	panic("implement me")
 }
 
-func (s *StubRepository) ListByEntityId(ctx context.Context, entityId string) ([]ruleSet.RuleSet, error) {
-	panic("implement me")
-}
-
 func (s *StubRepository) ListByEntityIds(ctx context.Context, entityIds ...string) ([]ruleSet.RuleSet, error) {
 	panic("implement me")
 }
