@@ -5,7 +5,6 @@ import (
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
-	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/logger"
 	"github.com/go-chi/chi"
 	"net/http"
@@ -13,7 +12,6 @@ import (
 
 type Resource struct {
 	logger                  *logger.Logger
-	entityServiceClient     entityService.EntityService
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet
 	listRuleSetAppFactory   func() listRuleSet.ListRuleSet
 	getRuleSetAppFactory    func() getRuleSet.GetRuleSet
@@ -22,7 +20,6 @@ type Resource struct {
 
 func NewResource(
 	logger *logger.Logger,
-	entityServiceClient entityService.EntityService,
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
@@ -30,7 +27,6 @@ func NewResource(
 ) Resource {
 	return Resource{
 		logger:                  logger,
-		entityServiceClient:     entityServiceClient,
 		createRuleSetAppFactory: createRuleSetAppFactory,
 		listRuleSetAppFactory:   listRuleSetAppFactory,
 		getRuleSetAppFactory:    getRuleSetAppFactory,

@@ -70,7 +70,6 @@ func (s *ServerCommand) Execute(args []string) error {
 		chi.NewRouter(),
 		log,
 		ruleSetRepo,
-		entityServiceClient,
 		validateTransactionApp,
 		createRuleSetAppFactory,
 		listRuleSetAppFactory,
