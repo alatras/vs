@@ -1,6 +1,9 @@
 package transaction
 
 type Transaction struct {
-	Amount   int    `json:"amount"`
-	EntityId string `json:"entity"`
+	EntityId            string
+	Amount              uint64
+	MinorUnits          int
+	CurrencyCode        CurrencyCode
+	CustomerCountryCode CountryCodeIso31661Alpha2
 }
