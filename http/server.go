@@ -8,7 +8,6 @@ import (
 	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
-	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
 	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
 	httpRuleSet "bitbucket.verifone.com/validation-service/http/ruleSet"
@@ -24,18 +23,17 @@ import (
 )
 
 type Server struct {
-	port                             int
-	router                           chi.Router
-	logger                           *logger.Logger
-	ruleSetRepository                ruleSet.Repository
-	entityServiceClient              entityService.EntityService
-	validateTransactionService       *validateTransaction.ValidatorService
-	createRuleSetAppFactory          func() createRuleSet.CreateRuleSet
-	listRuleSetAppFactory            func() listRuleSet.ListRuleSet
+	port                       int
+	router                     chi.Router
+	logger                     *logger.Logger
+	ruleSetRepository          ruleSet.Repository
+	validateTransactionService *validateTransaction.ValidatorService
+	createRuleSetAppFactory    func() createRuleSet.CreateRuleSet
+	listRuleSetAppFactory      func() listRuleSet.ListRuleSet
 	listAncestorsRuleSetAppFactory   func() listAncestorsRuleSet.ListAncestorsRuleSet
 	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet
-	getRuleSetAppFactory             func() getRuleSet.GetRuleSet
-	deleteRuleSetAppFactory          func() deleteRuleSet.DeleteRuleSet
+	getRuleSetAppFactory       func() getRuleSet.GetRuleSet
+	deleteRuleSetAppFactory    func() deleteRuleSet.DeleteRuleSet
 }
 
 func NewServer(
@@ -43,7 +41,6 @@ func NewServer(
 	router chi.Router,
 	logger *logger.Logger,
 	ruleSetRepository ruleSet.Repository,
-	entityServiceClient entityService.EntityService,
 	validateTransactionService *validateTransaction.ValidatorService,
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
 	listRuleSetAppFactory func() listRuleSet.ListRuleSet,
@@ -53,18 +50,17 @@ func NewServer(
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
 ) *Server {
 	return &Server{
-		port:                             port,
-		router:                           router,
-		logger:                           logger,
-		ruleSetRepository:                ruleSetRepository,
-		entityServiceClient:              entityServiceClient,
-		validateTransactionService:       validateTransactionService,
-		createRuleSetAppFactory:          createRuleSetAppFactory,
-		listRuleSetAppFactory:            listRuleSetAppFactory,
+		port:                       port,
+		router:                     router,
+		logger:                     logger,
+		ruleSetRepository:          ruleSetRepository,
+		validateTransactionService: validateTransactionService,
+		createRuleSetAppFactory:    createRuleSetAppFactory,
+		listRuleSetAppFactory:      listRuleSetAppFactory,
 		listAncestorsRuleSetAppFactory:   listAncestorsRuleSetAppFactory,
 		listDescendantsRuleSetAppFactory: listDescendantsRuleSetAppFactory,
-		getRuleSetAppFactory:             getRuleSetAppFactory,
-		deleteRuleSetAppFactory:          deleteRuleSetAppFactory,
+		getRuleSetAppFactory:       getRuleSetAppFactory,
+		deleteRuleSetAppFactory:    deleteRuleSetAppFactory,
 	}
 }
 
@@ -82,7 +78,6 @@ func (s *Server) Start() error {
 		"/entities",
 		httpRuleSet.NewResource(
 			s.logger,
-			s.entityServiceClient,
 			s.createRuleSetAppFactory,
 			s.getRuleSetAppFactory,
 			s.deleteRuleSetAppFactory,

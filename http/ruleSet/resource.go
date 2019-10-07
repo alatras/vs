@@ -7,26 +7,23 @@ import (
 	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
-	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/logger"
 	"github.com/go-chi/chi"
 	"net/http"
 )
 
 type Resource struct {
-	logger                           *logger.Logger
-	entityServiceClient              entityService.EntityService
-	createRuleSetAppFactory          func() createRuleSet.CreateRuleSet
-	listRuleSetAppFactory            func() listRuleSet.ListRuleSet
+	logger                  *logger.Logger
+	createRuleSetAppFactory func() createRuleSet.CreateRuleSet
+	listRuleSetAppFactory   func() listRuleSet.ListRuleSet
 	listAncestorsRuleSetAppFactory   func() listAncestorsRuleSet.ListAncestorsRuleSet
 	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet
-	getRuleSetAppFactory             func() getRuleSet.GetRuleSet
-	deleteRuleSetAppFactory          func() deleteRuleSet.DeleteRuleSet
+	getRuleSetAppFactory    func() getRuleSet.GetRuleSet
+	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet
 }
 
 func NewResource(
 	logger *logger.Logger,
-	entityServiceClient entityService.EntityService,
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
@@ -35,14 +32,13 @@ func NewResource(
 	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet,
 ) Resource {
 	return Resource{
-		logger:                           logger,
-		entityServiceClient:              entityServiceClient,
-		createRuleSetAppFactory:          createRuleSetAppFactory,
-		listRuleSetAppFactory:            listRuleSetAppFactory,
+		logger:                  logger,
+		createRuleSetAppFactory: createRuleSetAppFactory,
+		listRuleSetAppFactory:   listRuleSetAppFactory,
 		listAncestorsRuleSetAppFactory:   listAncestorsRuleSetAppFactory,
 		listDescendantsRuleSetAppFactory: listDescendantsRuleSetAppFactory,
-		getRuleSetAppFactory:             getRuleSetAppFactory,
-		deleteRuleSetAppFactory:          deleteRuleSetAppFactory,
+		getRuleSetAppFactory:    getRuleSetAppFactory,
+		deleteRuleSetAppFactory: deleteRuleSetAppFactory,
 	}
 }
 
