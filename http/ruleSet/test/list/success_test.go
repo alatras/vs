@@ -20,7 +20,6 @@ func setupSuccessRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecor
 		nil,
 		nil,
 		nil,
-		nil,
 		func() listRuleSet.ListRuleSet {
 			return &successApp{}
 		},

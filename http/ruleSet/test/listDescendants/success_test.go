@@ -22,7 +22,6 @@ func setupSuccessRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecor
 		nil,
 		nil,
 		nil,
-		nil,
 		func() listDescendantsRuleSet.ListDescendantsRuleSet {
 			return &successApp{}
 		},

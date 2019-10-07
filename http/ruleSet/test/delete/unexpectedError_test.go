@@ -19,7 +19,6 @@ func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest
 		log,
 		nil,
 		nil,
-		nil,
 		func() deleteRuleSet.DeleteRuleSet {
 			return &errorApp{error: deleteRuleSet.UnexpectedError}
 		},

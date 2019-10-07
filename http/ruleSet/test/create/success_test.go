@@ -18,7 +18,6 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 
 	resource := ruleSet.NewResource(
 		log,
-		nil,
 		func() createRuleSet.CreateRuleSet {
 			return &successApp{}
 		},

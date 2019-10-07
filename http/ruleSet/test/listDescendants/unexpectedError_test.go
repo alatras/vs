@@ -22,7 +22,6 @@ func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.Response
 		nil,
 		nil,
 		nil,
-		nil,
 		func() listDescendantsRuleSet.ListDescendantsRuleSet {
 			return &errorApp{error: listDescendantsRuleSet.UnexpectedError}
 		},
