@@ -42,22 +42,27 @@ func (c *client) GetAncestorsOf(entityId string) ([]string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		errorLog.WithError(err).Error("failed to read the request body")
+		errorLog.WithError(err).Error("failed to read the response body")
 		return []string{}, RequestError
 	}
 
 	json, err := simplejson.NewJson(body)
 
 	if err != nil {
-		errorLog.WithError(err).Error("failed to parse the request body")
-		return []string{}, err
+		errorLog.WithError(err).Error("failed to parse the response body")
+		return []string{}, ResponseInvalidError
+	}
+
+	if resp.StatusCode != 200 {
+		errorLog.WithField("errorDetails", json.MustMap()).Error("response status code is unsuccessful")
+		return []string{}, ResponseUnsuccessful
 	}
 
 	entityIds, err := entityIdsFromAncestorsResponseJson(json)
 
 	if err != nil {
 		errorLog.WithError(err).Error("failed to get entity ids from json")
-		return []string{}, err
+		return []string{}, ResponseInvalidError
 	}
 
 	return entityIds, nil
@@ -81,15 +86,20 @@ func (c *client) GetDescendantsOf(entityId string) ([]string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		errorLog.WithError(err).Error("failed to read the request body")
+		errorLog.WithError(err).Error("failed to read the response body")
 		return []string{}, RequestError
 	}
 
 	json, err := simplejson.NewJson(body)
 
 	if err != nil {
-		errorLog.WithError(err).Error("failed to parse the request body")
-		return []string{}, err
+		errorLog.WithError(err).Error("failed to parse the response body")
+		return []string{}, ResponseInvalidError
+	}
+
+	if resp.StatusCode != 200 {
+		errorLog.WithField("errorDetails", json.MustMap()).Error("response status code is unsuccessful")
+		return []string{}, ResponseUnsuccessful
 	}
 
 	entityIds, err := entityIdsFromDescendantsResponseJson(json)

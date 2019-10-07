@@ -4,6 +4,8 @@ import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/entityService"
@@ -65,6 +67,14 @@ func (s *ServerCommand) Execute(args []string) error {
 		return listRuleSet.NewListRuleSet(log, ruleSetRepo)
 	}
 
+	listAncestorsRuleSetAppFactory := func() listAncestorsRuleSet.ListAncestorsRuleSet {
+		return listAncestorsRuleSet.NewListAncestorsRuleSet(log, ruleSetRepo, entityServiceClient)
+	}
+
+	listDescendantsRuleSetAppFactory := func() listDescendantsRuleSet.ListDescendantsRuleSet {
+		return listDescendantsRuleSet.NewListDescendantsRuleSet(log, ruleSetRepo, entityServiceClient)
+	}
+
 	err := http.NewServer(
 		s.HTTPPort,
 		chi.NewRouter(),
@@ -74,6 +84,8 @@ func (s *ServerCommand) Execute(args []string) error {
 		validateTransactionApp,
 		createRuleSetAppFactory,
 		listRuleSetAppFactory,
+		listAncestorsRuleSetAppFactory,
+		listDescendantsRuleSetAppFactory,
 		getRuleSetAppFactory,
 		deleteRuleSetAppFactory,
 	).Start()
