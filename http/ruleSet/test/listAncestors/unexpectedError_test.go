@@ -1,7 +1,7 @@
-package list
+package listAncestors
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
@@ -21,20 +21,19 @@ func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.Response
 		nil,
 		nil,
 		nil,
-		func() listRuleSet.ListRuleSet {
-			return &errorApp{error: listRuleSet.UnexpectedError}
+		nil,
+		func() listAncestorsRuleSet.ListAncestorsRuleSet {
+			return &errorApp{error: listAncestorsRuleSet.UnexpectedError}
 		},
 		nil,
-		nil,
 	)
-
 	resource.Routes().ServeHTTP(recorder, r)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_List_UnexpectedError(t *testing.T) {
-	req, err := http.NewRequest("GET", "/12345/rulesets", bytes.NewBuffer([]byte("")))
+func Test_HTTP_RuleSet_ListAncestors_UnexpectedError(t *testing.T) {
+	req, err := http.NewRequest("GET", "/12345/rulesets/ancestors", bytes.NewBuffer([]byte("")))
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)

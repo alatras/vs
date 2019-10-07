@@ -1,7 +1,7 @@
-package list
+package listAncestors
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
@@ -21,10 +21,10 @@ func setupSuccessRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecor
 		nil,
 		nil,
 		nil,
-		func() listRuleSet.ListRuleSet {
+		nil,
+		func() listAncestorsRuleSet.ListAncestorsRuleSet {
 			return &successApp{}
 		},
-		nil,
 		nil,
 	)
 
@@ -33,9 +33,9 @@ func setupSuccessRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecor
 	return recorder
 }
 
-func Test_HTTP_RuleSet_List_Success(t *testing.T) {
+func Test_HTTP_RuleSet_ListAncestors_Success(t *testing.T) {
 
-	req, err := http.NewRequest("GET", "/12345/rulesets", bytes.NewBuffer([]byte("")))
+	req, err := http.NewRequest("GET", "/12345/rulesets/ancestors", bytes.NewBuffer([]byte("")))
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
