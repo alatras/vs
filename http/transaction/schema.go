@@ -5,10 +5,28 @@ import (
 )
 
 type ValidateTransactionPayload struct {
-	Amount int    `json:"amount"`
-	Entity string `json:"entity"`
+	Transaction transaction `json:"transaction"`
+}
+
+type transaction struct {
+	Amount   amount   `json:"amount"`
+	Merchant merchant `json:"merchant"`
+	Customer customer `json:"customer"`
+}
+
+type amount struct {
+	Value        string `json:"value"`
+	CurrencyCode string `json:"currencyCode"`
 }
 
 type ValidateTransactionResponse struct {
 	report.Report
+}
+
+type merchant struct {
+	Id string `json:"id"`
+}
+
+type customer struct {
+	Country string `json:"country"`
 }
