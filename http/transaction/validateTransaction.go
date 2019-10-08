@@ -5,11 +5,14 @@ import (
 	"bitbucket.verifone.com/validation-service/report"
 	trx "bitbucket.verifone.com/validation-service/transaction"
 	"errors"
+	"fmt"
 	"github.com/go-chi/render"
 	"net/http"
 	"strconv"
 	"strings"
 )
+
+const cardInstrument = "CARD"
 
 /*
 	Required to be implemented so that chi can bind the data to the payload struct
@@ -96,7 +99,19 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		CurrencyCode:        trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
 		CustomerCountryCode: trx.CountryCodeIso31661Alpha2(trxPayload.Transaction.Customer.Country),
 		EntityId:            trxPayload.Transaction.Merchant.Id,
+		CustomerId:          trxPayload.Transaction.Customer.CustomerIdentification.CustomerId,
+		CustomerIP:          trxPayload.Transaction.Customer.IP,
+		CustomerIPCountry:   trxPayload.Transaction.Customer.IPCountry,
 	}
+
+	for i := range trxPayload.Transaction.Instrument {
+		if trxPayload.Transaction.Instrument[i].Type == cardInstrument {
+			t.Card = trxPayload.Transaction.Instrument[i].CardNumber
+			t.IssuerCountryCode = trx.CountryCodeIso31661Alpha2(trxPayload.Transaction.Instrument[i].Country)
+		}
+	}
+
+	fmt.Printf("%+v\n", t)
 
 	reportChan, errChan := rs.app.Enqueue(ctx, t)
 
