@@ -9,9 +9,10 @@ type ValidateTransactionPayload struct {
 }
 
 type transaction struct {
-	Amount   amount   `json:"amount"`
-	Merchant merchant `json:"merchant"`
-	Customer customer `json:"customer"`
+	Amount     amount       `json:"amount"`
+	Merchant   merchant     `json:"merchant"`
+	Customer   customer     `json:"customer"`
+	Instrument []instrument `json:"instrument"`
 }
 
 type amount struct {
@@ -28,5 +29,18 @@ type merchant struct {
 }
 
 type customer struct {
-	Country string `json:"country"`
+	Country                string                 `json:"country"`
+	CustomerIdentification customerIdentification `json:"identification"`
+	IP                     string                 `json:"IPAddressV4"`
+	IPCountry              string                 `json:"IPCountry"`
+}
+
+type customerIdentification struct {
+	CustomerId string `json:"customerId"`
+}
+
+type instrument struct {
+	Type       string `json:"instrumentType"`
+	CardNumber string `json:"cardNumber"`
+	Country    string `json:"country"`
 }
