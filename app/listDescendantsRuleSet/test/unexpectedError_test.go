@@ -22,9 +22,9 @@ func Test_App_ListDescendantsRuleSet_UnexpectedError(t *testing.T) {
 	)
 
 	if err == nil {
-		t.Error("listing ancestors RuleSet succeeded but should fail with unexpected error")
+		t.Error("listing descendants RuleSet succeeded but should fail with unexpected error")
 	} else if err != listDescendantsRuleSet.UnexpectedError {
-		t.Errorf("listing ancestors RuleSet failed but not with unexpected error: %v", err)
+		t.Errorf("listing descendants RuleSet failed but not with unexpected error: %v", err)
 	}
 
 }

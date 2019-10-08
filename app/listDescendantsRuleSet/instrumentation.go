@@ -32,23 +32,23 @@ func (i *instrumentation) setMetadata(metadata metadata) {
 
 func (i *instrumentation) startListingDescendantsRuleSet() {
 	i.startedAt = time.Now()
-	i.logger.Output.Info("starting listing ancestors rule sets")
+	i.logger.Output.Info("starting listing descendants rule sets")
 }
 
 func (i *instrumentation) finishListingDescendantsRuleSet() {
 	i.logger.Output.
 		WithField("duration", time.Since(i.startedAt)).
-		Info("finished listing ancestors rule set")
+		Info("finished listing descendants rule set")
 }
 
 func (i *instrumentation) failedListingDescendantsRuleSet(err error) {
 	i.logger.Output.Logger.
 		WithError(err).
-		Error("error fetching ancestors rule sets from db")
+		Error("error fetching descendants rule sets from db")
 }
 
 func (i *instrumentation) failedGetDescendants(err error) {
 	i.logger.Output.Logger.
 		WithError(err).
-		Error("error fetching ancestors from the entity service")
+		Error("error fetching descendants from the entity service")
 }
