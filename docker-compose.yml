@@ -16,6 +16,7 @@ services:
       - MONGO_URL=mongodb://mongo
       - LOG_FORMAT=text
       - LOG_LEVEL=trace
+      - ENTITY_SERVICE_URL=http://blr2tBhanuP1:8090
   mongo:
     image: mongo:4.0.12
     restart: always

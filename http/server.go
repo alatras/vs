@@ -65,7 +65,7 @@ func (s *Server) Start() error {
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	r.Mount("/healthCheck", healthCheck.NewResource(s.logger, s.ruleSetRepository).Routes())
-	r.Mount("/", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
+	r.Mount("/transaction", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
 	r.Mount(
 		"/entities",
 		httpRuleSet.NewResource(
