@@ -5,7 +5,6 @@ import (
 	"bitbucket.verifone.com/validation-service/report"
 	trx "bitbucket.verifone.com/validation-service/transaction"
 	"errors"
-	"fmt"
 	"github.com/go-chi/render"
 	"net/http"
 	"strconv"
@@ -110,8 +109,6 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 			t.IssuerCountryCode = trx.CountryCodeIso31661Alpha3(trxPayload.Transaction.Instrument[i].Country)
 		}
 	}
-
-	fmt.Printf("%+v\n", t)
 
 	reportChan, errChan := rs.app.Enqueue(ctx, t)
 
