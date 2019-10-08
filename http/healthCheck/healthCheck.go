@@ -10,14 +10,14 @@ import (
 
 type Resource struct {
 	logger              *logger.Logger
-	repo                ruleSet.Repository
+	ruleSetRepo         ruleSet.Repository
 	entityServiceClient entityService.EntityService
 }
 
 func NewResource(l *logger.Logger, r ruleSet.Repository, e entityService.EntityService) Resource {
 	return Resource{
 		logger:              l.Scoped("healthCheck"),
-		repo:                r,
+		ruleSetRepo:         r,
 		entityServiceClient: e,
 	}
 }
@@ -31,7 +31,7 @@ func (rs Resource) Routes() chi.Router {
 }
 
 func (rs Resource) HealthCheck(w http.ResponseWriter, r *http.Request) {
-	err := rs.repo.Ping(r.Context())
+	err := rs.ruleSetRepo.Ping(r.Context())
 
 	if err != nil {
 
