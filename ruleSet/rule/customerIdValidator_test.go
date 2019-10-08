@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestNewCustomerIdValidator(t *testing.T) {
+func TestNewCustomerIdValidatorSuccess(t *testing.T) {
 	var err error
 
 	// Should create a new customer id validator where validation equals value
@@ -21,9 +21,12 @@ func TestNewCustomerIdValidator(t *testing.T) {
 	if err != nil {
 		t.Error("unexpected error while creating new customer id validator", err.Error())
 	}
+}
+
+func TestNewCustomerIdValidatorFailure(t *testing.T) {
 
 	// Should return an error when factory receives an invalid operator
-	_, err = newCustomerIdValidator("foo", "1234")
+	_, err := newCustomerIdValidator("foo", "1234")
 
 	if err != InvalidOperatorError {
 		t.Error("expected error while creating new customer id validator with invalid operator")

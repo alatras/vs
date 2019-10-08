@@ -50,20 +50,6 @@ func NewValidator(metadata Metadata) (Validator, error) {
 	var validator Validator
 	var err error
 
-	/* properties to validate
-	amount
-	customer country code
-	currency code
-
-	-- To do --
-	card - equal, not equal
-	issuer country - equal, not equal
-	entity - equal, not equal
-
-	customer - equal, not equal
-	customer IP - equal, not equal
-	customer IP country - equal, not equal
-	*/
 	switch metadata.Property {
 	case amount:
 		validator, err = newAmountValidator(metadata.Operator, metadata.Value)

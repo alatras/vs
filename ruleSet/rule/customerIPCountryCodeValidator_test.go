@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestNewCustomerIPCountryCodeValidator(t *testing.T) {
+func TestNewCustomerIPCountryCodeValidatorSuccess(t *testing.T) {
 	var err error
 
 	// Should create a new customer ip country code validator where validation equals value
@@ -21,9 +21,11 @@ func TestNewCustomerIPCountryCodeValidator(t *testing.T) {
 	if err != nil {
 		t.Error("unexpected error while creating new customer ip country code validator", err.Error())
 	}
+}
 
+func TestNewCustomerIPCountryCodeValidatorFailure(t *testing.T) {
 	// Should return an error when factory receives an invalid operator
-	_, err = newCustomerIPCountryCodeValidator("foo", "NL")
+	_, err := newCustomerIPCountryCodeValidator("foo", "NL")
 
 	if err != InvalidOperatorError {
 		t.Error("expected error while creating new customer ip country code validator with invalid operator")

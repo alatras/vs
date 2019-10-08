@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestNewCardValidator(t *testing.T) {
+func TestNewCardValidatorSuccess(t *testing.T) {
 	var err error
 
 	// Should create a new card validator where validation equals value
@@ -21,9 +21,11 @@ func TestNewCardValidator(t *testing.T) {
 	if err != nil {
 		t.Error("unexpected error while creating new card validator", err.Error())
 	}
+}
 
+func TestNewCardValidatorFailure(t *testing.T) {
 	// Should return an error when factory receives an invalid operator
-	_, err = newCardValidator("foo", "1234")
+	_, err := newCardValidator("foo", "1234")
 
 	if err != InvalidOperatorError {
 		t.Error("expected error while creating new card validator with invalid operator")

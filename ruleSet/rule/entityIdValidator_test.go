@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestNewEntityIdValidator(t *testing.T) {
+func TestNewEntityIdValidatorSuccess(t *testing.T) {
 	var err error
 
 	// Should create a new entity validator where validation equals value
@@ -21,9 +21,11 @@ func TestNewEntityIdValidator(t *testing.T) {
 	if err != nil {
 		t.Error("unexpected error while creating new entity validator", err.Error())
 	}
+}
 
+func TestNewEntityIdValidatorFailure(t *testing.T) {
 	// Should return an error when factory receives an invalid operator
-	_, err = newEntityIdValidator("foo", "1234")
+	_, err := newEntityIdValidator("foo", "1234")
 
 	if err != InvalidOperatorError {
 		t.Error("expected error while creating new entity validator with invalid operator")
