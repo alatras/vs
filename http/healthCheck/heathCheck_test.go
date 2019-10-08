@@ -15,7 +15,7 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 
 	log := logger.NewStubLogger()
 
-	resource := NewResource(log, &StubRepositorySuccess{})
+	resource := NewResource(log, &StubRepositorySuccess{}, &StubEntityServiceSuccess{})
 
 	resource.Routes().ServeHTTP(recorder, request)
 
@@ -27,7 +27,31 @@ func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest
 
 	log := logger.NewStubLogger()
 
-	resource := NewResource(log, &StubRepositoryError{})
+	resource := NewResource(log, &StubRepositoryError{}, &StubEntityServiceSuccess{})
+
+	resource.Routes().ServeHTTP(recorder, request)
+
+	return recorder
+}
+
+func setupSuccessRecorderEntityService(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
+	recorder := httptest.NewRecorder()
+
+	log := logger.NewStubLogger()
+
+	resource := NewResource(log, &StubRepositorySuccess{}, &StubEntityServiceSuccess{})
+
+	resource.Routes().ServeHTTP(recorder, request)
+
+	return recorder
+}
+
+func setupUnexpectedErrorRecorderEntityService(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
+	recorder := httptest.NewRecorder()
+
+	log := logger.NewStubLogger()
+
+	resource := NewResource(log, &StubRepositorySuccess{}, &StubEntityServiceError{})
 
 	resource.Routes().ServeHTTP(recorder, request)
 
@@ -56,6 +80,34 @@ func Test_HTTP_HealthCheck_Get_Failure(t *testing.T) {
 	}
 
 	recorder := setupUnexpectedErrorRecorder(t, req)
+
+	if status := recorder.Code; status != http.StatusInternalServerError {
+		t.Errorf("Status code expected to be %d but got %d", http.StatusInternalServerError, status)
+	}
+}
+
+func Test_HTTP_HealthCheck_Get_Success_EntityService(t *testing.T) {
+	req, err := http.NewRequest("GET", "/", nil)
+
+	if err != nil {
+		t.Errorf("Failed to create request: %v", err)
+	}
+
+	recorder := setupSuccessRecorderEntityService(t, req)
+
+	if status := recorder.Code; status != http.StatusOK {
+		t.Errorf("Status code expected to be %d but got %d", http.StatusOK, status)
+	}
+}
+
+func Test_HTTP_HealthCheck_Get_Failure_EntityService(t *testing.T) {
+	req, err := http.NewRequest("GET", "/", nil)
+
+	if err != nil {
+		t.Errorf("Failed to create request: %v", err)
+	}
+
+	recorder := setupUnexpectedErrorRecorderEntityService(t, req)
 
 	if status := recorder.Code; status != http.StatusInternalServerError {
 		t.Errorf("Status code expected to be %d but got %d", http.StatusInternalServerError, status)
@@ -122,4 +174,34 @@ func (s *StubRepositoryError) Delete(ctx context.Context, entityId string, ruleS
 
 func (s *StubRepositoryError) Ping(ctx context.Context) error {
 	return errors.New("cannot connect to mongo")
+}
+
+type StubEntityServiceSuccess struct {
+}
+
+func (e *StubEntityServiceSuccess) Ping() error {
+	return nil
+}
+
+func (e *StubEntityServiceSuccess) GetAncestorsOf(entityId string) ([]string, error) {
+	panic("implement me")
+}
+
+func (e *StubEntityServiceSuccess) GetDescendantsOf(entityId string) ([]string, error) {
+	panic("implement me")
+}
+
+type StubEntityServiceError struct {
+}
+
+func (e *StubEntityServiceError) Ping() error {
+	return errors.New("service is down")
+}
+
+func (e *StubEntityServiceError) GetAncestorsOf(entityId string) ([]string, error) {
+	panic("implement me")
+}
+
+func (e *StubEntityServiceError) GetDescendantsOf(entityId string) ([]string, error) {
+	panic("implement me")
 }

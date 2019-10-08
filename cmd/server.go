@@ -75,6 +75,7 @@ func (s *ServerCommand) Execute(args []string) error {
 		listRuleSetAppFactory,
 		getRuleSetAppFactory,
 		deleteRuleSetAppFactory,
+		entityServiceClient,
 	).Start()
 
 	if err != nil {

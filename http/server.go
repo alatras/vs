@@ -6,6 +6,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
+	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
 	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
 	httpRuleSet "bitbucket.verifone.com/validation-service/http/ruleSet"
@@ -30,6 +31,7 @@ type Server struct {
 	listRuleSetAppFactory      func() listRuleSet.ListRuleSet
 	getRuleSetAppFactory       func() getRuleSet.GetRuleSet
 	deleteRuleSetAppFactory    func() deleteRuleSet.DeleteRuleSet
+	entityServiceClient        entityService.EntityService
 }
 
 func NewServer(
@@ -42,6 +44,7 @@ func NewServer(
 	listRuleSetAppFactory func() listRuleSet.ListRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
+	entityServiceClient entityService.EntityService,
 ) *Server {
 	return &Server{
 		port:                       port,
@@ -53,6 +56,7 @@ func NewServer(
 		listRuleSetAppFactory:      listRuleSetAppFactory,
 		getRuleSetAppFactory:       getRuleSetAppFactory,
 		deleteRuleSetAppFactory:    deleteRuleSetAppFactory,
+		entityServiceClient:        entityServiceClient,
 	}
 }
 
@@ -64,7 +68,7 @@ func (s *Server) Start() error {
 	r.Use(httpMiddleware.SetContextWithTraceId)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	r.Mount("/healthCheck", healthCheck.NewResource(s.logger, s.ruleSetRepository).Routes())
+	r.Mount("/healthCheck", healthCheck.NewResource(s.logger, s.ruleSetRepository, s.entityServiceClient).Routes())
 	r.Mount("/transaction", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
 	r.Mount(
 		"/entities",

@@ -1,6 +1,7 @@
 package healthCheck
 
 import (
+	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"github.com/go-chi/chi"
@@ -8,14 +9,16 @@ import (
 )
 
 type Resource struct {
-	logger *logger.Logger
-	repo   ruleSet.Repository
+	logger              *logger.Logger
+	repo                ruleSet.Repository
+	entityServiceClient entityService.EntityService
 }
 
-func NewResource(l *logger.Logger, r ruleSet.Repository) Resource {
+func NewResource(l *logger.Logger, r ruleSet.Repository, e entityService.EntityService) Resource {
 	return Resource{
-		logger: l.Scoped("healthCheck"),
-		repo:   r,
+		logger:              l.Scoped("healthCheck"),
+		repo:                r,
+		entityServiceClient: e,
 	}
 }
 
@@ -33,6 +36,15 @@ func (rs Resource) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 
 		rs.logger.Error.WithError(err).Error("Health check failed. Mongo is down.......")
+
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	err = rs.entityServiceClient.Ping()
+
+	if err != nil {
+
+		rs.logger.Error.WithError(err).Error("Health check failed. Entity Service is down.......")
 
 		w.WriteHeader(http.StatusInternalServerError)
 	}
