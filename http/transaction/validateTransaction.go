@@ -107,7 +107,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	for i := range trxPayload.Transaction.Instrument {
 		if trxPayload.Transaction.Instrument[i].Type == cardInstrument {
 			t.Card = trxPayload.Transaction.Instrument[i].CardNumber
-			t.IssuerCountryCode = trx.CountryCodeIso31661Alpha2(trxPayload.Transaction.Instrument[i].Country)
+			t.IssuerCountryCode = trx.CountryCodeIso31661Alpha3(trxPayload.Transaction.Instrument[i].Country)
 		}
 	}
 

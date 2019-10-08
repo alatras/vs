@@ -10,7 +10,7 @@ type issuerCountryCodeValidator struct {
 }
 
 func newIssuerCountryCodeValidator(operator Operator, value string) (*issuerCountryCodeValidator, error) {
-	if !transaction.IsCountryCodeIso31661Alpha2(value) {
+	if !transaction.IsCountryCodeIso31661Alpha3(value) {
 		return nil, InvalidValueError
 	}
 
