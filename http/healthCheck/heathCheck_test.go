@@ -89,7 +89,15 @@ func (s *StubRepositorySuccess) Ping(ctx context.Context) error {
 	return nil
 }
 
+func (s *StubRepositorySuccess) ListByEntityIds(ctx context.Context, entityIds ...string) ([]ruleSet.RuleSet, error) {
+	panic("implement me")
+}
+
 type StubRepositoryError struct {
+}
+
+func (s *StubRepositoryError) ListByEntityIds(ctx context.Context, entityIds ...string) ([]ruleSet.RuleSet, error) {
+	panic("implement me")
 }
 
 func (s *StubRepositoryError) Create(ctx context.Context, ruleSet ruleSet.RuleSet) error {
