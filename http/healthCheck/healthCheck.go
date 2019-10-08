@@ -38,6 +38,7 @@ func (rs Resource) HealthCheck(w http.ResponseWriter, r *http.Request) {
 		rs.logger.Error.WithError(err).Error("Health check failed. Mongo is down.......")
 
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	err = rs.entityServiceClient.Ping()
@@ -47,6 +48,7 @@ func (rs Resource) HealthCheck(w http.ResponseWriter, r *http.Request) {
 		rs.logger.Error.WithError(err).Error("Health check failed. Entity Service is down.......")
 
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
