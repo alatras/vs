@@ -10,15 +10,15 @@ import (
 type metadata = logger.Metadata
 
 type instrumentation struct {
-	logger 		*logger.Logger
-	createdAt 	time.Time
-	startedAt 	time.Time
+	logger    *logger.Logger
+	createdAt time.Time
+	startedAt time.Time
 }
 
 func newInstrumentation(logger *logger.Logger) *instrumentation {
 	return &instrumentation{
-		logger:		 logger.Scoped("ValidateTransaction"),
-		createdAt: 	 time.Now(),
+		logger:    logger.Scoped("ValidateTransaction"),
+		createdAt: time.Now(),
 	}
 }
 

@@ -1,6 +1,7 @@
 package validateTransaction
 
 import (
+	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/report"
 	"bitbucket.verifone.com/validation-service/ruleSet"
@@ -11,17 +12,19 @@ import (
 const appName = "validateTransaction"
 
 type task struct {
-	ctx               context.Context
-	transaction       transaction.Transaction
-	ruleSetRepository ruleSet.Repository
-	response          chan report.Report
-	error             chan error
-	instrumentation   *instrumentation
+	ctx                 context.Context
+	transaction         transaction.Transaction
+	entityServiceClient entityService.EntityService
+	ruleSetRepository   ruleSet.Repository
+	response            chan report.Report
+	error               chan error
+	instrumentation     *instrumentation
 }
 
 func newTask(
 	ctx context.Context,
 	trx transaction.Transaction,
+	entityServiceClient entityService.EntityService,
 	ruleSetRepository ruleSet.Repository,
 	logger *logger.Logger,
 ) task {
@@ -33,12 +36,13 @@ func newTask(
 	})
 
 	return task{
-		ctx:               ctx,
-		transaction:       trx,
-		ruleSetRepository: ruleSetRepository,
-		response:          make(chan report.Report),
-		error:             make(chan error),
-		instrumentation:   instrumentation,
+		ctx:                 ctx,
+		transaction:         trx,
+		entityServiceClient: entityServiceClient,
+		ruleSetRepository:   ruleSetRepository,
+		response:            make(chan report.Report),
+		error:               make(chan error),
+		instrumentation:     instrumentation,
 	}
 }
 
@@ -48,7 +52,14 @@ func (task *task) run() {
 	defer close(task.response)
 	defer close(task.error)
 
-	ruleSets, err := task.ruleSetRepository.ListByEntityId(task.ctx, task.transaction.EntityId)
+	entityIds, err := task.entityServiceClient.GetAncestorsOf(task.transaction.EntityId)
+
+	if err != nil {
+		task.error <- err
+		return
+	}
+
+	ruleSets, err := task.ruleSetRepository.ListByEntityIds(task.ctx, entityIds...)
 
 	if err != nil {
 		task.error <- err
@@ -78,20 +89,27 @@ func (task *task) run() {
 }
 
 type ValidatorService struct {
-	ruleSetRepository ruleSet.Repository
-	queue             chan task
-	numOfWorkers      int
-	workers           []chan struct{}
-	logger            *logger.Logger
+	entityServiceClient entityService.EntityService
+	ruleSetRepository   ruleSet.Repository
+	queue               chan task
+	numOfWorkers        int
+	workers             []chan struct{}
+	logger              *logger.Logger
 }
 
-func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository, logger *logger.Logger) ValidatorService {
+func NewValidatorService(
+	numOfWorkers int,
+	entityServiceClient entityService.EntityService,
+	ruleSetRepository ruleSet.Repository,
+	logger *logger.Logger,
+) ValidatorService {
 	v := ValidatorService{
-		ruleSetRepository: ruleSetRepository,
-		queue:             make(chan task),
-		numOfWorkers:      numOfWorkers,
-		workers:           []chan struct{}{},
-		logger:            logger.Scoped(appName),
+		entityServiceClient: entityServiceClient,
+		ruleSetRepository:   ruleSetRepository,
+		queue:               make(chan task),
+		numOfWorkers:        numOfWorkers,
+		workers:             []chan struct{}{},
+		logger:              logger.Scoped(appName),
 	}
 
 	for workerId := 0; workerId < v.numOfWorkers; workerId++ {
@@ -102,7 +120,7 @@ func NewValidatorService(numOfWorkers int, ruleSetRepository ruleSet.Repository,
 }
 
 func (v *ValidatorService) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan error) {
-	task := newTask(ctx, trx, v.ruleSetRepository, v.logger)
+	task := newTask(ctx, trx, v.entityServiceClient, v.ruleSetRepository, v.logger)
 	v.queue <- task
 	return task.response, task.error
 }

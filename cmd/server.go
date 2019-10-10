@@ -7,6 +7,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
+	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/http"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
@@ -18,7 +19,8 @@ import (
 
 // ServerCommand with command line flags and env
 type ServerCommand struct {
-	Mongo MongoGroup `group:"mongo" namespace:"mongo" env-namespace:"MONGO"`
+	Mongo         MongoGroup         `group:"mongo" namespace:"mongo"`
+	EntityService EntityServiceGroup `group:"entityService" namespace:"entityService"`
 
 	HTTPPort int `long:"httpPort" env:"HTTP_PORT" default:"8080" description:"HTTP port"`
 
@@ -31,13 +33,20 @@ type MongoGroup struct {
 	DB  string `long:"db" env:"MONGO_DB" default:"validationService" description:"MongoDB database name"`
 }
 
+// EntityServiceGroup Entity Service configuration parameters
+type EntityServiceGroup struct {
+	URL string `long:"url" env:"ENTITY_SERVICE_URL" required:"Entity Service url required" description:"Entity Service URL (without trailing slash)"`
+}
+
 // Execute is the entry point for "server" command
 func (s *ServerCommand) Execute(args []string) error {
 	log := s.setupLogger()
 
 	ruleSetRepo := s.createRuleSetRepository(log)
 
-	validateTransactionApp := s.createValidateTransactionApp(ruleSetRepo, log)
+	entityServiceClient := entityService.NewClient(log, s.EntityService.URL)
+
+	validateTransactionApp := s.createValidateTransactionApp(entityServiceClient, ruleSetRepo, log)
 
 	log.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
 
@@ -107,7 +116,11 @@ func (s *ServerCommand) createRuleSetRepository(logger *logger.Logger) *ruleSet.
 	return ruleSetRepository
 }
 
-func (s *ServerCommand) createValidateTransactionApp(r *ruleSet.MongoRuleSetRepository, l *logger.Logger) *validateTransaction.ValidatorService {
-	validator := validateTransaction.NewValidatorService(runtime.NumCPU(), r, l)
+func (s *ServerCommand) createValidateTransactionApp(
+	e entityService.EntityService,
+	r *ruleSet.MongoRuleSetRepository,
+	l *logger.Logger,
+) *validateTransaction.ValidatorService {
+	validator := validateTransaction.NewValidatorService(runtime.NumCPU(), e, r, l)
 	return &validator
 }
