@@ -36,7 +36,9 @@ type MongoGroup struct {
 
 // EntityServiceGroup Entity Service configuration parameters
 type EntityServiceGroup struct {
-	URL string `long:"url" env:"ENTITY_SERVICE_URL" required:"Entity Service url required" description:"Entity Service URL (without trailing slash)"`
+	URL                  string `long:"url" env:"ENTITY_SERVICE_URL" required:"Entity service url required" description:"Entity service URL (without trailing slash)"`
+	JWTToken             string `long:"jwtToken" env:"ENTITY_SERVICE_JWT_TOKEN" required:"Entity service JWT auth token required" description:"Entity service JWT auth token"`
+	SkipCertVerification bool   `long:"skipCertVerification" env:"ENTITY_SERVICE_SKIP_CERT_VERIFICATION" description:"Skip HTTPS certificate verification or not"`
 }
 
 // Execute is the entry point for "server" command
@@ -45,7 +47,11 @@ func (s *ServerCommand) Execute(args []string) error {
 
 	ruleSetRepo := s.createRuleSetRepository(log)
 
-	entityServiceClient := entityService.NewClient(log, s.EntityService.URL)
+	entityServiceClient := entityService.NewClient(
+		log, s.EntityService.URL,
+		s.EntityService.JWTToken,
+		s.EntityService.SkipCertVerification,
+	)
 
 	validateTransactionApp := s.createValidateTransactionApp(entityServiceClient, ruleSetRepo, log)
 
