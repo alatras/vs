@@ -1,9 +1,10 @@
-package delete
+package update
 
 import (
-	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
+	"bytes"
 	"github.com/bitly/go-simplejson"
 	"net/http"
 	"net/http/httptest"
@@ -15,22 +16,36 @@ func setupNotFoundErrorRecorder(t *testing.T, request *http.Request) *httptest.R
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, nil, nil, func() deleteRuleSet.DeleteRuleSet {
-		return &errorApp{error: deleteRuleSet.NotFound}
-	}, nil, nil)
+	resource := ruleSet.NewResource(log, nil, nil, nil, nil, func() updateRuleSet.UpdateRuleSet {
+		return &errorApp{error: updateRuleSet.NotFound}
+	})
 
 	resource.Routes().ServeHTTP(recorder, request)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_Delete_NotFoundError(t *testing.T) {
-	req, err := http.NewRequest("DELETE", "/12345/rulesets/"+mockRuleSet.Id, nil)
+func Test_HTTP_RuleSet_Update_NotFoundError(t *testing.T) {
+	requestBody :=
+		`{
+			"name": "Test",
+			"action": "BLOCK",
+			"rules": [
+				{
+					"key": "amount",
+					"operator": ">=",
+					"value": "1000"
+				}
+			]
+		}`
+
+	req, err := http.NewRequest("PUT", "/12345/rulesets/"+mockRuleSet.Id, bytes.NewBuffer([]byte(requestBody)))
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
-		return
 	}
+
+	req.Header.Set("Content-Type", "application/json")
 
 	recorder := setupNotFoundErrorRecorder(t, req)
 

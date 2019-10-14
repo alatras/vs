@@ -5,6 +5,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
 	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
@@ -30,6 +31,7 @@ type Server struct {
 	listRuleSetAppFactory      func() listRuleSet.ListRuleSet
 	getRuleSetAppFactory       func() getRuleSet.GetRuleSet
 	deleteRuleSetAppFactory    func() deleteRuleSet.DeleteRuleSet
+	updateRuleSetAppFactory    func() updateRuleSet.UpdateRuleSet
 }
 
 func NewServer(
@@ -42,6 +44,7 @@ func NewServer(
 	listRuleSetAppFactory func() listRuleSet.ListRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
+	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet,
 ) *Server {
 	return &Server{
 		port:                       port,
@@ -53,6 +56,7 @@ func NewServer(
 		listRuleSetAppFactory:      listRuleSetAppFactory,
 		getRuleSetAppFactory:       getRuleSetAppFactory,
 		deleteRuleSetAppFactory:    deleteRuleSetAppFactory,
+		updateRuleSetAppFactory:    updateRuleSetAppFactory,
 	}
 }
 
@@ -74,6 +78,7 @@ func (s *Server) Start() error {
 			s.getRuleSetAppFactory,
 			s.deleteRuleSetAppFactory,
 			s.listRuleSetAppFactory,
+			s.updateRuleSetAppFactory,
 		).Routes(),
 	)
 

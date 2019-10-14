@@ -5,6 +5,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/http"
@@ -65,6 +66,10 @@ func (s *ServerCommand) Execute(args []string) error {
 		return listRuleSet.NewListRuleSet(log, ruleSetRepo)
 	}
 
+	updateRuleSetAppFactory := func() updateRuleSet.UpdateRuleSet {
+		return updateRuleSet.NewUpdateRuleSet(log, ruleSetRepo)
+	}
+
 	err := http.NewServer(
 		s.HTTPPort,
 		chi.NewRouter(),
@@ -75,6 +80,7 @@ func (s *ServerCommand) Execute(args []string) error {
 		listRuleSetAppFactory,
 		getRuleSetAppFactory,
 		deleteRuleSetAppFactory,
+		updateRuleSetAppFactory,
 	).Start()
 
 	if err != nil {

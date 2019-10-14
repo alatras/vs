@@ -44,6 +44,16 @@ func New(entityId string, name string, action Action, metadata []rule.Metadata) 
 	return ruleSet
 }
 
+func From(ruleSetId string, entityId string, name string, action Action, metadata []rule.Metadata) RuleSet {
+	return RuleSet{
+		Id:           ruleSetId,
+		EntityId:     entityId,
+		Name:         name,
+		Action:       action,
+		RuleMetadata: metadata,
+	}
+}
+
 func (ruleSet RuleSet) Matches(trx transaction.Transaction) (Action, error) {
 	if len(ruleSet.RuleMetadata) == 0 {
 		return Pass, nil
