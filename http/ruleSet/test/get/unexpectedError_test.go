@@ -25,6 +25,7 @@ func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest
 		nil,
 		nil,
 		nil,
+		nil,
 	)
 
 	resource.Routes().ServeHTTP(recorder, request)

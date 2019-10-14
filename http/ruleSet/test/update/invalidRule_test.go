@@ -1,7 +1,7 @@
-package create
+package update
 
 import (
-	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
@@ -15,46 +15,36 @@ func setupInvalidRuleRecorder(t *testing.T, request *http.Request) *httptest.Res
 	recorder := httptest.NewRecorder()
 
 	log := logger.NewStubLogger()
-
-	resource := ruleSet.NewResource(
-		log,
-		func() createRuleSet.CreateRuleSet {
-			return &errorApp{error: createRuleSet.InvalidRule}
-		},
-		nil,
-		nil,
-		nil,
-		nil,
-		nil,
-		nil,
-	)
+	resource := ruleSet.NewResource(log, nil, nil, nil, nil, func() updateRuleSet.UpdateRuleSet {
+		return &errorApp{error: updateRuleSet.InvalidRule}
+	})
 
 	resource.Routes().ServeHTTP(recorder, request)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_Create_InvalidRule(t *testing.T) {
+func Test_HTTP_RuleSet_Update_InvalidRule(t *testing.T) {
 	requestBody :=
 		`{
-			"name": "test",
-			"action": "TAG",
+			"name": "Test",
+			"action": "BLOCK",
 			"rules": [
 				{
-					"key": "name",
+					"key": "amount",
 					"operator": ">=",
 					"value": "1000"
 				}
 			]
 		}`
 
-	req, err := http.NewRequest("POST", "/12345/rulesets", bytes.NewBuffer([]byte(requestBody)))
-	req.Header.Set("Content-Type", "application/json")
+	req, err := http.NewRequest("PUT", "/12345/rulesets/"+mockRuleSet.Id, bytes.NewBuffer([]byte(requestBody)))
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
-		return
 	}
+
+	req.Header.Set("Content-Type", "application/json")
 
 	recorder := setupInvalidRuleRecorder(t, req)
 

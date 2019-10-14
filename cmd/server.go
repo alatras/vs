@@ -7,6 +7,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/http"
@@ -81,6 +82,10 @@ func (s *ServerCommand) Execute(args []string) error {
 		return listDescendantsRuleSet.NewListDescendantsRuleSet(log, ruleSetRepo, entityServiceClient)
 	}
 
+	updateRuleSetAppFactory := func() updateRuleSet.UpdateRuleSet {
+		return updateRuleSet.NewUpdateRuleSet(log, ruleSetRepo)
+	}
+
 	err := http.NewServer(
 		s.HTTPPort,
 		chi.NewRouter(),
@@ -93,6 +98,7 @@ func (s *ServerCommand) Execute(args []string) error {
 		listDescendantsRuleSetAppFactory,
 		getRuleSetAppFactory,
 		deleteRuleSetAppFactory,
+		updateRuleSetAppFactory,
 	).Start()
 
 	if err != nil {

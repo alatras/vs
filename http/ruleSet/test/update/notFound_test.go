@@ -1,9 +1,10 @@
-package get
+package update
 
 import (
-	"bitbucket.verifone.com/validation-service/app/getRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
+	"bytes"
 	"github.com/bitly/go-simplejson"
 	"net/http"
 	"net/http/httptest"
@@ -15,32 +16,36 @@ func setupNotFoundErrorRecorder(t *testing.T, request *http.Request) *httptest.R
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(
-		log,
-		nil,
-		func() getRuleSet.GetRuleSet {
-			return &errorApp{error: getRuleSet.NotFound}
-		},
-		nil,
-		nil,
-		nil,
-		nil,
-		nil,
-	)
+	resource := ruleSet.NewResource(log, nil, nil, nil, nil, func() updateRuleSet.UpdateRuleSet {
+		return &errorApp{error: updateRuleSet.NotFound}
+	})
 
 	resource.Routes().ServeHTTP(recorder, request)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_Get_NotFoundError(t *testing.T) {
-	req, err := http.NewRequest("GET", "/12345/rulesets/"+mockRuleSet.Id, nil)
-	req.Header.Set("Content-Type", "application/json")
+func Test_HTTP_RuleSet_Update_NotFoundError(t *testing.T) {
+	requestBody :=
+		`{
+			"name": "Test",
+			"action": "BLOCK",
+			"rules": [
+				{
+					"key": "amount",
+					"operator": ">=",
+					"value": "1000"
+				}
+			]
+		}`
+
+	req, err := http.NewRequest("PUT", "/12345/rulesets/"+mockRuleSet.Id, bytes.NewBuffer([]byte(requestBody)))
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
-		return
 	}
+
+	req.Header.Set("Content-Type", "application/json")
 
 	recorder := setupNotFoundErrorRecorder(t, req)
 

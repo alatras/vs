@@ -7,6 +7,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
 	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
@@ -34,6 +35,7 @@ type Server struct {
 	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet
 	getRuleSetAppFactory       func() getRuleSet.GetRuleSet
 	deleteRuleSetAppFactory    func() deleteRuleSet.DeleteRuleSet
+	updateRuleSetAppFactory    func() updateRuleSet.UpdateRuleSet
 }
 
 func NewServer(
@@ -48,6 +50,7 @@ func NewServer(
 	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
+	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet,
 ) *Server {
 	return &Server{
 		port:                       port,
@@ -61,6 +64,7 @@ func NewServer(
 		listDescendantsRuleSetAppFactory: listDescendantsRuleSetAppFactory,
 		getRuleSetAppFactory:       getRuleSetAppFactory,
 		deleteRuleSetAppFactory:    deleteRuleSetAppFactory,
+		updateRuleSetAppFactory:    updateRuleSetAppFactory,
 	}
 }
 
@@ -84,6 +88,7 @@ func (s *Server) Start() error {
 			s.listRuleSetAppFactory,
 			s.listAncestorsRuleSetAppFactory,
 			s.listDescendantsRuleSetAppFactory,
+			s.updateRuleSetAppFactory,
 		).Routes(),
 	)
 
