@@ -25,6 +25,7 @@ func setupSuccessRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecor
 			return &successApp{}
 		},
 		nil,
+		nil,
 	)
 
 	resource.Routes().ServeHTTP(recorder, r)

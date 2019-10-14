@@ -11,7 +11,7 @@ import (
 
 func Test_App_UpdateRuleSet_UnexpectedError(t *testing.T) {
 	log := logger.NewStubLogger()
-	repo := StubRepository{}
+	repo := stubRepository{}
 
 	app := updateRuleSet.NewUpdateRuleSet(log, &repo)
 
@@ -31,25 +31,25 @@ func Test_App_UpdateRuleSet_UnexpectedError(t *testing.T) {
 	}
 }
 
-type StubRepository struct {
+type stubRepository struct {
 }
 
-func (s *StubRepository) Create(ctx context.Context, ruleSet ruleSet.RuleSet) error {
+func (s *stubRepository) Create(ctx context.Context, ruleSet ruleSet.RuleSet) error {
 	panic("implement me")
 }
 
-func (s *StubRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (*ruleSet.RuleSet, error) {
+func (s *stubRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (*ruleSet.RuleSet, error) {
 	panic("implement me")
 }
 
-func (s *StubRepository) ListByEntityId(ctx context.Context, entityId string) ([]ruleSet.RuleSet, error) {
+func (s *stubRepository) ListByEntityIds(ctx context.Context, entityIds ...string) ([]ruleSet.RuleSet, error) {
 	panic("implement me")
 }
 
-func (s *StubRepository) Replace(ctx context.Context, entityId string, ruleSet ruleSet.RuleSet) (bool, error) {
+func (s *stubRepository) Replace(ctx context.Context, entityId string, ruleSet ruleSet.RuleSet) (bool, error) {
 	return true, errors.New("unexpected error")
 }
 
-func (s *StubRepository) Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error) {
+func (s *stubRepository) Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error) {
 	panic("implement me")
 }

@@ -25,6 +25,7 @@ func setupSuccessRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecor
 		func() listDescendantsRuleSet.ListDescendantsRuleSet {
 			return &successApp{}
 		},
+		nil,
 	)
 
 	resource.Routes().ServeHTTP(recorder, r)

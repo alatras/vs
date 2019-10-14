@@ -16,9 +16,18 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, nil, nil, nil, nil, func() updateRuleSet.UpdateRuleSet {
-		return &successApp{}
-	})
+	resource := ruleSet.NewResource(
+		log,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+		func() updateRuleSet.UpdateRuleSet {
+			return &successApp{}
+		},
+	)
 
 	resource.Routes().ServeHTTP(recorder, request)
 
