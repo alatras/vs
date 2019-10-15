@@ -15,9 +15,18 @@ func setupInvalidRuleRecorder(t *testing.T, request *http.Request) *httptest.Res
 	recorder := httptest.NewRecorder()
 
 	log := logger.NewStubLogger()
-	resource := ruleSet.NewResource(log, nil, nil, nil, nil, func() updateRuleSet.UpdateRuleSet {
-		return &errorApp{error: updateRuleSet.InvalidRule}
-	})
+	resource := ruleSet.NewResource(
+		log,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+		func() updateRuleSet.UpdateRuleSet {
+			return &errorApp{error: updateRuleSet.InvalidRule}
+		},
+	)
 
 	resource.Routes().ServeHTTP(recorder, request)
 

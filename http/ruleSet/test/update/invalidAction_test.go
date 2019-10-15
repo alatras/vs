@@ -16,9 +16,18 @@ func setupInvalidActionRecorder(t *testing.T, request *http.Request) *httptest.R
 
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, nil, nil, nil, nil, func() updateRuleSet.UpdateRuleSet {
-		return &errorApp{error: updateRuleSet.InvalidAction}
-	})
+	resource := ruleSet.NewResource(
+		log,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+		func() updateRuleSet.UpdateRuleSet {
+			return &errorApp{error: updateRuleSet.InvalidAction}
+		},
+	)
 
 	resource.Routes().ServeHTTP(recorder, request)
 

@@ -10,35 +10,35 @@ func Test_DescendantsResponse_Success(t *testing.T) {
 	responseText := `{
 		"children": [
 			{
-				"entityId": "rootChild1",
+				"entityUid": "rootChild1",
 				"name": "rootChild1",
 				"children": [
 					{
-						"entityId": "rootChild1Child1",
+						"entityUid": "rootChild1Child1",
 						"name": "rootChild1Child1"
 					},
 					{
-						"entityId": "rootChild1Child2",
+						"entityUid": "rootChild1Child2",
 						"name": "rootChild1Child2"
 					}
 				]
 			},
 			{
-				"entityId": "rootChild2",
+				"entityUid": "rootChild2",
 				"name": "rootChild2",
 				"children": [
 					{
-						"entityId": "rootChild2Child1",
+						"entityUid": "rootChild2Child1",
 						"name": "rootChild2Child1"
 					},
 					{
-						"entityId": "rootChild2Child2",
+						"entityUid": "rootChild2Child2",
 						"name": "rootChild2Child2"
 					}
 				]
 			}
 		],
-		"entityId": "root",
+		"entityUid": "root",
 		"name": "root"
 	}`
 
@@ -74,7 +74,7 @@ func Test_DescendantsResponse_Success(t *testing.T) {
 
 func Test_DescendantsResponse_Success_NoChildren(t *testing.T) {
 	responseText := `{	
-		"entityId": "root",
+		"entityUid": "root",
 		"name": "root"
 	}`
 
@@ -102,15 +102,15 @@ func Test_DescendantsResponse_Success_NoChildren(t *testing.T) {
 	}
 }
 
-func Test_EntityService_DescendantsResponse_Fail_NoEntityId(t *testing.T) {
+func Test_EntityService_DescendantsResponse_Fail_NoentityUid(t *testing.T) {
 	responseText := `{
 		"children": [
 			{
-				"entityId": "rootChild1",
+				"entityUid": "rootChild1",
 				"name": "rootChild1",
 				"children": [
 					{
-						"entityId": "rootChild1Child1",
+						"entityUid": "rootChild1Child1",
 						"name": "rootChild1Child1"
 					},
 					{
@@ -119,21 +119,21 @@ func Test_EntityService_DescendantsResponse_Fail_NoEntityId(t *testing.T) {
 				]
 			},
 			{
-				"entityId": "rootChild2",
+				"entityUid": "rootChild2",
 				"name": "rootChild2",
 				"children": [
 					{
-						"entityId": "rootChild2Child1",
+						"entityUid": "rootChild2Child1",
 						"name": "rootChild2Child1"
 					},
 					{
-						"entityId": "rootChild2Child2",
+						"entityUid": "rootChild2Child2",
 						"name": "rootChild2Child2"
 					}
 				]
 			}
 		],
-		"entityId": "root",
+		"entityUid": "root",
 		"name": "root"
 	}`
 

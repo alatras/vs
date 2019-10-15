@@ -1,51 +1,51 @@
-package delete
+package listDescendants
 
 import (
-	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
+	"bytes"
 	"github.com/bitly/go-simplejson"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
+func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
-
 	log := logger.NewStubLogger()
 
 	resource := ruleSet.NewResource(
 		log,
 		nil,
 		nil,
-		func() deleteRuleSet.DeleteRuleSet {
-			return &errorApp{error: deleteRuleSet.UnexpectedError}
+		nil,
+		nil,
+		nil,
+		func() listDescendantsRuleSet.ListDescendantsRuleSet {
+			return &errorApp{error: listDescendantsRuleSet.UnexpectedError}
 		},
 		nil,
-		nil,
-		nil,
-		nil,
 	)
-
-	resource.Routes().ServeHTTP(recorder, request)
+	resource.Routes().ServeHTTP(recorder, r)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_Delete_UnexpectedError(t *testing.T) {
-	req, err := http.NewRequest("DELETE", "/12345/rulesets/"+mockRuleSet.Id, nil)
+func Test_HTTP_RuleSet_ListDescendants_UnexpectedError(t *testing.T) {
+	req, err := http.NewRequest("GET", "/12345/rulesets/descendants", bytes.NewBuffer([]byte("")))
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
 		return
 	}
 
-	recorder := setupUnexpectedErrorRecorder(t, req)
+	req.Header.Set("Content-Type", "application/json")
+
+	recorder := setupUnknownErrorRecorder(t, req)
 
 	if status := recorder.Code; status != http.StatusInternalServerError {
 		t.Errorf("Status code expected to be %d but got %d", http.StatusInternalServerError, status)
-		return
 	}
 
 	body := recorder.Body.String()

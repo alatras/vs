@@ -1,7 +1,7 @@
 package test
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
@@ -9,11 +9,12 @@ import (
 	"testing"
 )
 
-func Test_App_ListRuleSet_UnexpectedError(t *testing.T) {
+func Test_App_ListAncestorsRuleSet_UnexpectedError(t *testing.T) {
 	log := logger.NewStubLogger()
 	repo := stubRepository{}
+	entityService := stubEntityService{}
 
-	app := listRuleSet.NewListRuleSet(log, &repo)
+	app := listAncestorsRuleSet.NewListAncestorsRuleSet(log, &repo, &entityService)
 
 	_, err := app.Execute(
 		context.TODO(),
@@ -21,9 +22,9 @@ func Test_App_ListRuleSet_UnexpectedError(t *testing.T) {
 	)
 
 	if err == nil {
-		t.Error("listing RuleSet succeeded but should fail with unexpected error")
-	} else if err != listRuleSet.UnexpectedError {
-		t.Errorf("listing RuleSet failed but not with unexpected error: %v", err)
+		t.Error("listing ancestors RuleSet succeeded but should fail with unexpected error")
+	} else if err != listAncestorsRuleSet.UnexpectedError {
+		t.Errorf("listing ancestors RuleSet failed but not with unexpected error: %v", err)
 	}
 
 }

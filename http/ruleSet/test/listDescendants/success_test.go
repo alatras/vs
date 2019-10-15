@@ -1,7 +1,7 @@
-package update
+package listDescendants
 
 import (
-	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
@@ -11,9 +11,8 @@ import (
 	"testing"
 )
 
-func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
+func setupSuccessRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
-
 	log := logger.NewStubLogger()
 
 	resource := ruleSet.NewResource(
@@ -23,35 +22,24 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 		nil,
 		nil,
 		nil,
-		nil,
-		func() updateRuleSet.UpdateRuleSet {
+		func() listDescendantsRuleSet.ListDescendantsRuleSet {
 			return &successApp{}
 		},
+		nil,
 	)
 
-	resource.Routes().ServeHTTP(recorder, request)
+	resource.Routes().ServeHTTP(recorder, r)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_Update_Success(t *testing.T) {
-	requestBody :=
-		`{
-			"name": "Test",
-			"action": "BLOCK",
-			"rules": [
-				{
-					"key": "amount",
-					"operator": ">=",
-					"value": "1000"
-				}
-			]
-		}`
+func Test_HTTP_RuleSet_ListDescendants_Success(t *testing.T) {
 
-	req, err := http.NewRequest("PUT", "/12345/rulesets/"+mockRuleSet.Id, bytes.NewBuffer([]byte(requestBody)))
+	req, err := http.NewRequest("GET", "/12345/rulesets/descendants", bytes.NewBuffer([]byte("")))
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
+		return
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -65,20 +53,22 @@ func Test_HTTP_RuleSet_Update_Success(t *testing.T) {
 	body := recorder.Body.String()
 
 	expected := fmt.Sprintf(
-		`{
-			"id": "%s",
-			"name": "Test",
-			"action": "BLOCK",
-			"entity": "12345",
-			"rules": [
-				{
-					"key": "amount",
-					"operator": ">=",
-					"value": "1000"
-				}
-			]
-		}`,
-		mockRuleSet.Id,
+		`[
+			{
+				"id": "%s",
+				"name": "Test",
+				"action": "BLOCK",
+				"entity": "12345",
+				"rules": [
+					{
+						"key": "amount",
+						"operator": ">=",
+						"value": "1000"
+					}
+				]
+			}
+		]`,
+		mockRuleSets[0].Id,
 	)
 
 	assertJSONEqual(t, "Response body expected to be", expected, body)

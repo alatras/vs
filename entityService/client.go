@@ -2,6 +2,7 @@ package entityService
 
 import (
 	"bitbucket.verifone.com/validation-service/logger"
+	"crypto/tls"
 	"github.com/bitly/go-simplejson"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -9,14 +10,26 @@ import (
 )
 
 type client struct {
-	logger *logger.Logger
-	url    string
+	logger     *logger.Logger
+	httpClient *http.Client
+	url        string
+	jwtToken   string
 }
 
-func NewClient(logger *logger.Logger, url string) *client {
+func NewClient(logger *logger.Logger, url string, jwtToken string, skipCertificateVerification bool) *client {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: skipCertificateVerification,
+		},
+	}
+
+	httpClient := &http.Client{Transport: tr}
+
 	return &client{
-		logger: logger.Scoped("EntityServiceClient"),
-		url:    url + "/ds-entity-service",
+		logger:     logger.Scoped("EntityServiceClient"),
+		httpClient: httpClient,
+		url:        url + "/ds-entity-service",
+		jwtToken:   jwtToken,
 	}
 }
 
@@ -30,7 +43,16 @@ func (c *client) GetAncestorsOf(entityId string) ([]string, error) {
 		"method":   "GetAncestorsOf",
 	})
 
-	resp, err := http.Get(c.url + "/entities/" + entityId + "/ancestors")
+	req, err := http.NewRequest("GET", c.url+"/entities/"+entityId+"/ancestors", nil)
+
+	if err != nil {
+		errorLog.WithError(err).Error("failed to create the request")
+		return []string{}, RequestError
+	}
+
+	req.Header.Set("Authorization", "Bearer "+c.jwtToken)
+
+	resp, err := c.httpClient.Do(req)
 
 	if err != nil {
 		errorLog.WithError(err).Error("failed to perform the request")
@@ -42,22 +64,37 @@ func (c *client) GetAncestorsOf(entityId string) ([]string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		errorLog.WithError(err).Error("failed to read the request body")
+		errorLog.WithError(err).Error("failed to read the response body")
 		return []string{}, RequestError
 	}
 
 	json, err := simplejson.NewJson(body)
 
 	if err != nil {
-		errorLog.WithError(err).Error("failed to parse the request body")
-		return []string{}, err
+		errorLog.WithError(err).Error("failed to parse the response body")
+		return []string{}, ResponseInvalidError
+	}
+
+	if resp.StatusCode == 401 {
+		errorLog.WithField("errorDetails", json.MustMap()).Error("request unauthorized")
+		return []string{}, UnauthorizedError
+	}
+
+	if resp.StatusCode == 404 {
+		errorLog.WithField("errorDetails", json.MustMap()).Error("entity was not found")
+		return []string{}, EntityNotFound
+	}
+
+	if resp.StatusCode != 200 {
+		errorLog.WithField("errorDetails", json.MustMap()).Error("response status code is unsuccessful")
+		return []string{}, ResponseUnsuccessful
 	}
 
 	entityIds, err := entityIdsFromAncestorsResponseJson(json)
 
 	if err != nil {
 		errorLog.WithError(err).Error("failed to get entity ids from json")
-		return []string{}, err
+		return []string{}, ResponseInvalidError
 	}
 
 	return entityIds, nil
@@ -69,7 +106,16 @@ func (c *client) GetDescendantsOf(entityId string) ([]string, error) {
 		"method":   "GetDescendantsOf",
 	})
 
-	resp, err := http.Get(c.url + "/entities/" + entityId + "/descendants")
+	req, err := http.NewRequest("GET", c.url+"/entities/"+entityId+"/descendents", nil)
+
+	if err != nil {
+		errorLog.WithError(err).Error("failed to create the request")
+		return []string{}, RequestError
+	}
+
+	req.Header.Set("Authorization", "Bearer "+c.jwtToken)
+
+	resp, err := c.httpClient.Do(req)
 
 	if err != nil {
 		errorLog.WithError(err).Error("failed to perform the request")
@@ -81,15 +127,30 @@ func (c *client) GetDescendantsOf(entityId string) ([]string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		errorLog.WithError(err).Error("failed to read the request body")
+		errorLog.WithError(err).Error("failed to read the response body")
 		return []string{}, RequestError
 	}
 
 	json, err := simplejson.NewJson(body)
 
 	if err != nil {
-		errorLog.WithError(err).Error("failed to parse the request body")
-		return []string{}, err
+		errorLog.WithError(err).Error("failed to parse the response body")
+		return []string{}, ResponseInvalidError
+	}
+
+	if resp.StatusCode == 401 {
+		errorLog.WithField("errorDetails", json.MustMap()).Error("request unauthorized")
+		return []string{}, UnauthorizedError
+	}
+
+	if resp.StatusCode == 404 {
+		errorLog.WithField("errorDetails", json.MustMap()).Error("entity was not found")
+		return []string{}, EntityNotFound
+	}
+
+	if resp.StatusCode != 200 {
+		errorLog.WithField("errorDetails", json.MustMap()).Error("response status code is unsuccessful")
+		return []string{}, ResponseUnsuccessful
 	}
 
 	entityIds, err := entityIdsFromDescendantsResponseJson(json)

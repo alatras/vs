@@ -15,17 +15,25 @@ func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.Response
 	recorder := httptest.NewRecorder()
 	log := logger.NewStubLogger()
 
-	resource := ruleSet.NewResource(log, nil, nil, nil,
+	resource := ruleSet.NewResource(
+		log,
+		nil,
+		nil,
+		nil,
 		func() listRuleSet.ListRuleSet {
 			return &errorApp{error: listRuleSet.UnexpectedError}
-		}, nil)
+		},
+		nil,
+		nil,
+		nil,
+	)
 
 	resource.Routes().ServeHTTP(recorder, r)
 
 	return recorder
 }
 
-func Test_HTTP_RuleSet_Create_UnexpectedError(t *testing.T) {
+func Test_HTTP_RuleSet_List_UnexpectedError(t *testing.T) {
 	req, err := http.NewRequest("GET", "/12345/rulesets", bytes.NewBuffer([]byte("")))
 
 	if err != nil {

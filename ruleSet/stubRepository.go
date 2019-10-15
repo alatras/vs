@@ -46,21 +46,6 @@ func (r *StubRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 	}
 }
 
-func (r *StubRuleSetRepository) ListByEntityId(ctx context.Context, entityId string) ([]RuleSet, error) {
-	var ruleSets []RuleSet
-
-	r.lock.RLock()
-	defer r.lock.RUnlock()
-
-	if cachedRuleSetMap, ok := r.cache[entityId]; ok {
-		for _, ruleSet := range cachedRuleSetMap {
-			ruleSets = append(ruleSets, ruleSet)
-		}
-	}
-
-	return ruleSets, nil
-}
-
 func (r *StubRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds ...string) ([]RuleSet, error) {
 	var ruleSets []RuleSet
 
