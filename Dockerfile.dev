@@ -6,7 +6,7 @@ ENV GOARCH=amd64
 ENV GOPATH /go
 ENV HTTP_PORT=8080
 
-RUN apk add --no-cache --update tzdata git bash && \
+RUN apk add --no-cache --update tzdata curl git bash && \
     rm -rf /var/cache/apk/*
 
 # Install Gin live reloading golang library
@@ -18,5 +18,7 @@ EXPOSE 3000
 WORKDIR /go/src/bitbucket.verifone.com/validation-service
 
 COPY . .
+
+HEALTHCHECK CMD curl --fail http://localhost:8080/healthCheck || exit 1
 
 CMD gin --immediate --appPort $HTTP_PORT --bin validation-service run

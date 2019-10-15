@@ -9,6 +9,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
+	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
 	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
 	httpRuleSet "bitbucket.verifone.com/validation-service/http/ruleSet"
@@ -24,18 +25,19 @@ import (
 )
 
 type Server struct {
-	port                       int
-	router                     chi.Router
-	logger                     *logger.Logger
-	ruleSetRepository          ruleSet.Repository
-	validateTransactionService *validateTransaction.ValidatorService
-	createRuleSetAppFactory    func() createRuleSet.CreateRuleSet
-	listRuleSetAppFactory      func() listRuleSet.ListRuleSet
+	port                             int
+	router                           chi.Router
+	logger                           *logger.Logger
+	ruleSetRepository                ruleSet.Repository
+	validateTransactionService       *validateTransaction.ValidatorService
+	createRuleSetAppFactory          func() createRuleSet.CreateRuleSet
+	listRuleSetAppFactory            func() listRuleSet.ListRuleSet
 	listAncestorsRuleSetAppFactory   func() listAncestorsRuleSet.ListAncestorsRuleSet
 	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet
-	getRuleSetAppFactory       func() getRuleSet.GetRuleSet
-	deleteRuleSetAppFactory    func() deleteRuleSet.DeleteRuleSet
-	updateRuleSetAppFactory    func() updateRuleSet.UpdateRuleSet
+	getRuleSetAppFactory             func() getRuleSet.GetRuleSet
+	deleteRuleSetAppFactory          func() deleteRuleSet.DeleteRuleSet
+	entityServiceClient              entityService.EntityService
+	updateRuleSetAppFactory          func() updateRuleSet.UpdateRuleSet
 }
 
 func NewServer(
@@ -50,21 +52,23 @@ func NewServer(
 	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
+	entityServiceClient entityService.EntityService,
 	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet,
 ) *Server {
 	return &Server{
-		port:                       port,
-		router:                     router,
-		logger:                     logger,
-		ruleSetRepository:          ruleSetRepository,
-		validateTransactionService: validateTransactionService,
-		createRuleSetAppFactory:    createRuleSetAppFactory,
-		listRuleSetAppFactory:      listRuleSetAppFactory,
+		port:                             port,
+		router:                           router,
+		logger:                           logger,
+		ruleSetRepository:                ruleSetRepository,
+		validateTransactionService:       validateTransactionService,
+		createRuleSetAppFactory:          createRuleSetAppFactory,
+		listRuleSetAppFactory:            listRuleSetAppFactory,
 		listAncestorsRuleSetAppFactory:   listAncestorsRuleSetAppFactory,
 		listDescendantsRuleSetAppFactory: listDescendantsRuleSetAppFactory,
-		getRuleSetAppFactory:       getRuleSetAppFactory,
-		deleteRuleSetAppFactory:    deleteRuleSetAppFactory,
-		updateRuleSetAppFactory:    updateRuleSetAppFactory,
+		getRuleSetAppFactory:             getRuleSetAppFactory,
+		deleteRuleSetAppFactory:          deleteRuleSetAppFactory,
+		entityServiceClient:              entityServiceClient,
+		updateRuleSetAppFactory:          updateRuleSetAppFactory,
 	}
 }
 
@@ -76,7 +80,7 @@ func (s *Server) Start() error {
 	r.Use(httpMiddleware.SetContextWithTraceId)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	r.Mount("/healthCheck", healthCheck.NewResource(s.logger).Routes())
+	r.Mount("/healthCheck", healthCheck.NewResource(s.logger, s.ruleSetRepository, s.entityServiceClient).Routes())
 	r.Mount("/transaction", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
 	r.Mount(
 		"/entities",

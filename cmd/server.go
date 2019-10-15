@@ -98,6 +98,7 @@ func (s *ServerCommand) Execute(args []string) error {
 		listDescendantsRuleSetAppFactory,
 		getRuleSetAppFactory,
 		deleteRuleSetAppFactory,
+		entityServiceClient,
 		updateRuleSetAppFactory,
 	).Start()
 
@@ -124,7 +125,7 @@ func (s *ServerCommand) setupLogger() *logger.Logger {
 }
 
 func (s *ServerCommand) createRuleSetRepository(logger *logger.Logger) *ruleSet.MongoRuleSetRepository {
-	ruleSetRepository, err := ruleSet.NewMongoRepository(s.Mongo.URL, s.Mongo.DB)
+	ruleSetRepository, err := ruleSet.NewMongoRepository(s.Mongo.URL, s.Mongo.DB, logger)
 
 	if err != nil {
 		logger.Error.WithError(err).Error("Failed to initialize RuleSetRepository")
