@@ -67,7 +67,63 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/unexpectedErrorResponse'                
+                $ref: '#/components/schemas/unexpectedErrorResponse'
+  /entities/{entityId}/rulesets/ancestors:
+    get:
+      tags:
+        - ruleSets
+      summary: Get all rule sets for a given entity and it's ancestors.
+      operationId: listAncestorRuleSets
+      parameters:
+        - in: path
+          name: entityId
+          required: true
+          schema:
+            type: string
+          description: The unique ID of the entity
+      responses:
+        '200':
+          description: Fetched rule sets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ruleSetResponse'
+        '500':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unexpectedErrorResponse'
+  /entities/{entityId}/rulesets/descendants:
+    get:
+      tags:
+        - ruleSets
+      summary: Get all rule sets for a given entity and it's descendants.
+      operationId: listDescendantsRuleSets
+      parameters:
+        - in: path
+          name: entityId
+          required: true
+          schema:
+            type: string
+          description: The unique ID of the entity
+      responses:
+        '200':
+          description: Fetched rule sets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ruleSetResponse'
+        '500':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unexpectedErrorResponse'
   /entities/{entityId}/rulsets/{ruleSetId}:
     put:
       tags:

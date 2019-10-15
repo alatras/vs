@@ -34,6 +34,47 @@ func (rs Resource) List(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		_ = render.Render(w, r, errorResponse.UnexpectedError(err.Error()))
+		return
+	}
+
+	if err := render.RenderList(w, r, NewListRuleSetResponse(ruleSets)); err != nil {
+		rs.logger.Error.WithError(err).Error("error rendering response")
+		return
+	}
+}
+
+func (rs Resource) ListAncestors(w http.ResponseWriter, r *http.Request) {
+	app := rs.listAncestorsRuleSetAppFactory()
+
+	ctx := r.Context()
+
+	entityId := chi.URLParam(r, "id")
+
+	ruleSets, err := app.Execute(ctx, entityId)
+
+	if err != nil {
+		_ = render.Render(w, r, errorResponse.UnexpectedError(err.Error()))
+		return
+	}
+
+	if err := render.RenderList(w, r, NewListRuleSetResponse(ruleSets)); err != nil {
+		rs.logger.Error.WithError(err).Error("error rendering response")
+		return
+	}
+}
+
+func (rs Resource) ListDescendants(w http.ResponseWriter, r *http.Request) {
+	app := rs.listDescendantsRuleSetAppFactory()
+
+	ctx := r.Context()
+
+	entityId := chi.URLParam(r, "id")
+
+	ruleSets, err := app.Execute(ctx, entityId)
+
+	if err != nil {
+		_ = render.Render(w, r, errorResponse.UnexpectedError(err.Error()))
+		return
 	}
 
 	if err := render.RenderList(w, r, NewListRuleSetResponse(ruleSets)); err != nil {

@@ -39,10 +39,6 @@ func (s *stubRepository) GetById(ctx context.Context, entityId string, ruleSetId
 	panic("implement me")
 }
 
-func (s *stubRepository) ListByEntityId(ctx context.Context, entityId string) ([]ruleSet.RuleSet, error) {
-	return nil, errors.New("unexpected error")
-}
-
 func (s *stubRepository) ListByEntityIds(ctx context.Context, entityIds ...string) ([]ruleSet.RuleSet, error) {
 	return nil, errors.New("unexpected error")
 }

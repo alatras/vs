@@ -4,7 +4,10 @@ import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/http"
@@ -34,7 +37,9 @@ type MongoGroup struct {
 
 // EntityServiceGroup Entity Service configuration parameters
 type EntityServiceGroup struct {
-	URL string `long:"url" env:"ENTITY_SERVICE_URL" required:"Entity Service url required" description:"Entity Service URL (without trailing slash)"`
+	URL                  string `long:"url" env:"ENTITY_SERVICE_URL" required:"Entity service url required" description:"Entity service URL (without trailing slash)"`
+	JWTToken             string `long:"jwtToken" env:"ENTITY_SERVICE_JWT_TOKEN" required:"Entity service JWT auth token required" description:"Entity service JWT auth token"`
+	SkipCertVerification bool   `long:"skipCertVerification" env:"ENTITY_SERVICE_SKIP_CERT_VERIFICATION" description:"Skip HTTPS certificate verification or not"`
 }
 
 // Execute is the entry point for "server" command
@@ -43,7 +48,11 @@ func (s *ServerCommand) Execute(args []string) error {
 
 	ruleSetRepo := s.createRuleSetRepository(log)
 
-	entityServiceClient := entityService.NewClient(log, s.EntityService.URL)
+	entityServiceClient := entityService.NewClient(
+		log, s.EntityService.URL,
+		s.EntityService.JWTToken,
+		s.EntityService.SkipCertVerification,
+	)
 
 	validateTransactionApp := s.createValidateTransactionApp(entityServiceClient, ruleSetRepo, log)
 
@@ -65,6 +74,18 @@ func (s *ServerCommand) Execute(args []string) error {
 		return listRuleSet.NewListRuleSet(log, ruleSetRepo)
 	}
 
+	listAncestorsRuleSetAppFactory := func() listAncestorsRuleSet.ListAncestorsRuleSet {
+		return listAncestorsRuleSet.NewListAncestorsRuleSet(log, ruleSetRepo, entityServiceClient)
+	}
+
+	listDescendantsRuleSetAppFactory := func() listDescendantsRuleSet.ListDescendantsRuleSet {
+		return listDescendantsRuleSet.NewListDescendantsRuleSet(log, ruleSetRepo, entityServiceClient)
+	}
+
+	updateRuleSetAppFactory := func() updateRuleSet.UpdateRuleSet {
+		return updateRuleSet.NewUpdateRuleSet(log, ruleSetRepo)
+	}
+
 	err := http.NewServer(
 		s.HTTPPort,
 		chi.NewRouter(),
@@ -73,9 +94,12 @@ func (s *ServerCommand) Execute(args []string) error {
 		validateTransactionApp,
 		createRuleSetAppFactory,
 		listRuleSetAppFactory,
+		listAncestorsRuleSetAppFactory,
+		listDescendantsRuleSetAppFactory,
 		getRuleSetAppFactory,
 		deleteRuleSetAppFactory,
 		entityServiceClient,
+		updateRuleSetAppFactory,
 	).Start()
 
 	if err != nil {
