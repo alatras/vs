@@ -53,6 +53,6 @@ func (s *stubRepository) Delete(ctx context.Context, entityId string, ruleSetIds
 	panic("implement me")
 }
 
-func (s *StubRepository) Ping(ctx context.Context) error {
+func (s stubRepository) Ping(ctx context.Context) error {
 	panic("implement me")
 }
