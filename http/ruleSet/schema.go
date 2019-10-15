@@ -32,6 +32,18 @@ type CreateRuleSetResponse struct {
 	Entity string `json:"entity"`
 }
 
+type UpdateRuleSetPayload struct {
+	Name   string        `json:"name"`
+	Action string        `json:"action"`
+	Rules  []RulePayload `json:"rules"`
+}
+
+type UpdateRuleSetResponse struct {
+	UpdateRuleSetPayload
+	Id     string `json:"id"`
+	Entity string `json:"entity"`
+}
+
 func (r RulePayload) Validate() error {
 	if r.Key == "" {
 		return errors.New("key should be present")
@@ -49,6 +61,28 @@ func (r RulePayload) Validate() error {
 }
 
 func (payload CreateRuleSetPayload) Validate() error {
+	if payload.Name == "" {
+		return errors.New("body.name: should be present")
+	}
+
+	if payload.Action == "" {
+		return errors.New("body.action: should be present")
+	}
+
+	if len(payload.Rules) == 0 {
+		return errors.New("body.rules: at least one rule should be defined")
+	}
+
+	for index, rulePayload := range payload.Rules {
+		if ruleError := rulePayload.Validate(); ruleError != nil {
+			return fmt.Errorf("body.rules.%d: %s", index, ruleError.Error())
+		}
+	}
+
+	return nil
+}
+
+func (payload UpdateRuleSetPayload) Validate() error {
 	if payload.Name == "" {
 		return errors.New("body.name: should be present")
 	}

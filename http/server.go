@@ -4,7 +4,10 @@ import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
+	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
 	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
@@ -28,8 +31,11 @@ type Server struct {
 	validateTransactionService *validateTransaction.ValidatorService
 	createRuleSetAppFactory    func() createRuleSet.CreateRuleSet
 	listRuleSetAppFactory      func() listRuleSet.ListRuleSet
+	listAncestorsRuleSetAppFactory   func() listAncestorsRuleSet.ListAncestorsRuleSet
+	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet
 	getRuleSetAppFactory       func() getRuleSet.GetRuleSet
 	deleteRuleSetAppFactory    func() deleteRuleSet.DeleteRuleSet
+	updateRuleSetAppFactory    func() updateRuleSet.UpdateRuleSet
 }
 
 func NewServer(
@@ -40,8 +46,11 @@ func NewServer(
 	validateTransactionService *validateTransaction.ValidatorService,
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
 	listRuleSetAppFactory func() listRuleSet.ListRuleSet,
+	listAncestorsRuleSetAppFactory func() listAncestorsRuleSet.ListAncestorsRuleSet,
+	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
+	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet,
 ) *Server {
 	return &Server{
 		port:                       port,
@@ -51,8 +60,11 @@ func NewServer(
 		validateTransactionService: validateTransactionService,
 		createRuleSetAppFactory:    createRuleSetAppFactory,
 		listRuleSetAppFactory:      listRuleSetAppFactory,
+		listAncestorsRuleSetAppFactory:   listAncestorsRuleSetAppFactory,
+		listDescendantsRuleSetAppFactory: listDescendantsRuleSetAppFactory,
 		getRuleSetAppFactory:       getRuleSetAppFactory,
 		deleteRuleSetAppFactory:    deleteRuleSetAppFactory,
+		updateRuleSetAppFactory:    updateRuleSetAppFactory,
 	}
 }
 
@@ -74,6 +86,9 @@ func (s *Server) Start() error {
 			s.getRuleSetAppFactory,
 			s.deleteRuleSetAppFactory,
 			s.listRuleSetAppFactory,
+			s.listAncestorsRuleSetAppFactory,
+			s.listDescendantsRuleSetAppFactory,
+			s.updateRuleSetAppFactory,
 		).Routes(),
 	)
 

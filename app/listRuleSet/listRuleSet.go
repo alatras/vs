@@ -34,7 +34,7 @@ func (app *App) Execute(ctx context.Context, entityId string) ([]ruleSet.RuleSet
 	})
 	app.instrumentation.startListingRuleSet()
 
-	ruleSets, err := app.repository.ListByEntityId(ctx, entityId)
+	ruleSets, err := app.repository.ListByEntityIds(ctx, entityId)
 
 	if err != nil {
 		app.instrumentation.failedListingRuleSet(err)

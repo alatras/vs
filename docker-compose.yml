@@ -12,11 +12,15 @@ services:
       - mongo
     depends_on:
       - mongo
+    env_file:
+      - .env
     environment:
+      - ENTITY_SERVICE_URL
+      - ENTITY_SERVICE_JWT_TOKEN
+      - ENTITY_SERVICE_SKIP_CERT_VERIFICATION
       - MONGO_URL=mongodb://mongo
       - LOG_FORMAT=text
       - LOG_LEVEL=trace
-      - ENTITY_SERVICE_URL=http://blr2tBhanuP1:8090
   mongo:
     image: mongo:4.0.12
     restart: always

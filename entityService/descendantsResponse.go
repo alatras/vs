@@ -8,10 +8,10 @@ import (
 func entityIdsFromDescendantsResponseJson(json *simplejson.Json) ([]string, error) {
 	var entityIds []string
 
-	entityId, err := json.Get("entityId").String()
+	entityId, err := json.Get("entityUid").String()
 
 	if err != nil || entityId == "" {
-		return []string{}, errors.New("entityId is not present")
+		return []string{}, errors.New("entityUid is not present")
 	}
 
 	entityIds = append(entityIds, entityId)
