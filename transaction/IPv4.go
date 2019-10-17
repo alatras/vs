@@ -4,9 +4,10 @@ import (
 	"regexp"
 )
 
-const regexV4 = `\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b`
+const regexV4 = `^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$`
+
+var regex = regexp.MustCompile(regexV4)
 
 func IsIPv4(ipv4 string) bool {
-	re := regexp.MustCompile(regexV4)
-	return re.MatchString(ipv4)
+	return regex.MatchString(ipv4)
 }
