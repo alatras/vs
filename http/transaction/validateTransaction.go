@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"bitbucket.verifone.com/validation-service/report"
 	trx "bitbucket.verifone.com/validation-service/transaction"
@@ -119,9 +120,17 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			rs.logger.Error.WithError(err).Error("error rendering response")
 		}
-	case err := <-errChan:
-		rs.logger.Error.WithError(err).Error("error validating transaction")
-		e := render.Render(w, r, errorResponse.UnexpectedError(details))
+	case validationError := <-errChan:
+		rs.logger.Error.WithError(validationError).Error("error validating transaction")
+
+		var e error
+
+		if validationError.Is(validateTransaction.EntityIdNotFoundErr) {
+			e = render.Render(w, r, errorResponse.EntityIdNotFound(details))
+		} else {
+			e = render.Render(w, r, errorResponse.UnexpectedError(details))
+		}
+
 		if e != nil {
 			rs.logger.Error.WithError(e).Error("error rendering response")
 		}

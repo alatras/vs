@@ -17,7 +17,7 @@ type task struct {
 	entityServiceClient entityService.EntityService
 	ruleSetRepository   ruleSet.Repository
 	response            chan report.Report
-	error               chan error
+	error               chan ValidationError
 	instrumentation     *instrumentation
 }
 
@@ -41,7 +41,7 @@ func newTask(
 		entityServiceClient: entityServiceClient,
 		ruleSetRepository:   ruleSetRepository,
 		response:            make(chan report.Report),
-		error:               make(chan error),
+		error:               make(chan ValidationError),
 		instrumentation:     instrumentation,
 	}
 }
@@ -55,14 +55,22 @@ func (task *task) run() {
 	entityIds, err := task.entityServiceClient.GetAncestorsOf(task.transaction.EntityId)
 
 	if err != nil {
-		task.error <- err
+		var validationError ValidationError
+
+		if err == entityService.EntityNotFound {
+			validationError = newError(EntityIdNotFoundErr, err)
+		} else {
+			validationError = newError(UnexpectedErr, err)
+		}
+
+		task.error <- validationError
 		return
 	}
 
 	ruleSets, err := task.ruleSetRepository.ListByEntityIds(task.ctx, entityIds...)
 
 	if err != nil {
-		task.error <- err
+		task.error <- newError(UnexpectedErr, err)
 		return
 	}
 
@@ -71,7 +79,7 @@ func (task *task) run() {
 	for _, rs := range ruleSets {
 		action, err := rs.Matches(task.transaction)
 		if err != nil {
-			task.error <- err
+			task.error <- newError(UnexpectedErr, err)
 			return
 		}
 
@@ -119,7 +127,7 @@ func NewValidatorService(
 	return v
 }
 
-func (v *ValidatorService) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan error) {
+func (v *ValidatorService) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan ValidationError) {
 	task := newTask(ctx, trx, v.entityServiceClient, v.ruleSetRepository, v.logger)
 	v.queue <- task
 	return task.response, task.error
