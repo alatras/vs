@@ -26,8 +26,8 @@ func (body ValidateTransactionPayload) Bind(r *http.Request) error {
 		return errors.New("currency code required")
 	}
 
-	if body.Transaction.Merchant.Id == "" {
-		return errors.New("merchant ID required")
+	if body.Transaction.Merchant.Organisation.UUID == "" {
+		return errors.New("merchant organisation UUID required")
 	}
 
 	if body.Transaction.Customer.Country == "" {
@@ -97,7 +97,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		MinorUnits:          minorUnits,
 		CurrencyCode:        trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
 		CustomerCountryCode: trx.CountryCodeIso31661Alpha2(trxPayload.Transaction.Customer.Country),
-		EntityId:            trxPayload.Transaction.Merchant.Id,
+		EntityId:            trxPayload.Transaction.Merchant.Organisation.UUID,
 		CustomerId:          trxPayload.Transaction.Customer.CustomerIdentification.CustomerId,
 		CustomerIP:          trxPayload.Transaction.Customer.IP,
 		CustomerIPCountry:   trxPayload.Transaction.Customer.IPCountry,
