@@ -25,7 +25,11 @@ type ValidateTransactionResponse struct {
 }
 
 type merchant struct {
-	Id string `json:"id"`
+	Organisation organisation `json:"organisation"`
+}
+
+type organisation struct {
+	UUID string `json:"UUID"`
 }
 
 type customer struct {
