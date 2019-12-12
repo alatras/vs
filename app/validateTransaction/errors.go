@@ -14,7 +14,7 @@ type ValidationError struct {
 	error error
 }
 
-func newError(k kind, e error) ValidationError {
+func NewError(k kind, e error) ValidationError {
 	return ValidationError{
 		kind:  k,
 		error: e,

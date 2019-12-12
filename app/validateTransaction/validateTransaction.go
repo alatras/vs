@@ -9,6 +9,11 @@ import (
 	"context"
 )
 
+type ValidatorService interface {
+	Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan ValidationError)
+	ResizeWorkers(numOfWorkers int)
+}
+
 const appName = "validateTransaction"
 
 type task struct {
@@ -58,9 +63,9 @@ func (task *task) run() {
 		var validationError ValidationError
 
 		if err == entityService.EntityNotFound {
-			validationError = newError(EntityIdNotFoundErr, err)
+			validationError = NewError(EntityIdNotFoundErr, err)
 		} else {
-			validationError = newError(UnexpectedErr, err)
+			validationError = NewError(UnexpectedErr, err)
 		}
 
 		task.error <- validationError
@@ -70,7 +75,7 @@ func (task *task) run() {
 	ruleSets, err := task.ruleSetRepository.ListByEntityIds(task.ctx, entityIds...)
 
 	if err != nil {
-		task.error <- newError(UnexpectedErr, err)
+		task.error <- NewError(UnexpectedErr, err)
 		return
 	}
 
@@ -79,7 +84,7 @@ func (task *task) run() {
 	for _, rs := range ruleSets {
 		action, err := rs.Matches(task.transaction)
 		if err != nil {
-			task.error <- newError(UnexpectedErr, err)
+			task.error <- NewError(UnexpectedErr, err)
 			return
 		}
 
@@ -96,7 +101,7 @@ func (task *task) run() {
 	task.response <- r
 }
 
-type ValidatorService struct {
+type App struct {
 	entityServiceClient entityService.EntityService
 	ruleSetRepository   ruleSet.Repository
 	queue               chan task
@@ -110,8 +115,8 @@ func NewValidatorService(
 	entityServiceClient entityService.EntityService,
 	ruleSetRepository ruleSet.Repository,
 	logger *logger.Logger,
-) ValidatorService {
-	v := ValidatorService{
+) App {
+	v := App{
 		entityServiceClient: entityServiceClient,
 		ruleSetRepository:   ruleSetRepository,
 		queue:               make(chan task),
@@ -127,13 +132,13 @@ func NewValidatorService(
 	return v
 }
 
-func (v *ValidatorService) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan ValidationError) {
+func (v *App) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan ValidationError) {
 	task := newTask(ctx, trx, v.entityServiceClient, v.ruleSetRepository, v.logger)
 	v.queue <- task
 	return task.response, task.error
 }
 
-func (v *ValidatorService) ResizeWorkers(numOfWorkers int) {
+func (v *App) ResizeWorkers(numOfWorkers int) {
 	delta := v.numOfWorkers - numOfWorkers
 
 	if delta > 0 {
