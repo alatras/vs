@@ -30,6 +30,8 @@ var malformedParametersMessage = "At least one parameter is invalid. Examine the
 	"submitted in the request's body, query for parameters appended to the request's URL, and params for " +
 	"templated parameters of the request's URL."
 
+var entityIdNotFound = "The entity ID in the transaction body was not found"
+
 func UnexpectedError(details interface{}) *Response {
 	return &Response{
 		HttpStatusCode: http.StatusInternalServerError,
@@ -69,6 +71,16 @@ func MalformedParameters(details interface{}) *Response {
 		Code:           107,
 		Details:        details,
 		Message:        malformedParametersMessage,
+		Timestamp:      time.Now(),
+	}
+}
+
+func EntityIdNotFound(details interface{}) *Response {
+	return &Response{
+		HttpStatusCode: http.StatusNotFound,
+		Code:           108,
+		Details:        details,
+		Message:        entityIdNotFound,
 		Timestamp:      time.Now(),
 	}
 }

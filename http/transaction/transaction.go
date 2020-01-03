@@ -8,10 +8,10 @@ import (
 
 type Resource struct {
 	logger *logger.Logger
-	app    *validateTransaction.ValidatorService
+	app    validateTransaction.ValidatorService
 }
 
-func NewResource(l *logger.Logger, a *validateTransaction.ValidatorService) Resource {
+func NewResource(l *logger.Logger, a validateTransaction.ValidatorService) Resource {
 	return Resource{
 		logger: l,
 		app:    a,

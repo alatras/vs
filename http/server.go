@@ -29,7 +29,7 @@ type Server struct {
 	router                           chi.Router
 	logger                           *logger.Logger
 	ruleSetRepository                ruleSet.Repository
-	validateTransactionService       *validateTransaction.ValidatorService
+	validateTransactionService       validateTransaction.ValidatorService
 	createRuleSetAppFactory          func() createRuleSet.CreateRuleSet
 	listRuleSetAppFactory            func() listRuleSet.ListRuleSet
 	listAncestorsRuleSetAppFactory   func() listAncestorsRuleSet.ListAncestorsRuleSet
@@ -45,7 +45,7 @@ func NewServer(
 	router chi.Router,
 	logger *logger.Logger,
 	ruleSetRepository ruleSet.Repository,
-	validateTransactionService *validateTransaction.ValidatorService,
+	validateTransactionService validateTransaction.ValidatorService,
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
 	listRuleSetAppFactory func() listRuleSet.ListRuleSet,
 	listAncestorsRuleSetAppFactory func() listAncestorsRuleSet.ListAncestorsRuleSet,

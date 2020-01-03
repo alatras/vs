@@ -106,7 +106,7 @@ func (c *client) GetDescendantsOf(entityId string) ([]string, error) {
 		"method":   "GetDescendantsOf",
 	})
 
-	req, err := http.NewRequest("GET", c.url+"/entities/"+entityId+"/descendents", nil)
+	req, err := http.NewRequest("GET", c.url+"/entities/"+entityId+"/descendants", nil)
 
 	if err != nil {
 		errorLog.WithError(err).Error("failed to create the request")

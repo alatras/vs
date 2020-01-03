@@ -139,7 +139,7 @@ func (s *ServerCommand) createValidateTransactionApp(
 	e entityService.EntityService,
 	r *ruleSet.MongoRuleSetRepository,
 	l *logger.Logger,
-) *validateTransaction.ValidatorService {
+) validateTransaction.ValidatorService {
 	validator := validateTransaction.NewValidatorService(runtime.NumCPU(), e, r, l)
 	return &validator
 }
