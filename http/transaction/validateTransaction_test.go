@@ -224,6 +224,65 @@ func Test_HTTP_ValidateTransaction_EntityNotFound(t *testing.T) {
 	}
 }
 
+func Test_HTTP_ValidateTransaction_EntityIdFormatIncorrect(t *testing.T) {
+	requestBody :=
+		`{
+			"transaction": {
+				"amount": {
+					"value": "100",
+					"currencyCode": "EUR"
+				},
+				"merchant": {
+					"organisation": {
+						"UUID": "123"
+					}
+				},
+				"customer": {
+					"country": "NL"
+				}
+			}
+		}`
+
+	validationError := validateTransaction.NewError(validateTransaction.EntityIdFormatIncorrectErr, errors.New("incorrect"))
+
+	req, err := http.NewRequest("POST", "/validate", bytes.NewBuffer([]byte(requestBody)))
+	req.Header.Set("Content-Type", "application/json")
+
+	if err != nil {
+		t.Errorf("Failed to create request: %v", err)
+	}
+
+	recorder := setupRecorder(t, req, nil, &validationError)
+
+	if status := recorder.Code; status != http.StatusBadRequest {
+		t.Errorf("Status code expected to be %d but got %d", http.StatusBadRequest, status)
+	}
+
+	body := recorder.Body.String()
+
+	resJson, err := simplejson.NewJson([]byte(body))
+
+	if err != nil {
+		t.Errorf("Error while reading response JSON: %s", err)
+		return
+	}
+
+	errCode := resJson.Get("code").MustInt()
+	message := resJson.Get("message").MustString()
+
+	expectedErrCode := 107
+
+	if errCode != expectedErrCode {
+		t.Errorf("Expected error code %d but got %d", expectedErrCode, errCode)
+		return
+	}
+
+	if message != malformedParametersMessage {
+		t.Errorf("Expected message %s but got %s", malformedParametersMessage, message)
+		return
+	}
+}
+
 func Test_HTTP_ValidateTransaction_UnexpectedError(t *testing.T) {
 	requestBody :=
 		`{
