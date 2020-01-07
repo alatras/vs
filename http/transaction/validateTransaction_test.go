@@ -211,7 +211,7 @@ func Test_HTTP_ValidateTransaction_EntityNotFound(t *testing.T) {
 	errCode := resJson.Get("code").MustInt()
 	message := resJson.Get("message").MustString()
 
-	expectedErrCode := 108
+	expectedErrCode := 109
 
 	if errCode != expectedErrCode {
 		t.Errorf("Expected error code %d but got %d", expectedErrCode, errCode)

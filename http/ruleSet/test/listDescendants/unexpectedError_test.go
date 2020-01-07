@@ -5,6 +5,7 @@ import (
 	"bitbucket.verifone.com/validation-service/http/ruleSet"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
+	"errors"
 	"github.com/bitly/go-simplejson"
 	"net/http"
 	"net/http/httptest"
@@ -23,7 +24,7 @@ func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.Response
 		nil,
 		nil,
 		func() listDescendantsRuleSet.ListDescendantsRuleSet {
-			return &errorApp{error: listDescendantsRuleSet.UnexpectedError}
+			return &errorApp{error: listDescendantsRuleSet.NewError(listDescendantsRuleSet.UnexpectedErr, errors.New("unexpected"))}
 		},
 		nil,
 	)
