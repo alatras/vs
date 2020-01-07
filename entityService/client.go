@@ -80,6 +80,11 @@ func (c *client) GetAncestorsOf(entityId string) ([]string, error) {
 		return []string{}, UnauthorizedError
 	}
 
+	if resp.StatusCode == 400 {
+		errorLog.WithField("errorDetails", json.MustMap()).Error("entity id is not correct")
+		return []string{}, EntityIdFormatIncorrect
+	}
+
 	if resp.StatusCode == 404 {
 		errorLog.WithField("errorDetails", json.MustMap()).Error("entity was not found")
 		return []string{}, EntityNotFound
@@ -141,6 +146,11 @@ func (c *client) GetDescendantsOf(entityId string) ([]string, error) {
 	if resp.StatusCode == 401 {
 		errorLog.WithField("errorDetails", json.MustMap()).Error("request unauthorized")
 		return []string{}, UnauthorizedError
+	}
+
+	if resp.StatusCode == 400 {
+		errorLog.WithField("errorDetails", json.MustMap()).Error("entity id is not correct")
+		return []string{}, EntityIdFormatIncorrect
 	}
 
 	if resp.StatusCode == 404 {

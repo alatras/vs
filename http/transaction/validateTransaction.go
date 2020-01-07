@@ -93,12 +93,14 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	entityId := trxPayload.Transaction.Merchant.Organisation.UUID
+
 	t := trx.Transaction{
 		Amount:              amount,
 		MinorUnits:          minorUnits,
 		CurrencyCode:        trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
 		CustomerCountryCode: trx.CountryCodeIso31661Alpha2(trxPayload.Transaction.Customer.Country),
-		EntityId:            trxPayload.Transaction.Merchant.Organisation.UUID,
+		EntityId:            entityId,
 		CustomerId:          trxPayload.Transaction.Customer.CustomerIdentification.CustomerId,
 		CustomerIP:          trxPayload.Transaction.Customer.IP,
 		CustomerIPCountry:   trxPayload.Transaction.Customer.IPCountry,
@@ -126,7 +128,11 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		var e error
 
 		if validationError.Is(validateTransaction.EntityIdNotFoundErr) {
-			e = render.Render(w, r, errorResponse.EntityIdNotFound(details))
+			e = render.Render(w, r, errorResponse.ResourceNotFound("entity", entityId))
+		} else if validationError.Is(validateTransaction.EntityIdFormatIncorrectErr) {
+			e = render.Render(w, r, errorResponse.MalformedParameters(map[string]string{
+				"body.transaction.merchant.organisation.UUID": validationError.Error(),
+			}))
 		} else {
 			e = render.Render(w, r, errorResponse.UnexpectedError(details))
 		}

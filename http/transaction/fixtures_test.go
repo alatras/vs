@@ -14,12 +14,12 @@ const (
 
 type app struct {
 	rep *report.Report
-	err *validateTransaction.ValidationError
+	err *validateTransaction.AppError
 }
 
-func (a *app) Enqueue(ctx context.Context, tx trx.Transaction) (chan report.Report, chan validateTransaction.ValidationError) {
+func (a *app) Enqueue(ctx context.Context, tx trx.Transaction) (chan report.Report, chan validateTransaction.AppError) {
 	resp := make(chan report.Report)
-	error := make(chan validateTransaction.ValidationError)
+	error := make(chan validateTransaction.AppError)
 
 	go func() {
 		if a.err != nil {

@@ -1,6 +1,8 @@
 package ruleSet
 
 import (
+	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
+	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"github.com/go-chi/chi"
@@ -52,8 +54,16 @@ func (rs Resource) ListAncestors(w http.ResponseWriter, r *http.Request) {
 
 	ruleSets, err := app.Execute(ctx, entityId)
 
-	if err != nil {
-		_ = render.Render(w, r, errorResponse.UnexpectedError(err.Error()))
+	if err.HasError() {
+		if err.Is(listAncestorsRuleSet.EntityIdNotFoundErr) {
+			_ = render.Render(w, r, errorResponse.ResourceNotFound("entity", entityId))
+		} else if err.Is(listAncestorsRuleSet.EntityIdFormatIncorrectErr) {
+			_ = render.Render(w, r, errorResponse.MalformedParameters(map[string]string{
+				"params.entityId": err.Error(),
+			}))
+		} else {
+			_ = render.Render(w, r, errorResponse.UnexpectedError(err.Error()))
+		}
 		return
 	}
 
@@ -72,8 +82,16 @@ func (rs Resource) ListDescendants(w http.ResponseWriter, r *http.Request) {
 
 	ruleSets, err := app.Execute(ctx, entityId)
 
-	if err != nil {
-		_ = render.Render(w, r, errorResponse.UnexpectedError(err.Error()))
+	if err.HasError() {
+		if err.Is(listDescendantsRuleSet.EntityIdNotFoundErr) {
+			_ = render.Render(w, r, errorResponse.ResourceNotFound("entity", entityId))
+		} else if err.Is(listDescendantsRuleSet.EntityIdFormatIncorrectErr) {
+			_ = render.Render(w, r, errorResponse.MalformedParameters(map[string]string{
+				"params.entityId": err.Error(),
+			}))
+		} else {
+			_ = render.Render(w, r, errorResponse.UnexpectedError(err.Error()))
+		}
 		return
 	}
 

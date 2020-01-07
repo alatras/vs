@@ -21,16 +21,14 @@ var notFoundMessage = "The requested page can't be found. It's likely that the p
 	"is incorrect, or was accessed using an incorrect protocol. For some pages, a strict URL routing is enabled: " +
 	"you may need to add or remove a trailing slash, to or from the URL."
 
-var resourceNotFoundMessage = `The requested resource, or one of its sub-resources, can't be 
-found. If the submitted query is valid, this error is likely to be caused by a problem with a nested 
-resource that has been deleted or modified. Check the details property for additional insights.`
+var resourceNotFoundMessage = "The requested resource, or one of its sub-resources, can't be " +
+	"found. If the submitted query is valid, this error is likely to be caused by a problem with a nested " +
+	"resource that has been deleted or modified. Check the details property for additional insights."
 
 var malformedParametersMessage = "At least one parameter is invalid. Examine the details " +
 	"property for more information. Invalid parameters are listed and prefixed accordingly: body for parameters " +
 	"submitted in the request's body, query for parameters appended to the request's URL, and params for " +
 	"templated parameters of the request's URL."
-
-var entityIdNotFound = "The entity ID in the transaction body was not found"
 
 func UnexpectedError(details interface{}) *Response {
 	return &Response{
@@ -71,16 +69,6 @@ func MalformedParameters(details interface{}) *Response {
 		Code:           107,
 		Details:        details,
 		Message:        malformedParametersMessage,
-		Timestamp:      time.Now(),
-	}
-}
-
-func EntityIdNotFound(details interface{}) *Response {
-	return &Response{
-		HttpStatusCode: http.StatusNotFound,
-		Code:           108,
-		Details:        details,
-		Message:        entityIdNotFound,
 		Timestamp:      time.Now(),
 	}
 }

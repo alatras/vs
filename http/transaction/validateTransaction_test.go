@@ -15,7 +15,7 @@ import (
 	"testing"
 )
 
-func setupRecorder(t *testing.T, request *http.Request, report *report.Report, err *validateTransaction.ValidationError) *httptest.ResponseRecorder {
+func setupRecorder(t *testing.T, request *http.Request, report *report.Report, err *validateTransaction.AppError) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 
 	log := logger.NewStubLogger()
