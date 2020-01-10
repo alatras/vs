@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -29,7 +30,7 @@ func NewMongoRepository(url string, dbName string, logger *logger.Logger) (*Mong
 	repository := MongoRuleSetRepository{
 		mongoClient:       client,
 		ruleSetCollection: ruleSetCollection,
-		logger:            logger.Scoped("ruleSetRepo"),
+		logger:            logger.Scoped("MongoRuleSetRepository"),
 	}
 
 	err = createIndexes(ruleSetCollection)
@@ -153,15 +154,25 @@ func connectToMongo(url string) (*mongo.Client, error) {
 }
 
 func (r MongoRuleSetRepository) Ping(ctx context.Context) error {
+	log := r.logger.Output.WithFields(logrus.Fields{
+		"method": "Ping",
+	})
+
+	errorLog := r.logger.Error.WithFields(logrus.Fields{
+		"method": "Ping",
+	})
+
 	ctx, cancel := context.WithTimeout(ctx, time.Second)
 	defer cancel()
 
 	err := r.mongoClient.Ping(ctx, nil)
 
 	if err != nil {
-		r.logger.Output.WithError(err).Error("cannot connect to mongo")
+		errorLog.WithError(err).Error("mongo is not healthy")
 		return errors.New("cannot connect to mongo")
 	}
+
+	log.Trace("mongo is healthy")
 
 	return nil
 }

@@ -5,15 +5,10 @@ import (
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
-	"errors"
-)
-
-var (
-	UnexpectedError = errors.New("unexpected error")
 )
 
 type ListAncestorsRuleSet interface {
-	Execute(ctx context.Context, entityId string) ([]ruleSet.RuleSet, error)
+	Execute(ctx context.Context, entityId string) ([]ruleSet.RuleSet, AppError)
 }
 
 type App struct {
@@ -30,7 +25,7 @@ func NewListAncestorsRuleSet(logger *logger.Logger, ruleSetRepository ruleSet.Re
 	}
 }
 
-func (app *App) Execute(ctx context.Context, entityId string) ([]ruleSet.RuleSet, error) {
+func (app *App) Execute(ctx context.Context, entityId string) ([]ruleSet.RuleSet, AppError) {
 	app.instrumentation.setContext(ctx)
 	app.instrumentation.setMetadata(logger.Metadata{
 		"entityId": entityId,
@@ -41,16 +36,28 @@ func (app *App) Execute(ctx context.Context, entityId string) ([]ruleSet.RuleSet
 
 	if err != nil {
 		app.instrumentation.failedGetAncestors(err)
-		return nil, UnexpectedError
+
+		var appError AppError
+
+		if err == entityService.EntityNotFound {
+			appError = NewError(EntityIdNotFoundErr, err)
+		} else if err == entityService.EntityIdFormatIncorrect {
+			appError = NewError(EntityIdFormatIncorrectErr, err)
+		} else {
+			appError = NewError(UnexpectedErr, err)
+		}
+
+		return nil, appError
 	}
 
 	ruleSets, err := app.repository.ListByEntityIds(ctx, entityIds...)
 
 	if err != nil {
 		app.instrumentation.failedListingAncestorsRuleSet(err)
-		return nil, UnexpectedError
+		return nil, NewError(UnexpectedErr, err)
 	}
 
 	app.instrumentation.finishListingAncestorsRuleSet()
-	return ruleSets, nil
+
+	return ruleSets, AppError{}
 }

@@ -1,4 +1,4 @@
-package validateTransaction
+package listAncestorsRuleSet
 
 import "fmt"
 
@@ -29,7 +29,7 @@ func (e AppError) Error() string {
 	case EntityIdFormatIncorrectErr:
 		return "entity id should be a valid UUID"
 	default:
-		return fmt.Sprintf("an unexpected error occurred while validating transaction: %s", e.error)
+		return fmt.Sprintf("an unexpected error occurred while listing ancestors rule sets: %s", e.error)
 	}
 }
 

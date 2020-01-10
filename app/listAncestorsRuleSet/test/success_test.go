@@ -29,12 +29,12 @@ func Test_App_ListAncestorsRuleSet_Success(t *testing.T) {
 
 	app := listAncestorsRuleSet.NewListAncestorsRuleSet(log, repo, &entityService)
 
-	ruleSets, err := app.Execute(
+	ruleSets, error := app.Execute(
 		context.TODO(),
 		mockRuleSets[0].EntityId,
 	)
 
-	if err != nil {
+	if error.HasError() {
 		t.Errorf("Failed to list RuleSets: %v", err)
 		return
 	}

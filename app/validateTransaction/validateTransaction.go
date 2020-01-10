@@ -10,7 +10,7 @@ import (
 )
 
 type ValidatorService interface {
-	Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan ValidationError)
+	Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan AppError)
 	ResizeWorkers(numOfWorkers int)
 }
 
@@ -22,7 +22,7 @@ type task struct {
 	entityServiceClient entityService.EntityService
 	ruleSetRepository   ruleSet.Repository
 	response            chan report.Report
-	error               chan ValidationError
+	error               chan AppError
 	instrumentation     *instrumentation
 }
 
@@ -46,7 +46,7 @@ func newTask(
 		entityServiceClient: entityServiceClient,
 		ruleSetRepository:   ruleSetRepository,
 		response:            make(chan report.Report),
-		error:               make(chan ValidationError),
+		error:               make(chan AppError),
 		instrumentation:     instrumentation,
 	}
 }
@@ -60,10 +60,12 @@ func (task *task) run() {
 	entityIds, err := task.entityServiceClient.GetAncestorsOf(task.transaction.EntityId)
 
 	if err != nil {
-		var validationError ValidationError
+		var validationError AppError
 
 		if err == entityService.EntityNotFound {
 			validationError = NewError(EntityIdNotFoundErr, err)
+		} else if err == entityService.EntityIdFormatIncorrect {
+			validationError = NewError(EntityIdFormatIncorrectErr, err)
 		} else {
 			validationError = NewError(UnexpectedErr, err)
 		}
@@ -132,7 +134,7 @@ func NewValidatorService(
 	return v
 }
 
-func (v *App) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan ValidationError) {
+func (v *App) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan AppError) {
 	task := newTask(ctx, trx, v.entityServiceClient, v.ruleSetRepository, v.logger)
 	v.queue <- task
 	return task.response, task.error

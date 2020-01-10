@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {
+func setupEntityIdFormatIncorrectErrorRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 	log := logger.NewStubLogger()
 
@@ -24,7 +24,7 @@ func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.Response
 		nil,
 		nil,
 		func() listDescendantsRuleSet.ListDescendantsRuleSet {
-			return &errorApp{error: listDescendantsRuleSet.NewError(listDescendantsRuleSet.UnexpectedErr, errors.New("unexpected"))}
+			return &errorApp{error: listDescendantsRuleSet.NewError(listDescendantsRuleSet.EntityIdFormatIncorrectErr, errors.New("incorrect"))}
 		},
 		nil,
 	)
@@ -33,7 +33,7 @@ func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.Response
 	return recorder
 }
 
-func Test_HTTP_RuleSet_ListDescendants_UnexpectedError(t *testing.T) {
+func Test_HTTP_RuleSet_ListDescendants_EntityIdFormatIncorrect(t *testing.T) {
 	req, err := http.NewRequest("GET", "/12345/rulesets/descendants", bytes.NewBuffer([]byte("")))
 
 	if err != nil {
@@ -43,10 +43,10 @@ func Test_HTTP_RuleSet_ListDescendants_UnexpectedError(t *testing.T) {
 
 	req.Header.Set("Content-Type", "application/json")
 
-	recorder := setupUnknownErrorRecorder(t, req)
+	recorder := setupEntityIdFormatIncorrectErrorRecorder(t, req)
 
-	if status := recorder.Code; status != http.StatusInternalServerError {
-		t.Errorf("Status code expected to be %d but got %d", http.StatusInternalServerError, status)
+	if status := recorder.Code; status != http.StatusBadRequest {
+		t.Errorf("Status code expected to be %d but got %d", http.StatusBadRequest, status)
 	}
 
 	body := recorder.Body.String()
@@ -61,15 +61,15 @@ func Test_HTTP_RuleSet_ListDescendants_UnexpectedError(t *testing.T) {
 	errCode := resJson.Get("code").MustInt()
 	message := resJson.Get("message").MustString()
 
-	expectedErrCode := 100
+	expectedErrCode := 107
 
 	if errCode != expectedErrCode {
 		t.Errorf("Expected error code %d but got %d", expectedErrCode, errCode)
 		return
 	}
 
-	if message != unexpectedErrorMessage {
-		t.Errorf("Expected message %s but got %s", unexpectedErrorMessage, message)
+	if message != malformedParametersMessage {
+		t.Errorf("Expected message %s but got %s", malformedParametersMessage, message)
 		return
 	}
 }

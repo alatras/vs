@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {
+func setupEntityNotFoundErrorRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 	log := logger.NewStubLogger()
 
@@ -24,7 +24,7 @@ func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.Response
 		nil,
 		nil,
 		func() listDescendantsRuleSet.ListDescendantsRuleSet {
-			return &errorApp{error: listDescendantsRuleSet.NewError(listDescendantsRuleSet.UnexpectedErr, errors.New("unexpected"))}
+			return &errorApp{error: listDescendantsRuleSet.NewError(listDescendantsRuleSet.EntityIdNotFoundErr, errors.New("not found"))}
 		},
 		nil,
 	)
@@ -33,7 +33,7 @@ func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.Response
 	return recorder
 }
 
-func Test_HTTP_RuleSet_ListDescendants_UnexpectedError(t *testing.T) {
+func Test_HTTP_RuleSet_ListDescendants_EntityNotFound(t *testing.T) {
 	req, err := http.NewRequest("GET", "/12345/rulesets/descendants", bytes.NewBuffer([]byte("")))
 
 	if err != nil {
@@ -43,10 +43,10 @@ func Test_HTTP_RuleSet_ListDescendants_UnexpectedError(t *testing.T) {
 
 	req.Header.Set("Content-Type", "application/json")
 
-	recorder := setupUnknownErrorRecorder(t, req)
+	recorder := setupEntityNotFoundErrorRecorder(t, req)
 
-	if status := recorder.Code; status != http.StatusInternalServerError {
-		t.Errorf("Status code expected to be %d but got %d", http.StatusInternalServerError, status)
+	if status := recorder.Code; status != http.StatusNotFound {
+		t.Errorf("Status code expected to be %d but got %d", http.StatusNotFound, status)
 	}
 
 	body := recorder.Body.String()
@@ -61,15 +61,15 @@ func Test_HTTP_RuleSet_ListDescendants_UnexpectedError(t *testing.T) {
 	errCode := resJson.Get("code").MustInt()
 	message := resJson.Get("message").MustString()
 
-	expectedErrCode := 100
+	expectedErrCode := 109
 
 	if errCode != expectedErrCode {
 		t.Errorf("Expected error code %d but got %d", expectedErrCode, errCode)
 		return
 	}
 
-	if message != unexpectedErrorMessage {
-		t.Errorf("Expected message %s but got %s", unexpectedErrorMessage, message)
+	if message != resourceNotFoundMessage {
+		t.Errorf("Expected message %s but got %s", resourceNotFoundMessage, message)
 		return
 	}
 }
