@@ -81,8 +81,8 @@ func Test_HTTP_HealthCheck_Get_Failure(t *testing.T) {
 
 	recorder := setupUnexpectedErrorRecorder(t, req)
 
-	if status := recorder.Code; status != http.StatusInternalServerError {
-		t.Errorf("Status code expected to be %d but got %d", http.StatusInternalServerError, status)
+	if status := recorder.Code; status != http.StatusServiceUnavailable {
+		t.Errorf("Status code expected to be %d but got %d", http.StatusServiceUnavailable, status)
 	}
 }
 
@@ -109,8 +109,8 @@ func Test_HTTP_HealthCheck_Get_Failure_EntityService(t *testing.T) {
 
 	recorder := setupUnexpectedErrorRecorderEntityService(t, req)
 
-	if status := recorder.Code; status != http.StatusInternalServerError {
-		t.Errorf("Status code expected to be %d but got %d", http.StatusInternalServerError, status)
+	if status := recorder.Code; status != http.StatusServiceUnavailable {
+		t.Errorf("Status code expected to be %d but got %d", http.StatusServiceUnavailable, status)
 	}
 }
 
