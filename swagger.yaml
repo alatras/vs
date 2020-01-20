@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Validation API
-  version: 0.1.0
+  version: 1.0.0
 paths:
   /entities/{entityId}/rulesets:
     post:
@@ -40,40 +40,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/unexpectedErrorResponse'                
+                $ref: '#/components/schemas/unexpectedErrorResponse'
     get:
       tags:
         - ruleSets
       summary: Get all rule sets for a given entity.
       operationId: listRuleSets
-      parameters:
-        - in: path
-          name: entityId
-          required: true
-          schema:
-            type: string
-          description: The unique ID of the entity
-      responses:
-        '200':
-          description: Fetched rule sets
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ruleSetResponse'
-        '500':
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/unexpectedErrorResponse'
-  /entities/{entityId}/rulesets/ancestors:
-    get:
-      tags:
-        - ruleSets
-      summary: Get all rule sets for a given entity and it's ancestors.
-      operationId: listAncestorRuleSets
       parameters:
         - in: path
           name: entityId
@@ -161,7 +133,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ruleSetNotFoundErrorResponse'            
+                $ref: '#/components/schemas/ruleSetNotFoundErrorResponse'
         '400':
           description: Malformed parameters in the body
           content:
@@ -173,7 +145,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/unexpectedErrorResponse'                
+                $ref: '#/components/schemas/unexpectedErrorResponse'
     get:
       tags:
         - ruleSets
@@ -210,7 +182,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/unexpectedErrorResponse'                
+                $ref: '#/components/schemas/unexpectedErrorResponse'
     delete:
       tags:
         - ruleSets
@@ -243,7 +215,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/unexpectedErrorResponse'                
+                $ref: '#/components/schemas/unexpectedErrorResponse'
   /transaction/validate:
     post:
       tags:
@@ -264,7 +236,7 @@ paths:
               schema:
                 type: object
                 required:
-                    - action
+                  - action
                 properties:
                   action:
                     type: string
@@ -294,6 +266,12 @@ paths:
                     items:
                       type: object
                       properties:
+                        id:
+                          type: string
+                          description: The unique ID of the rule set
+                        entity:
+                          type: string
+                          description: The entity ID of the rule set
                         name:
                           type: string
                         rules:
@@ -315,7 +293,9 @@ paths:
                   value:
                     action: PASS
                     tags:
-                      - name: SUSPICIOUS HIGH AMOUNT (SWEDEN)
+                      - id: '529469fc-200a-4bca-9a94-26089bfccf11'
+                        entity: '550a0591-6157-43e3-80b7-66168646fb67'
+                        name: SUSPICIOUS HIGH AMOUNT (SWEDEN)
                         rules:
                           - key: amount
                             operator: ">"
@@ -327,7 +307,9 @@ paths:
                   value:
                     action: BLOCK
                     block:
-                      - name: Less than minimum amount (EUR)
+                      - id: '2e293dbb-da9c-4694-99ed-ddb010c7deb2'
+                        entity: 'e4b95dfc-a92f-41de-83e9-1755a9d1ebf8'
+                        name: Less than minimum amount (EUR)
                         rules:
                           - key: amount
                             operator: "<="
@@ -339,7 +321,9 @@ paths:
                   value:
                     action: BLOCK
                     block:
-                      - name: Less than minimum amount (EUR)
+                      - id: '2e293dbb-da9c-4694-99ed-ddb010c7deb2'
+                        entity: 'e4b95dfc-a92f-41de-83e9-1755a9d1ebf8'
+                        name: Less than minimum amount (EUR)
                         rules:
                           - key: amount
                             operator: "<="
@@ -348,7 +332,9 @@ paths:
                             operator: "=="
                             value: EUR
                     tags:
-                      - name: SUSPICIOUS HIGH AMOUNT (SWEDEN)
+                      - id: '529469fc-200a-4bca-9a94-26089bfccf11'
+                        entity: '550a0591-6157-43e3-80b7-66168646fb67'
+                        name: SUSPICIOUS HIGH AMOUNT (SWEDEN)
                         rules:
                           - key: amount
                             operator: ">"
@@ -367,8 +353,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/unexpectedErrorResponse'                
-                            
+                $ref: '#/components/schemas/unexpectedErrorResponse'
+
 components:
   schemas:
     unexpectedErrorResponse:
@@ -404,7 +390,7 @@ components:
         timestamp:
           type: integer
           example: 1569834344
-          description: Timestamp when error occurred  
+          description: Timestamp when error occurred
     ruleSetNotFoundErrorResponse:
       type: object
       properties:
@@ -418,7 +404,7 @@ components:
           properties:
             resource:
               type: string
-              enum: 
+              enum:
                 - ruleSet
                 - entity
               description: Type of resource which was not found
@@ -464,6 +450,12 @@ components:
             - amount
             - currencyCode
             - customerCountryCode
+            - card
+            - issuerCountryCode
+            - entityId
+            - customerId
+            - customerIP
+            - customerIPCountryCode
         operator:
           type: string
           enum:

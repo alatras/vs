@@ -3,3 +3,13 @@
 
 # MacOS metadata files
 .DS_Store
+
+swagger.yml
+Jenkinsfile
+.gitignore
+docker-compose.yml
+Dockerfile
+Dockerfile.dev
+README.md
+.env
+
