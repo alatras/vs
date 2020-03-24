@@ -42,7 +42,16 @@ func (c *client) Ping() error {
 		"method": "Ping",
 	})
 
-	resp, err := http.Get(c.url + "/LB_STATUS")
+	req, err := http.NewRequest("GET", c.url+"/LB_STATUS", nil)
+
+	if err != nil {
+		errorLog.WithError(err).Error("failed to create the request")
+		return RequestError
+	}
+
+	req.Header.Set("Authorization", "Bearer "+c.jwtToken)
+
+	resp, err := c.httpClient.Do(req)
 
 	if err != nil {
 		errorLog.WithError(err).Error("failed to perform the request")
