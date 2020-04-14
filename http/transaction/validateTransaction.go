@@ -31,10 +31,6 @@ func (body ValidateTransactionPayload) Bind(r *http.Request) error {
 		return errors.New("merchant organisation UUID required")
 	}
 
-	if body.Transaction.Customer.Country == "" {
-		return errors.New("customer country code required")
-	}
-
 	return nil
 }
 
@@ -96,14 +92,22 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	entityId := trxPayload.Transaction.Merchant.Organisation.UUID
 
 	t := trx.Transaction{
-		Amount:              amount,
-		MinorUnits:          minorUnits,
-		CurrencyCode:        trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
-		CustomerCountryCode: trx.CountryCodeIso31661Alpha2(trxPayload.Transaction.Customer.Country),
-		EntityId:            entityId,
-		CustomerId:          trxPayload.Transaction.Customer.CustomerIdentification.CustomerId,
-		CustomerIP:          trxPayload.Transaction.Customer.IP,
-		CustomerIPCountry:   trxPayload.Transaction.Customer.IPCountry,
+		Amount:       amount,
+		MinorUnits:   minorUnits,
+		CurrencyCode: trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
+		EntityId:     entityId,
+	}
+
+	if trxPayload.Transaction.Customer != (customer{}) {
+		trxCustomer := trxPayload.Transaction.Customer
+
+		if trxCustomer.Country != "" {
+			t.CustomerCountryCode = trx.CountryCodeIso31661Alpha2(trxCustomer.Country)
+		}
+
+		t.CustomerId = trxCustomer.CustomerIdentification.CustomerId
+		t.CustomerIP = trxCustomer.IP
+		t.CustomerIPCountry = trxCustomer.IPCountry
 	}
 
 	for i := range trxPayload.Transaction.Instrument {
