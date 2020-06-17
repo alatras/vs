@@ -96,7 +96,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/unexpectedErrorResponse'
-  /entities/{entityId}/rulsets/{ruleSetId}:
+  /entities/{entityId}/rulesets/{ruleSetId}:
     put:
       tags:
         - ruleSets

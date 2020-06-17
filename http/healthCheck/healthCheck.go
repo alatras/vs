@@ -41,15 +41,5 @@ func (rs Resource) HealthCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = rs.entityServiceClient.Ping()
-
-	if err != nil {
-
-		rs.logger.Error.WithError(err).Error("Health check failed. Entity Service is down.......")
-
-		w.WriteHeader(http.StatusServiceUnavailable)
-		return
-	}
-
 	w.WriteHeader(http.StatusOK)
 }

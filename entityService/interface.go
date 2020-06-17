@@ -12,7 +12,6 @@ var (
 )
 
 type EntityService interface {
-	Ping() error
 	GetAncestorsOf(entityId string) ([]string, error)
 	GetDescendantsOf(entityId string) ([]string, error)
 }
