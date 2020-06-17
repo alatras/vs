@@ -1,7 +1,6 @@
 package healthCheck
 
 import (
-	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"github.com/go-chi/chi"
@@ -9,16 +8,14 @@ import (
 )
 
 type Resource struct {
-	logger              *logger.Logger
-	ruleSetRepo         ruleSet.Repository
-	entityServiceClient entityService.EntityService
+	logger      *logger.Logger
+	ruleSetRepo ruleSet.Repository
 }
 
-func NewResource(l *logger.Logger, r ruleSet.Repository, e entityService.EntityService) Resource {
+func NewResource(l *logger.Logger, r ruleSet.Repository) Resource {
 	return Resource{
-		logger:              l.Scoped("healthCheck"),
-		ruleSetRepo:         r,
-		entityServiceClient: e,
+		logger:      l.Scoped("healthCheck"),
+		ruleSetRepo: r,
 	}
 }
 

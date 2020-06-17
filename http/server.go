@@ -80,7 +80,7 @@ func (s *Server) Start() error {
 	r.Use(httpMiddleware.SetContextWithTraceId)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	r.Mount("/healthCheck", healthCheck.NewResource(s.logger, s.ruleSetRepository, s.entityServiceClient).Routes())
+	r.Mount("/healthCheck", healthCheck.NewResource(s.logger, s.ruleSetRepository).Routes())
 	r.Mount("/transaction", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
 	r.Mount(
 		"/entities",
