@@ -33,44 +33,6 @@ func NewClient(logger *logger.Logger, url string, jwtToken string, skipCertifica
 	}
 }
 
-func (c *client) Ping() error {
-	log := c.logger.Output.WithFields(logrus.Fields{
-		"method": "Ping",
-	})
-
-	errorLog := c.logger.Error.WithFields(logrus.Fields{
-		"method": "Ping",
-	})
-
-	req, err := http.NewRequest("GET", c.url+"/LB_STATUS", nil)
-
-	if err != nil {
-		errorLog.WithError(err).Error("failed to create the request")
-		return RequestError
-	}
-
-	req.Header.Set("Authorization", "Bearer "+c.jwtToken)
-
-	resp, err := c.httpClient.Do(req)
-
-	if err != nil {
-		errorLog.WithError(err).Error("failed to perform the request")
-		return RequestError
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		err = ResponseUnsuccessful
-		errorLog.WithError(err).WithField("statusCode", resp.StatusCode).Error("entity service is not healthy")
-		return err
-	}
-
-	log.Trace("entity service is healthy")
-
-	return nil
-}
-
 func (c *client) GetAncestorsOf(entityId string) ([]string, error) {
 	errorLog := c.logger.Error.WithFields(logrus.Fields{
 		"entityId": entityId,
