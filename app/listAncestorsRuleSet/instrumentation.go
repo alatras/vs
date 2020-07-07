@@ -46,9 +46,3 @@ func (i *instrumentation) failedListingAncestorsRuleSet(err error) {
 		WithError(err).
 		Error("error fetching ancestors rule sets from db")
 }
-
-func (i *instrumentation) failedGetAncestors(err error) {
-	i.logger.Output.Logger.
-		WithError(err).
-		Error("error fetching ancestors from the entity service")
-}

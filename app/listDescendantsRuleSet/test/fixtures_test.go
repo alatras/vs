@@ -17,19 +17,3 @@ var mockRuleSets = [1]ruleSet.RuleSet{ruleSet.New(
 		},
 	},
 )}
-
-type stubEntityService struct {
-	err error
-}
-
-func (s *stubEntityService) Ping() error {
-	return nil
-}
-
-func (s *stubEntityService) GetAncestorsOf(entityId string) ([]string, error) {
-	return []string{entityId}, s.err
-}
-
-func (s *stubEntityService) GetDescendantsOf(entityId string) ([]string, error) {
-	return []string{entityId}, s.err
-}

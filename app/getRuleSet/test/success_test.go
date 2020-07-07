@@ -10,7 +10,7 @@ import (
 
 func Test_App_GetRuleSet_Success(t *testing.T) {
 	log := logger.NewStubLogger()
-	repo, err := ruleSet.NewStubRepository()
+	repo, err := ruleSet.NewStubRepository(nil)
 
 	if err != nil {
 		t.Errorf("Failed to init stub repository: %v", err)

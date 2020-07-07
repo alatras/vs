@@ -10,7 +10,7 @@ import (
 
 func Test_App_UpdateRuleSet_InvalidRule_Key(t *testing.T) {
 	log := logger.NewStubLogger()
-	repo, err := ruleSet.NewStubRepository()
+	repo, err := ruleSet.NewStubRepository(nil)
 
 	if err != nil {
 		t.Errorf("Failed to init stub repository: %v", err)
@@ -37,7 +37,7 @@ func Test_App_UpdateRuleSet_InvalidRule_Key(t *testing.T) {
 
 func Test_App_UpdateRuleSet_InvalidRule_Operation(t *testing.T) {
 	log := logger.NewStubLogger()
-	repo, err := ruleSet.NewStubRepository()
+	repo, err := ruleSet.NewStubRepository(nil)
 
 	if err != nil {
 		t.Errorf("Failed to init stub repository: %v", err)
@@ -64,7 +64,7 @@ func Test_App_UpdateRuleSet_InvalidRule_Operation(t *testing.T) {
 
 func Test_App_UpdateRuleSet_InvalidRule_Value(t *testing.T) {
 	log := logger.NewStubLogger()
-	repo, err := ruleSet.NewStubRepository()
+	repo, err := ruleSet.NewStubRepository(nil)
 
 	if err != nil {
 		t.Errorf("Failed to init stub repository: %v", err)
@@ -91,7 +91,7 @@ func Test_App_UpdateRuleSet_InvalidRule_Value(t *testing.T) {
 
 func Test_App_UpdateRuleSet_InvalidRule_NoValue(t *testing.T) {
 	log := logger.NewStubLogger()
-	repo, err := ruleSet.NewStubRepository()
+	repo, err := ruleSet.NewStubRepository(nil)
 
 	if err != nil {
 		t.Errorf("Failed to init stub repository: %v", err)

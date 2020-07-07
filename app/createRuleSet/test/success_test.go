@@ -11,7 +11,7 @@ import (
 
 func Test_App_CreateRuleSet_Success(t *testing.T) {
 	log := logger.NewStubLogger()
-	repo, err := ruleSet.NewStubRepository()
+	repo, err := ruleSet.NewStubRepository(nil)
 
 	if err != nil {
 		t.Errorf("Failed to init stub repository: %v", err)
@@ -41,7 +41,7 @@ func Test_App_CreateRuleSet_Success_Amount_AllOperators(t *testing.T) {
 
 	for _, operator := range amountOperators {
 		log := logger.NewStubLogger()
-		repo, err := ruleSet.NewStubRepository()
+		repo, err := ruleSet.NewStubRepository(nil)
 
 		if err != nil {
 			t.Errorf("Failed to init stub repository: %v", err)

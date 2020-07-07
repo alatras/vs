@@ -10,8 +10,7 @@ import (
 
 func Test_App_ListDescendantsRuleSet_Success(t *testing.T) {
 	log := logger.NewStubLogger()
-	repo, err := ruleSet.NewStubRepository()
-	entityService := stubEntityService{}
+	repo, err := ruleSet.NewStubRepository(nil)
 
 	if err != nil {
 		t.Errorf("Failed to init stub repository: %v", err)
@@ -27,11 +26,11 @@ func Test_App_ListDescendantsRuleSet_Success(t *testing.T) {
 		return
 	}
 
-	app := listDescendantsRuleSet.NewListDescendantsRuleSet(log, repo, &entityService)
+	app := listDescendantsRuleSet.NewListDescendantsRuleSet(log, repo)
 
 	ruleSets, error := app.Execute(
 		context.TODO(),
-		mockRuleSets[0].EntityId,
+		[]string{mockRuleSets[0].EntityId},
 	)
 
 	if error.HasError() {
