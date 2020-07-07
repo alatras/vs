@@ -15,9 +15,6 @@ services:
     env_file:
       - .env
     environment:
-      - ENTITY_SERVICE_URL
-      - ENTITY_SERVICE_JWT_TOKEN
-      - ENTITY_SERVICE_SKIP_CERT_VERIFICATION
       - MONGO_URL=mongodb://mongo
       - LOG_FORMAT=text
       - LOG_LEVEL=trace
