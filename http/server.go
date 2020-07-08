@@ -9,7 +9,6 @@ import (
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
-	"bitbucket.verifone.com/validation-service/entityService"
 	"bitbucket.verifone.com/validation-service/http/healthCheck"
 	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
 	httpRuleSet "bitbucket.verifone.com/validation-service/http/ruleSet"
@@ -36,7 +35,6 @@ type Server struct {
 	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet
 	getRuleSetAppFactory             func() getRuleSet.GetRuleSet
 	deleteRuleSetAppFactory          func() deleteRuleSet.DeleteRuleSet
-	entityServiceClient              entityService.EntityService
 	updateRuleSetAppFactory          func() updateRuleSet.UpdateRuleSet
 }
 
@@ -52,7 +50,6 @@ func NewServer(
 	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
-	entityServiceClient entityService.EntityService,
 	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet,
 ) *Server {
 	return &Server{
@@ -67,7 +64,6 @@ func NewServer(
 		listDescendantsRuleSetAppFactory: listDescendantsRuleSetAppFactory,
 		getRuleSetAppFactory:             getRuleSetAppFactory,
 		deleteRuleSetAppFactory:          deleteRuleSetAppFactory,
-		entityServiceClient:              entityServiceClient,
 		updateRuleSetAppFactory:          updateRuleSetAppFactory,
 	}
 }

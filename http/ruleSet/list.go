@@ -52,7 +52,7 @@ func (rs Resource) ListAncestors(w http.ResponseWriter, r *http.Request) {
 
 	entityId := chi.URLParam(r, "id")
 
-	ruleSets, err := app.Execute(ctx, entityId)
+	ruleSets, err := app.Execute(ctx, []string{entityId}) // TODO: replace with entity ids list from the request
 
 	if err.HasError() {
 		if err.Is(listAncestorsRuleSet.EntityIdNotFoundErr) {
@@ -80,7 +80,7 @@ func (rs Resource) ListDescendants(w http.ResponseWriter, r *http.Request) {
 
 	entityId := chi.URLParam(r, "id")
 
-	ruleSets, err := app.Execute(ctx, entityId)
+	ruleSets, err := app.Execute(ctx, []string{entityId}) // TODO: replace with entity ids from the request
 
 	if err.HasError() {
 		if err.Is(listDescendantsRuleSet.EntityIdNotFoundErr) {

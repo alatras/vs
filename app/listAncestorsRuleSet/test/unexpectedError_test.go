@@ -12,13 +12,11 @@ import (
 func Test_App_ListAncestorsRuleSet_UnexpectedError(t *testing.T) {
 	log := logger.NewStubLogger()
 	repo := stubRepository{}
-	entityService := stubEntityService{}
-
-	app := listAncestorsRuleSet.NewListAncestorsRuleSet(log, &repo, &entityService)
+	app := listAncestorsRuleSet.NewListAncestorsRuleSet(log, &repo)
 
 	_, err := app.Execute(
 		context.TODO(),
-		"123",
+		[]string{"123"},
 	)
 
 	if !err.HasError() {

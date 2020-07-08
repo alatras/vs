@@ -7,17 +7,23 @@ import (
 
 type StubRuleSetRepository struct {
 	cache map[string]map[string]RuleSet
+	error error
 	lock  *sync.RWMutex
 }
 
-func NewStubRepository() (*StubRuleSetRepository, error) {
+func NewStubRepository(error error) (*StubRuleSetRepository, error) {
 	return &StubRuleSetRepository{
 		cache: make(map[string]map[string]RuleSet),
+		error: error,
 		lock:  &sync.RWMutex{},
 	}, nil
 }
 
 func (r *StubRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) error {
+	if r.error != nil {
+		return r.error
+	}
+
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -30,6 +36,10 @@ func (r *StubRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) err
 }
 
 func (r *StubRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (*RuleSet, error) {
+	if r.error != nil {
+		return nil, r.error
+	}
+
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
@@ -47,6 +57,10 @@ func (r *StubRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 }
 
 func (r *StubRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds ...string) ([]RuleSet, error) {
+	if r.error != nil {
+		return []RuleSet{}, r.error
+	}
+
 	var ruleSets []RuleSet
 
 	r.lock.RLock()
@@ -64,6 +78,10 @@ func (r *StubRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds .
 }
 
 func (r *StubRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
+	if r.error != nil {
+		return false, r.error
+	}
+
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -85,6 +103,10 @@ func (r *StubRuleSetRepository) Replace(ctx context.Context, entityId string, ru
 }
 
 func (r *StubRuleSetRepository) Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error) {
+	if r.error != nil {
+		return false, r.error
+	}
+
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -112,5 +134,9 @@ func (r *StubRuleSetRepository) Delete(ctx context.Context, entityId string, rul
 }
 
 func (r *StubRuleSetRepository) Ping(ctx context.Context) error {
+	if r.error != nil {
+		return r.error
+	}
+
 	return nil
 }

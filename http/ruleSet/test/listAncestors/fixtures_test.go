@@ -34,7 +34,7 @@ var mockRuleSets = []ruleSet.RuleSet{ruleSet.New(
 type successApp struct {
 }
 
-func (app *successApp) Execute(ctx context.Context, entityId string) ([]ruleSet.RuleSet, listAncestorsRuleSet.AppError) {
+func (app *successApp) Execute(ctx context.Context, entityIds []string) ([]ruleSet.RuleSet, listAncestorsRuleSet.AppError) {
 	return mockRuleSets, listAncestorsRuleSet.AppError{}
 }
 
@@ -42,6 +42,6 @@ type errorApp struct {
 	error listAncestorsRuleSet.AppError
 }
 
-func (app *errorApp) Execute(ctx context.Context, entityId string) ([]ruleSet.RuleSet, listAncestorsRuleSet.AppError) {
+func (app *errorApp) Execute(ctx context.Context, entityIds []string) ([]ruleSet.RuleSet, listAncestorsRuleSet.AppError) {
 	return []ruleSet.RuleSet{}, app.error
 }

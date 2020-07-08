@@ -46,9 +46,3 @@ func (i *instrumentation) failedListingDescendantsRuleSet(err error) {
 		WithError(err).
 		Error("error fetching descendants rule sets from db")
 }
-
-func (i *instrumentation) failedGetDescendants(err error) {
-	i.logger.Output.Logger.
-		WithError(err).
-		Error("error fetching descendants from the entity service")
-}
