@@ -20,17 +20,17 @@ import (
 
 // ServerCommand with command line flags and env
 type ServerCommand struct {
-	Mongo MongoGroup `group:"mongo" namespace:"mongo"`
+	Mongo MongoGroup `yaml:"mongo" group:"mongo" namespace:"mongo"`
 
-	HTTPPort int `long:"httpPort" env:"HTTP_PORT" default:"8080" description:"HTTP port"`
+	HTTPPort int `yaml:"httpPort" long:"httpPort" env:"HTTP_PORT" default:"8080" description:"HTTP port"`
 
 	CommonOpts
 }
 
 // MongoGroup MongoDB configuration parameters
 type MongoGroup struct {
-	URL string `long:"url" env:"MONGO_URL" required:"MongoDB url required" description:"MongoDB url"`
-	DB  string `long:"db" env:"MONGO_DB" default:"validationService" description:"MongoDB database name"`
+	URL string `yaml:"url" long:"url" env:"MONGO_URL" required:"MongoDB url required" description:"MongoDB url"`
+	DB  string `yaml:"db" long:"db" env:"MONGO_DB" default:"validationService" description:"MongoDB database name"`
 }
 
 // Execute is the entry point for "server" command

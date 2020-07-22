@@ -18,13 +18,14 @@ type CommonOptionsCommander interface {
 // LogGroup logging configuration parameters
 type LogGroup struct {
 	///nolint:staticcheck
-	Level string `long:"level" env:"LOG_LEVEL" default:"info" choice:"trace" choice:"debug" choice:"info" choice:"warn" choice:"error" choice:"fatal" description:"Logging level"`
+	Level string `yaml:"level" long:"level" env:"LOG_LEVEL" default:"info" choice:"trace" choice:"debug" choice:"info" choice:"warn" choice:"error" choice:"fatal" description:"Logging level"`
 	///nolint:staticcheck
-	Format string `long:"format" env:"LOG_FORMAT" default:"json" choice:"json" choice:"text" description:"Logging format"`
+	Format string `yaml:"format" long:"format" env:"LOG_FORMAT" default:"json" choice:"json" choice:"text" description:"Logging format"`
 }
 
 type CommonOpts struct {
-	Log LogGroup
+	ConfigFile string   `long:"configFile" short:"f" description:"YAML configuration file path"`
+	Log        LogGroup `yaml:"log"`
 }
 
 func (log LogGroup) LevelValue() logrus.Level {
