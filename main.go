@@ -2,7 +2,9 @@ package main
 
 import (
 	"bitbucket.verifone.com/validation-service/cmd"
+	"bitbucket.verifone.com/validation-service/config"
 	"github.com/jessevdk/go-flags"
+	"gopkg.in/yaml.v2"
 	"log"
 	"os"
 )
@@ -10,45 +12,50 @@ import (
 var version = "unknown"
 var appName = "Validation Service"
 
-// Opts with all cli commands and flags
-type Opts struct {
-	ServerCmd cmd.ServerCommand `command:"server"`
-	cmd.CommonOpts
+type ConfigFileOpts struct {
+	ConfigFile string `long:"config" short:"f" default:"config.yml" description:"YAML configuration file path"`
 }
 
 func main() {
-	var opts Opts
-	cmd.AppName = appName
-	cmd.Version = version
+	config.AppName = appName
+	config.Version = version
 
-	p := flags.NewParser(&opts, flags.Default)
+	var opts ConfigFileOpts
 
-	if len(os.Args) == 1 {
-		os.Args = append(os.Args, "server")
+	_, err := flags.Parse(&opts)
+
+	if err != nil {
+		log.Printf("[ERROR] failed to parse arguments with error: %+v", err)
+		os.Exit(1)
 	}
 
-	p.CommandHandler = func(command flags.Commander, args []string) error {
-		commonOpts := cmd.CommonOpts{Log: opts.Log}
+	file, err := os.Open(opts.ConfigFile)
 
-		c := command.(cmd.CommonOptionsCommander)
-
-		c.SetCommon(commonOpts)
-
-		err := c.Execute(args)
-
-		if err != nil {
-			log.Printf("[ERROR] failed with %+v", err)
-		}
-
-		return err
+	if err != nil {
+		log.Printf("[ERROR] failed to read configuration file with error: %+v", err)
+		os.Exit(1)
 	}
 
-	if _, err := p.Parse(); err != nil {
-		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
-			os.Exit(0)
-		} else {
-			os.Exit(1)
-		}
+	defer file.Close()
+
+	decoder := yaml.NewDecoder(file)
+
+	var serverConfig config.Server
+
+	if err := decoder.Decode(&serverConfig); err != nil {
+		log.Printf("[ERROR] failed to decode configuration file with error: %+v", err)
+		os.Exit(1)
 	}
 
+	if err := serverConfig.Validate(); err != nil {
+		log.Printf("[ERROR] configuration file is invalid: %+v", err)
+		os.Exit(1)
+	}
+
+	err = cmd.StartServer(serverConfig)
+
+	if err != nil {
+		log.Printf("[ERROR] server command failed with error: %+v", err)
+		os.Exit(1)
+	}
 }

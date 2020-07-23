@@ -33,7 +33,7 @@ cat << EOF > %{buildroot}%{_unitdir}/validation-service.service
 [Unit]
 Description=Validation Service
 [Service]
-ExecStart=/usr/bin/validation-service
+ExecStart=/usr/bin/validation-service -f /etc/dimebox/validation-service.yml
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
