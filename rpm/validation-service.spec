@@ -1,4 +1,5 @@
 %define name validation-service
+%define unitdir /etc/systemd/system/
 
 Name:     %{name}
 Version:  %{rev}
@@ -27,20 +28,20 @@ go build -o validation-service -ldflags "-X main.version=%{version} -s -w -extld
 
 %pre
 echo 'executing preinstall script'
-if [ -e /etc/systemd/system/%{name}.service ]; then
-	/etc/systemd/system/%{name}.service stop &> /dev/null
+if [ -e %{unitdir}/%{name}.service ]; then
+    systemctl stop %{unitdir}/%{name}.service &> /dev/null
 fi
 
 %install
 mkdir -p %{buildroot}/etc/dimebox/%{name}
-mkdir -p %{buildroot}%{_unitdir}
+mkdir -p %{buildroot}%{unitdir}
 
 install -d %{buildroot}%{_bindir}
 install -p -m 0755 ./%{name} %{buildroot}%{_bindir}/%{name}
 
 # Create service: validation-service
-mkdir -p %{buildroot}/etc/systemd/system
-cp ./rpm/%{name}.service %{buildroot}/etc/systemd/system/
+mkdir -p %{buildroot}%{unitdir}
+cp ./rpm/%{name}.service %{buildroot}%{unitdir}
 
 # Create rsyslog config file that write syslog messages from validation-service to /var/log/dimebox/validation-service.log
 mkdir -p %{buildroot}/etc/rsyslog.d
@@ -51,10 +52,9 @@ cp ./rpm/%{name}.conf %{buildroot}/etc/rsyslog.d/
 echo 'Setting permission to directories...'
 chmod -R ug+x,o+r /etc/dimebox/%{name}
 chmod -R ug+x,o+r /var/log/dimebox/%{name}
-chmod -R ug+x,o+r /opt/dimebox/%{name}
 
 echo '%{name} installed. Before start check configuration files.'
-systemctl enable /etc/systemd/system/%{name}.service
+systemctl enable %{unitdir}/%{name}.service
 
 %clean
 rm -rf %{buildroot}
@@ -62,9 +62,9 @@ rm -rf %{buildroot}
 %preun
 if [ $1 -eq 0 ]; then
     echo 'Stopping the Service %{name} before uninstalling the rpm..'
-	systemctl stop %{name}.service
+	systemctl stop %{unitdir}/%{name}.service
 	echo 'Service %{name} stopped'
-    systemctl disable %{name}.service
+    systemctl disable %{unitdir}/%{name}.service
 fi
 
 %files
@@ -72,6 +72,6 @@ fi
 %doc README.md
 %config(noreplace) /etc/rsyslog.d/%{name}.conf
 %{_bindir}/%{name}
-%{_unitdir}/%{name}.service
+%{unitdir}/%{name}.service
 /var/log/dimebox/%{name}
 /etc/dimebox/%{name}
