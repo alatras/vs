@@ -29,7 +29,7 @@ go build -o validation-service -ldflags "-X main.version=%{version} -s -w -extld
 %pre
 echo 'executing preinstall script'
 if [ -e %{unitdir}/%{name}.service ]; then
-    systemctl stop %{unitdir}/%{name}.service &> /dev/null
+    systemctl stop %{name}.service &> /dev/null
 fi
 
 %install
@@ -54,7 +54,7 @@ chmod -R ug+x,o+r /etc/dimebox/%{name}
 chmod -R ug+x,o+r /var/log/dimebox/%{name}
 
 echo '%{name} installed. Before start check configuration files.'
-systemctl enable %{unitdir}/%{name}.service
+systemctl enable %{name}.service
 
 %clean
 rm -rf %{buildroot}
@@ -62,9 +62,9 @@ rm -rf %{buildroot}
 %preun
 if [ $1 -eq 0 ]; then
     echo 'Stopping the Service %{name} before uninstalling the rpm..'
-	systemctl stop %{unitdir}/%{name}.service
+	systemctl stop %{name}.service
 	echo 'Service %{name} stopped'
-    systemctl disable %{unitdir}/%{name}.service
+    systemctl disable %{name}.service
 fi
 
 %files
