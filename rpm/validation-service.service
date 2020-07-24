@@ -1,0 +1,13 @@
+[Unit]
+Description=Validation Service
+After=syslog.target
+
+[Service]
+ExecStart=/usr/bin/%{name}
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=validation-service
+
+[Install]
+WantedBy=multi-user.target
