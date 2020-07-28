@@ -53,6 +53,9 @@ echo 'Setting permission to directories...'
 chmod -R ug+x,o+r /etc/dimebox/%{name}
 chmod -R ug+x,o+r /var/log/dimebox/%{name}
 
+echo 'Restarting rsyslog...'
+systemctl restart rsyslog
+
 echo '%{name} installed. Before start check configuration files.'
 systemctl enable %{name}.service
 
