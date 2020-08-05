@@ -1,0 +1,7 @@
+log:
+  level: info
+  format: text
+httpPort: 8080
+mongo:
+  url: mongodb://mongo
+  db: validationService

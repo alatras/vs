@@ -12,12 +12,6 @@ services:
       - mongo
     depends_on:
       - mongo
-    env_file:
-      - .env
-    environment:
-      - MONGO_URL=mongodb://mongo
-      - LOG_FORMAT=text
-      - LOG_LEVEL=trace
   mongo:
     image: mongo:4.2.2
     restart: always

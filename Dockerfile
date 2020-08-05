@@ -43,4 +43,4 @@ COPY --from=build /go/bin/validation-service /go/bin/validation-service
 
 EXPOSE 8080
 
-CMD ["/go/bin/validation-service", "server"]
+CMD ["/go/bin/validation-service"]

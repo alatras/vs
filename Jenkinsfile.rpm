@@ -1,0 +1,25 @@
+pipeline {
+    agent { label 'master' }
+    stages {
+        stage('RPM build') {
+            steps {
+                withDockerRegistry([credentialsId: 'ecr:eu-west-1:aws-ecr', url: 'https://099399110699.dkr.ecr.eu-west-1.amazonaws.com']) {
+                    sh 'git archive --prefix="validation-service/" -o ~/rpmbuild/SOURCES/validation-service.tar.gz `git rev-parse --short HEAD`'
+                    sh 'rpmbuild -bb --define "_rpmdir /var/www/yum" --define "rev `git rev-parse --short HEAD`" --define "epoch `date +%s`" rpm/validation-service.spec'
+                    sh 'createrepo --database --update /var/www/yum'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+        failure {
+            slackSend channel: '#ci', color: 'danger', message: "*Validation Service RPM FAILED* `${env.JOB_NAME}` on ${env.STAGE_NAME}\n- ${env.BUILD_DISPLAY_NAME}: ${env.RUN_DISPLAY_URL}\n- PR: ${env.CHANGE_URL}\n- Commit: `${env.GIT_PREVIOUS_COMMIT}`", tokenCredentialId: 'slack-api'
+        }
+        success {
+            slackSend channel: '#ci', color: 'good', message: "*Validation Service RPM SUCCESS* `${env.JOB_NAME}`\n- ${env.BUILD_DISPLAY_NAME}: ${env.RUN_DISPLAY_URL}\n- PR: ${env.CHANGE_URL}\n- Commit: `${env.GIT_PREVIOUS_COMMIT}`", tokenCredentialId: 'slack-api'
+        }
+    }
+}

@@ -20,7 +20,7 @@ type MongoRuleSetRepository struct {
 }
 
 func NewMongoRepository(url string, dbName string, logger *logger.Logger) (*MongoRuleSetRepository, error) {
-	client, err := connectToMongo(url)
+	client, err := connectToMongo(url, logger)
 
 	if err != nil {
 		return nil, err
@@ -136,17 +136,19 @@ func (r MongoRuleSetRepository) Delete(ctx context.Context, entityId string, rul
 	return deleted, nil
 }
 
-func connectToMongo(url string) (*mongo.Client, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+func connectToMongo(url string, logger *logger.Logger) (*mongo.Client, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(url))
 
 	if err != nil {
+		logger.Error.WithError(err).Error("failed to establish MongoDB connection")
 		return nil, errors.New("error while establishing connection to MongoDB")
 	}
 
 	if err := client.Ping(ctx, nil); err != nil {
+		logger.Error.WithError(err).Error("failed to ping MongoDB")
 		return nil, errors.New("error while ensuring connection to MongoDB")
 	}
 

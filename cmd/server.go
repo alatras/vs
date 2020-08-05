@@ -9,6 +9,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
+	"bitbucket.verifone.com/validation-service/config"
 	"bitbucket.verifone.com/validation-service/http"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
@@ -18,30 +19,14 @@ import (
 	"runtime"
 )
 
-// ServerCommand with command line flags and env
-type ServerCommand struct {
-	Mongo MongoGroup `group:"mongo" namespace:"mongo"`
+func StartServer(config config.Server) error {
+	log := setupLogger(config.Log)
 
-	HTTPPort int `long:"httpPort" env:"HTTP_PORT" default:"8080" description:"HTTP port"`
+	ruleSetRepo := createRuleSetRepository(config.Mongo, log)
 
-	CommonOpts
-}
+	validateTransactionApp := createValidateTransactionApp(ruleSetRepo, log)
 
-// MongoGroup MongoDB configuration parameters
-type MongoGroup struct {
-	URL string `long:"url" env:"MONGO_URL" required:"MongoDB url required" description:"MongoDB url"`
-	DB  string `long:"db" env:"MONGO_DB" default:"validationService" description:"MongoDB database name"`
-}
-
-// Execute is the entry point for "server" command
-func (s *ServerCommand) Execute(args []string) error {
-	log := s.setupLogger()
-
-	ruleSetRepo := s.createRuleSetRepository(log)
-
-	validateTransactionApp := s.createValidateTransactionApp(ruleSetRepo, log)
-
-	log.Output.Infof("Starting REST API server at port %d", s.HTTPPort)
+	log.Output.Infof("Starting REST API server at port %d", config.HTTPPort)
 
 	createRuleSetAppFactory := func() createRuleSet.CreateRuleSet {
 		return createRuleSet.NewCreateRuleSet(log, ruleSetRepo)
@@ -72,7 +57,7 @@ func (s *ServerCommand) Execute(args []string) error {
 	}
 
 	err := http.NewServer(
-		s.HTTPPort,
+		config.HTTPPort,
 		chi.NewRouter(),
 		log,
 		ruleSetRepo,
@@ -94,22 +79,23 @@ func (s *ServerCommand) Execute(args []string) error {
 	return nil
 }
 
-func (s *ServerCommand) setupLogger() *logger.Logger {
+func setupLogger(logConfig config.Log) *logger.Logger {
 	l, err := logger.NewLogger(
-		AppName,
-		Version,
-		s.Log.FormatValue(),
-		s.Log.LevelValue(),
+		config.AppName,
+		config.Version,
+		logConfig.FormatValue(),
+		logConfig.LevelValue(),
 	)
 
 	if err != nil {
 		log.Panic("Failed to initialize logger")
 	}
+
 	return l
 }
 
-func (s *ServerCommand) createRuleSetRepository(logger *logger.Logger) *ruleSet.MongoRuleSetRepository {
-	ruleSetRepository, err := ruleSet.NewMongoRepository(s.Mongo.URL, s.Mongo.DB, logger)
+func createRuleSetRepository(mongoConfig config.Mongo, logger *logger.Logger) *ruleSet.MongoRuleSetRepository {
+	ruleSetRepository, err := ruleSet.NewMongoRepository(mongoConfig.URL, mongoConfig.DB, logger)
 
 	if err != nil {
 		logger.Error.WithError(err).Error("Failed to initialize RuleSetRepository")
@@ -119,7 +105,7 @@ func (s *ServerCommand) createRuleSetRepository(logger *logger.Logger) *ruleSet.
 	return ruleSetRepository
 }
 
-func (s *ServerCommand) createValidateTransactionApp(
+func createValidateTransactionApp(
 	r *ruleSet.MongoRuleSetRepository,
 	l *logger.Logger,
 ) validateTransaction.ValidatorService {
