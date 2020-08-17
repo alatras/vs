@@ -5,3 +5,14 @@ httpPort: 8080
 mongo:
   url: mongodb://mongo
   db: validationService
+appd:
+  appName: validationService
+  tierName: transaction
+  nodeName: transaction01
+  initTimeout: 1000
+  controller:
+    host: my-appd-controller.example.org
+    port: 8090
+    useSSL: false
+    account: customer1
+    accessKey: secret
