@@ -1,6 +1,7 @@
 package healthCheck
 
 import (
+	appd "bitbucket.verifone.com/validation-service/appdynamics"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"github.com/go-chi/chi"
@@ -28,9 +29,15 @@ func (rs Resource) Routes() chi.Router {
 }
 
 func (rs Resource) HealthCheck(w http.ResponseWriter, r *http.Request) {
+	appDCorrelationHeader := r.Header.Get(appd.APPD_CORRELATION_HEADER_NAME)
+	businessTransaction := appd.StartBT("Health check", appDCorrelationHeader)
+	appd.SetBTURL(businessTransaction, r.URL.Path)
+	defer appd.EndBT(businessTransaction)
+
 	err := rs.ruleSetRepo.Ping(r.Context())
 
 	if err != nil {
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
 
 		rs.logger.Error.WithError(err).Error("Health check failed. Mongo is down.......")
 

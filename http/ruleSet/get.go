@@ -2,6 +2,7 @@ package ruleSet
 
 import (
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
+	appd "bitbucket.verifone.com/validation-service/appdynamics"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -13,6 +14,11 @@ func (resp GetRuleSetResponse) Render(w http.ResponseWriter, r *http.Request) er
 }
 
 func (rs Resource) Get(w http.ResponseWriter, r *http.Request) {
+	appDCorrelationHeader := r.Header.Get(appd.APPD_CORRELATION_HEADER_NAME)
+	businessTransaction := appd.StartBT("Get ruleset", appDCorrelationHeader)
+	appd.SetBTURL(businessTransaction, r.URL.Path)
+	defer appd.EndBT(businessTransaction)
+
 	app := rs.getRuleSetAppFactory()
 
 	ctx := r.Context()
@@ -22,6 +28,8 @@ func (rs Resource) Get(w http.ResponseWriter, r *http.Request) {
 	fetchedRuleSet, err := app.Execute(ctx, entityId, ruleSetId)
 
 	if err != nil {
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+
 		switch err {
 		case getRuleSet.NotFound:
 			_ = render.Render(w, r, errorResponse.ResourceNotFound("ruleSet", ruleSetId))
@@ -56,6 +64,7 @@ func (rs Resource) Get(w http.ResponseWriter, r *http.Request) {
 	err = render.Render(w, r, response)
 
 	if err != nil {
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
 		rs.logger.Error.WithError(err).Error("error rendering response")
 	}
 }

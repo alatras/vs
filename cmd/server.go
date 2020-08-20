@@ -9,6 +9,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/listRuleSet"
 	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
+	appd "bitbucket.verifone.com/validation-service/appdynamics"
 	"bitbucket.verifone.com/validation-service/config"
 	"bitbucket.verifone.com/validation-service/http"
 	"bitbucket.verifone.com/validation-service/logger"
@@ -21,6 +22,8 @@ import (
 
 func StartServer(config config.Server) error {
 	log := setupLogger(config.Log)
+
+	setupAppD(config.AppD)
 
 	ruleSetRepo := createRuleSetRepository(config.Mongo, log)
 
@@ -92,6 +95,24 @@ func setupLogger(logConfig config.Log) *logger.Logger {
 	}
 
 	return l
+}
+
+func setupAppD(appDConfig config.AppD) {
+	cfg := appd.Config{}
+
+	cfg.AppName = appDConfig.AppName
+	cfg.TierName = appDConfig.TierName
+	cfg.NodeName = appDConfig.NodeName
+	cfg.InitTimeoutMs = appDConfig.InitTimeout
+	cfg.Controller.Host = appDConfig.Controller.Host
+	cfg.Controller.Port = appDConfig.Controller.Port
+	cfg.Controller.UseSSL = appDConfig.Controller.UseSSL
+	cfg.Controller.Account = appDConfig.Controller.Account
+	cfg.Controller.AccessKey = appDConfig.Controller.AccessKey
+
+	if err := appd.InitSDK(&cfg); err != nil {
+		log.Panic("Error initializing the AppDynamics SDK\n")
+	}
 }
 
 func createRuleSetRepository(mongoConfig config.Mongo, logger *logger.Logger) *ruleSet.MongoRuleSetRepository {

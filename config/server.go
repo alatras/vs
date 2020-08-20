@@ -32,7 +32,7 @@ type AppD struct {
 	InitTimeout int    `yaml:"initTimeout"`
 	Controller  struct {
 		Host      string `yaml:"host"`
-		Port      int    `yaml:"port"`
+		Port      uint16 `yaml:"port"`
 		UseSSL    bool   `yaml:"useSSL"`
 		Account   string `yaml:"account"`
 		AccessKey string `yaml:"accessKey"`

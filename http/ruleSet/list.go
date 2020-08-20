@@ -3,6 +3,7 @@ package ruleSet
 import (
 	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
 	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
+	appd "bitbucket.verifone.com/validation-service/appdynamics"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"github.com/go-chi/chi"
@@ -26,6 +27,11 @@ func NewListRuleSetResponse(ruleSets []ruleSet.RuleSet) []render.Renderer {
 }
 
 func (rs Resource) List(w http.ResponseWriter, r *http.Request) {
+	appDCorrelationHeader := r.Header.Get(appd.APPD_CORRELATION_HEADER_NAME)
+	businessTransaction := appd.StartBT("List rulesets", appDCorrelationHeader)
+	appd.SetBTURL(businessTransaction, r.URL.Path)
+	defer appd.EndBT(businessTransaction)
+
 	app := rs.listRuleSetAppFactory()
 
 	ctx := r.Context()

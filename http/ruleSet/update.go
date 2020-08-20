@@ -2,6 +2,7 @@ package ruleSet
 
 import (
 	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
+	appd "bitbucket.verifone.com/validation-service/appdynamics"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -18,6 +19,11 @@ func (u UpdateRuleSetResponse) Render(w http.ResponseWriter, r *http.Request) er
 }
 
 func (rs Resource) Update(w http.ResponseWriter, r *http.Request) {
+	appDCorrelationHeader := r.Header.Get(appd.APPD_CORRELATION_HEADER_NAME)
+	businessTransaction := appd.StartBT("Update ruleset", appDCorrelationHeader)
+	appd.SetBTURL(businessTransaction, r.URL.Path)
+	defer appd.EndBT(businessTransaction)
+
 	app := rs.updateRuleSetAppFactory()
 
 	ctx := r.Context()
