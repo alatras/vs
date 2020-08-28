@@ -3,6 +3,7 @@ package ruleSet
 import (
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	appd "bitbucket.verifone.com/validation-service/appdynamics"
+	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -10,14 +11,16 @@ import (
 )
 
 func (rs Resource) Delete(w http.ResponseWriter, r *http.Request) {
-	appDCorrelationHeader := r.Header.Get(appd.APPD_CORRELATION_HEADER_NAME)
-	businessTransaction := appd.StartBT("Delete ruleset", appDCorrelationHeader)
-	appd.SetBTURL(businessTransaction, r.URL.Path)
-	defer appd.EndBT(businessTransaction)
+	ctx := r.Context()
+
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
 
 	app := rs.deleteRuleSetAppFactory()
 
-	ctx := r.Context()
 	entityId := chi.URLParam(r, "id")
 	ruleSetId := chi.URLParam(r, "ruleSetId")
 

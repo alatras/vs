@@ -11,8 +11,8 @@ appd:
   nodeName: transaction01
   initTimeout: 1000
   controller:
-    host: my-appd-controller.example.org
-    port: 8090
-    useSSL: false
-    account: customer1
-    accessKey: secret
+    host: verifone-test.saas.appdynamics.com
+    port: 443
+    useSSL: true
+    account: verifone-test
+    accessKey: pagow299f851

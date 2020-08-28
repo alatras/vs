@@ -11,6 +11,7 @@ import (
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	appd "bitbucket.verifone.com/validation-service/appdynamics"
 	"bitbucket.verifone.com/validation-service/config"
+	"bitbucket.verifone.com/validation-service/enums/appdBackend"
 	"bitbucket.verifone.com/validation-service/http"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
@@ -112,6 +113,14 @@ func setupAppD(appDConfig config.AppD) {
 
 	if err := appd.InitSDK(&cfg); err != nil {
 		log.Panic("Error initializing the AppDynamics SDK\n")
+	}
+
+	backendProperties := map[string]string{
+		"DATABASE": "mongodb",
+	}
+
+	if err := appd.AddBackend(string(appdBackend.MongoDB), "DB", backendProperties, true); err != nil {
+		log.Printf("Failed to add AppD database backend: %s", err.Error())
 	}
 }
 

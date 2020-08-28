@@ -1,6 +1,9 @@
 package ruleSet
 
 import (
+	appd "bitbucket.verifone.com/validation-service/appdynamics"
+	"bitbucket.verifone.com/validation-service/enums/appdBackend"
+	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/logger"
 	"context"
 	"errors"
@@ -43,6 +46,15 @@ func NewMongoRepository(url string, dbName string, logger *logger.Logger) (*Mong
 }
 
 func (r MongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) error {
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
+
+	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	defer appd.EndExitcall(exitCallHandle)
+
 	_, err := r.ruleSetCollection.InsertOne(ctx, ruleSet)
 
 	if err != nil {
@@ -53,6 +65,15 @@ func (r MongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) err
 }
 
 func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (*RuleSet, error) {
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
+
+	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	defer appd.EndExitcall(exitCallHandle)
+
 	var ruleSet RuleSet
 
 	err := r.ruleSetCollection.FindOne(context.TODO(), bson.M{
@@ -72,6 +93,15 @@ func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 }
 
 func (r MongoRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds ...string) ([]RuleSet, error) {
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
+
+	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	defer appd.EndExitcall(exitCallHandle)
+
 	cursor, err := r.ruleSetCollection.Find(ctx, bson.M{
 		"entityId": bson.M{
 			"$in": entityIds,
@@ -97,6 +127,15 @@ func (r MongoRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds .
 }
 
 func (r MongoRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
+
+	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	defer appd.EndExitcall(exitCallHandle)
+
 	var replaced bool
 
 	result, err := r.ruleSetCollection.ReplaceOne(ctx, bson.M{
@@ -116,6 +155,15 @@ func (r MongoRuleSetRepository) Replace(ctx context.Context, entityId string, ru
 }
 
 func (r MongoRuleSetRepository) Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error) {
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
+
+	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	defer appd.EndExitcall(exitCallHandle)
+
 	var deleted bool
 
 	result, err := r.ruleSetCollection.DeleteMany(ctx, bson.M{
@@ -156,6 +204,15 @@ func connectToMongo(url string, logger *logger.Logger) (*mongo.Client, error) {
 }
 
 func (r MongoRuleSetRepository) Ping(ctx context.Context) error {
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
+
+	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	defer appd.EndExitcall(exitCallHandle)
+
 	log := r.logger.Output.WithFields(logrus.Fields{
 		"method": "Ping",
 	})

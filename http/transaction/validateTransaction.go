@@ -3,6 +3,7 @@ package transaction
 import (
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	appd "bitbucket.verifone.com/validation-service/appdynamics"
+	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"bitbucket.verifone.com/validation-service/report"
 	trx "bitbucket.verifone.com/validation-service/transaction"
@@ -44,10 +45,13 @@ func response(report report.Report) *ValidateTransactionResponse {
 }
 
 func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
-	appDCorrelationHeader := r.Header.Get(appd.APPD_CORRELATION_HEADER_NAME)
-	businessTransaction := appd.StartBT("Transaction validation", appDCorrelationHeader)
-	appd.SetBTURL(businessTransaction, r.URL.Path)
-	defer appd.EndBT(businessTransaction)
+	ctx := r.Context()
+
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
 
 	var details interface{}
 
@@ -58,8 +62,6 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		_ = render.Render(w, r, errorResponse.MalformedParameters(err.Error()))
 		return
 	}
-
-	ctx := r.Context()
 
 	minorUnits := 0
 

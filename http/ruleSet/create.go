@@ -3,6 +3,7 @@ package ruleSet
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	appd "bitbucket.verifone.com/validation-service/appdynamics"
+	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -19,14 +20,16 @@ func (t CreateRuleSetResponse) Render(w http.ResponseWriter, r *http.Request) er
 }
 
 func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
-	appDCorrelationHeader := r.Header.Get(appd.APPD_CORRELATION_HEADER_NAME)
-	businessTransaction := appd.StartBT("Create ruleset", appDCorrelationHeader)
-	appd.SetBTURL(businessTransaction, r.URL.Path)
-	defer appd.EndBT(businessTransaction)
+	ctx := r.Context()
+
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
 
 	app := rs.createRuleSetAppFactory()
 
-	ctx := r.Context()
 	entityId := chi.URLParam(r, "id")
 
 	payload := CreateRuleSetPayload{}
