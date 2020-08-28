@@ -53,6 +53,8 @@ func (r MongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) err
 	}
 
 	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	_ = appd.SetExitcallDetails(exitCallHandle, "InsertOne")
+
 	defer appd.EndExitcall(exitCallHandle)
 
 	_, err := r.ruleSetCollection.InsertOne(ctx, ruleSet)
@@ -65,6 +67,11 @@ func (r MongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) err
 }
 
 func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ruleSetId string) (*RuleSet, error) {
+	query := bson.M{
+		"entityId": entityId,
+		"id":       ruleSetId,
+	}
+
 	var businessTransaction appd.BtHandle
 
 	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
@@ -72,14 +79,12 @@ func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 	}
 
 	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	_ = appd.SetExitcallDetails(exitCallHandle, fmt.Sprintf("FindOne: %s", query))
 	defer appd.EndExitcall(exitCallHandle)
 
 	var ruleSet RuleSet
 
-	err := r.ruleSetCollection.FindOne(context.TODO(), bson.M{
-		"entityId": entityId,
-		"id":       ruleSetId,
-	}).Decode(&ruleSet)
+	err := r.ruleSetCollection.FindOne(context.TODO(), query).Decode(&ruleSet)
 
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
@@ -93,6 +98,12 @@ func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 }
 
 func (r MongoRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds ...string) ([]RuleSet, error) {
+	query := bson.M{
+		"entityId": bson.M{
+			"$in": entityIds,
+		},
+	}
+
 	var businessTransaction appd.BtHandle
 
 	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
@@ -100,13 +111,10 @@ func (r MongoRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds .
 	}
 
 	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	_ = appd.SetExitcallDetails(exitCallHandle, fmt.Sprintf("Find: %s", query))
 	defer appd.EndExitcall(exitCallHandle)
 
-	cursor, err := r.ruleSetCollection.Find(ctx, bson.M{
-		"entityId": bson.M{
-			"$in": entityIds,
-		},
-	})
+	cursor, err := r.ruleSetCollection.Find(ctx, query)
 
 	if err != nil {
 		return nil, errors.New("error while listing rule sets by entity ids")
@@ -127,6 +135,11 @@ func (r MongoRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds .
 }
 
 func (r MongoRuleSetRepository) Replace(ctx context.Context, entityId string, ruleSet RuleSet) (bool, error) {
+	query := bson.M{
+		"entityId": entityId,
+		"id":       ruleSet.Id,
+	}
+
 	var businessTransaction appd.BtHandle
 
 	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
@@ -134,14 +147,12 @@ func (r MongoRuleSetRepository) Replace(ctx context.Context, entityId string, ru
 	}
 
 	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	_ = appd.SetExitcallDetails(exitCallHandle, fmt.Sprintf("ReplaceOne: %s", query))
 	defer appd.EndExitcall(exitCallHandle)
 
 	var replaced bool
 
-	result, err := r.ruleSetCollection.ReplaceOne(ctx, bson.M{
-		"entityId": entityId,
-		"id":       ruleSet.Id,
-	}, ruleSet)
+	result, err := r.ruleSetCollection.ReplaceOne(ctx, query, ruleSet)
 
 	if err != nil {
 		return replaced, errors.New("error while replacing rule set")
@@ -155,6 +166,13 @@ func (r MongoRuleSetRepository) Replace(ctx context.Context, entityId string, ru
 }
 
 func (r MongoRuleSetRepository) Delete(ctx context.Context, entityId string, ruleSetIds ...string) (bool, error) {
+	query := bson.M{
+		"entityId": entityId,
+		"id": bson.M{
+			"$in": ruleSetIds,
+		},
+	}
+
 	var businessTransaction appd.BtHandle
 
 	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
@@ -162,16 +180,12 @@ func (r MongoRuleSetRepository) Delete(ctx context.Context, entityId string, rul
 	}
 
 	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	_ = appd.SetExitcallDetails(exitCallHandle, fmt.Sprintf("DeleteMany: %s", query))
 	defer appd.EndExitcall(exitCallHandle)
 
 	var deleted bool
 
-	result, err := r.ruleSetCollection.DeleteMany(ctx, bson.M{
-		"entityId": entityId,
-		"id": bson.M{
-			"$in": ruleSetIds,
-		},
-	})
+	result, err := r.ruleSetCollection.DeleteMany(ctx, query)
 
 	if err != nil {
 		return deleted, errors.New("error while deleting rule set from db")
@@ -211,6 +225,7 @@ func (r MongoRuleSetRepository) Ping(ctx context.Context) error {
 	}
 
 	exitCallHandle := appd.StartExitcall(businessTransaction, string(appdBackend.MongoDB))
+	_ = appd.SetExitcallDetails(exitCallHandle, "Ping")
 	defer appd.EndExitcall(exitCallHandle)
 
 	log := r.logger.Output.WithFields(logrus.Fields{
