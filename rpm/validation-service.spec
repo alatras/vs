@@ -10,8 +10,10 @@ Summary:  Validation Service
 License:  Commercial
 Source:  validation-service.tar.gz
 
-BuildRequires:  golang >= 1.13.11
-AutoReqProv:    no
+BuildRequires: golang >= 1.13.11
+BuildRequires: glibc >= 2.12
+Requires: glibc >= 2.12
+AutoReqProv: no
 
 %description
 Validation Service for the Greenbox environment
@@ -24,7 +26,7 @@ mkdir -p ./_build/src/bitbucket.verifone.com/
 ln -s $(pwd) ./_build/src/bitbucket.verifone.com/validation-service
 
 export GOPATH=$(pwd)/_build:%{gopath}
-go build -o validation-service -ldflags "-X main.version=%{version} -s -w -extldflags -static" .
+go build -o validation-service -ldflags "-X main.version=%{version} -s -w" .
 
 %pre
 echo 'executing preinstall script'
@@ -35,9 +37,12 @@ fi
 %install
 mkdir -p %{buildroot}/etc/dimebox/%{name}
 mkdir -p %{buildroot}%{unitdir}
+mkdir -p %{buildroot}/%{_libdir}
 
 install -d %{buildroot}%{_bindir}
+install -d %{buildroot}%{_libdir}
 install -p -m 0755 ./%{name} %{buildroot}%{_bindir}/%{name}
+install -p -m 0755 ./appdynamics/lib/libappdynamics.so %{buildroot}%{_libdir}/libappdynamics.so
 
 # Create service: validation-service
 mkdir -p %{buildroot}%{unitdir}
@@ -75,6 +80,7 @@ fi
 %doc README.md
 %config(noreplace) /etc/rsyslog.d/%{name}.conf
 %{_bindir}/%{name}
+%{_libdir}/libappdynamics.so
 %{unitdir}/%{name}.service
 /var/log/dimebox/%{name}
 /etc/dimebox/%{name}

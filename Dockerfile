@@ -1,12 +1,12 @@
-FROM golang:1.13.0-alpine3.10 AS build
+FROM golang:1.13.14-buster AS build
 
-ENV CGO_ENABLED=0
+ENV CGO_ENABLED=1
 ENV GOOS=linux
 ENV GOARCH=amd64
 ENV GOLANG_CI_LINT_VERSION=1.18.0
 
-RUN apk add --no-cache --update tzdata git bash && \
-    rm -rf /var/cache/apk/*
+RUN apt-get update && apt-get install -y --no-install-recommends g++ gcc libc6-dev wget && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install the linter
 RUN wget -O - -q https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v$GOLANG_CI_LINT_VERSION
@@ -35,12 +35,18 @@ RUN go version && \
     branch=$(git rev-parse --abbrev-ref HEAD) &&\
     version="$branch:$commit" && \
     echo "Building version $version..." && \
-    go build -o /go/bin/validation-service -ldflags "-X main.version=${version} -s -w -extldflags -static"
+    go build -o /go/bin/validation-service -ldflags "-X main.version=${version} -s -w"
 
-FROM scratch
+FROM golang:1.13.14-buster
 
+WORKDIR /go/bin
+
+ENV LD_LIBRARY_PATH=/go/lib
+
+COPY --from=build /go/src/bitbucket.verifone.com/validation-service/appdynamics/lib /go/lib
 COPY --from=build /go/bin/validation-service /go/bin/validation-service
+COPY --from=build /go/src/bitbucket.verifone.com/validation-service/config.yml /go/bin/
 
 EXPOSE 8080
 
-CMD ["/go/bin/validation-service"]
+CMD ["validation-service"]

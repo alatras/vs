@@ -2,6 +2,8 @@ package transaction
 
 import (
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
+	appd "bitbucket.verifone.com/validation-service/appdynamics"
+	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"bitbucket.verifone.com/validation-service/report"
 	trx "bitbucket.verifone.com/validation-service/transaction"
@@ -43,16 +45,23 @@ func response(report report.Report) *ValidateTransactionResponse {
 }
 
 func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
+
 	var details interface{}
 
 	trxPayload := ValidateTransactionPayload{}
 
 	if err := render.Bind(r, &trxPayload); err != nil {
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
 		_ = render.Render(w, r, errorResponse.MalformedParameters(err.Error()))
 		return
 	}
-
-	ctx := r.Context()
 
 	minorUnits := 0
 
@@ -61,6 +70,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	amount, err := strconv.ParseUint(amountComponents[0], 10, 64)
 
 	if err != nil {
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
 		_ = render.Render(w, r, errorResponse.MalformedParameters(err))
 		return
 	}
@@ -73,6 +83,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		decimalAmount, err := strconv.ParseUint(decimalAmountString, 10, 64)
 
 		if err != nil {
+			appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
 			_ = render.Render(w, r, errorResponse.MalformedParameters(err))
 			return
 		}
@@ -85,7 +96,9 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 
 		amount += decimalAmount
 	} else if numberOfAmountComponents > 2 {
-		_ = render.Render(w, r, errorResponse.MalformedParameters("amount can contain only one decimal point"))
+		errMessage := "amount can contain only one decimal point"
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, errMessage, false)
+		_ = render.Render(w, r, errorResponse.MalformedParameters(errMessage))
 		return
 	}
 
@@ -124,9 +137,11 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		render.Status(r, http.StatusOK)
 		err := render.Render(w, r, response(rep))
 		if err != nil {
+			appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
 			rs.logger.Error.WithError(err).Error("error rendering response")
 		}
 	case validationError := <-errChan:
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, validationError.Error(), false)
 		rs.logger.Error.WithError(validationError).Error("error validating transaction")
 
 		var e error
@@ -142,6 +157,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if e != nil {
+			appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, e.Error(), false)
 			rs.logger.Error.WithError(e).Error("error rendering response")
 		}
 	}

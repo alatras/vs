@@ -2,6 +2,8 @@ package ruleSet
 
 import (
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
+	appd "bitbucket.verifone.com/validation-service/appdynamics"
+	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -18,14 +20,22 @@ func (t CreateRuleSetResponse) Render(w http.ResponseWriter, r *http.Request) er
 }
 
 func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var businessTransaction appd.BtHandle
+
+	if businessTransactionUid, ok := ctx.Value(contextKey.BusinessTransaction).(string); ok {
+		businessTransaction = appd.GetBT(businessTransactionUid)
+	}
+
 	app := rs.createRuleSetAppFactory()
 
-	ctx := r.Context()
 	entityId := chi.URLParam(r, "id")
 
 	payload := CreateRuleSetPayload{}
 
 	if err := render.Bind(r, &payload); err != nil {
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
 		_ = render.Render(w, r, errorResponse.MalformedParameters(err.Error()))
 		return
 	}
@@ -45,6 +55,8 @@ func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
 	ruleSet, err := app.Execute(ctx, entityId, payload.Name, payload.Action, rules)
 
 	if err != nil {
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+
 		switch err {
 		case createRuleSet.InvalidAction:
 			_ = render.Render(w, r, errorResponse.MalformedParameters(err.Error()))
@@ -67,6 +79,7 @@ func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
 	err = render.Render(w, r, response)
 
 	if err != nil {
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
 		rs.logger.Error.WithError(err).Error("error rendering response")
 	}
 }
