@@ -43,13 +43,13 @@ func (rs Resource) List(w http.ResponseWriter, r *http.Request) {
 	ruleSets, err := app.Execute(ctx, entityId)
 
 	if err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 		_ = render.Render(w, r, errorResponse.UnexpectedError(err.Error()))
 		return
 	}
 
 	if err := render.RenderList(w, r, NewListRuleSetResponse(ruleSets)); err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 		rs.logger.Error.WithError(err).Error("error rendering response")
 		return
 	}
@@ -71,7 +71,7 @@ func (rs Resource) ListAncestors(w http.ResponseWriter, r *http.Request) {
 	ruleSets, err := app.Execute(ctx, []string{entityId}) // TODO: replace with entity ids list from the request
 
 	if err.HasError() {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 
 		if err.Is(listAncestorsRuleSet.EntityIdNotFoundErr) {
 			_ = render.Render(w, r, errorResponse.ResourceNotFound("entity", entityId))
@@ -86,7 +86,7 @@ func (rs Resource) ListAncestors(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.RenderList(w, r, NewListRuleSetResponse(ruleSets)); err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 		rs.logger.Error.WithError(err).Error("error rendering response")
 		return
 	}
@@ -108,7 +108,7 @@ func (rs Resource) ListDescendants(w http.ResponseWriter, r *http.Request) {
 	ruleSets, err := app.Execute(ctx, []string{entityId}) // TODO: replace with entity ids from the request
 
 	if err.HasError() {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 
 		if err.Is(listDescendantsRuleSet.EntityIdNotFoundErr) {
 			_ = render.Render(w, r, errorResponse.ResourceNotFound("entity", entityId))
@@ -123,7 +123,7 @@ func (rs Resource) ListDescendants(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.RenderList(w, r, NewListRuleSetResponse(ruleSets)); err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 		rs.logger.Error.WithError(err).Error("error rendering response")
 		return
 	}

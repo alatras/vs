@@ -27,7 +27,7 @@ func (rs Resource) Delete(w http.ResponseWriter, r *http.Request) {
 	err := app.Execute(ctx, entityId, ruleSetId)
 
 	if err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 
 		switch err {
 		case deleteRuleSet.NotFound:

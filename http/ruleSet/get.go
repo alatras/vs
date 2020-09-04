@@ -31,7 +31,7 @@ func (rs Resource) Get(w http.ResponseWriter, r *http.Request) {
 	fetchedRuleSet, err := app.Execute(ctx, entityId, ruleSetId)
 
 	if err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 
 		switch err {
 		case getRuleSet.NotFound:
@@ -67,7 +67,7 @@ func (rs Resource) Get(w http.ResponseWriter, r *http.Request) {
 	err = render.Render(w, r, response)
 
 	if err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 		rs.logger.Error.WithError(err).Error("error rendering response")
 	}
 }

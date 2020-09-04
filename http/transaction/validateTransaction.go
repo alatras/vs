@@ -58,7 +58,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	trxPayload := ValidateTransactionPayload{}
 
 	if err := render.Bind(r, &trxPayload); err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 		_ = render.Render(w, r, errorResponse.MalformedParameters(err.Error()))
 		return
 	}
@@ -70,7 +70,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 	amount, err := strconv.ParseUint(amountComponents[0], 10, 64)
 
 	if err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 		_ = render.Render(w, r, errorResponse.MalformedParameters(err))
 		return
 	}
@@ -83,7 +83,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		decimalAmount, err := strconv.ParseUint(decimalAmountString, 10, 64)
 
 		if err != nil {
-			appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+			appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 			_ = render.Render(w, r, errorResponse.MalformedParameters(err))
 			return
 		}
@@ -97,7 +97,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		amount += decimalAmount
 	} else if numberOfAmountComponents > 2 {
 		errMessage := "amount can contain only one decimal point"
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, errMessage, false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, errMessage, true)
 		_ = render.Render(w, r, errorResponse.MalformedParameters(errMessage))
 		return
 	}
@@ -137,11 +137,11 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		render.Status(r, http.StatusOK)
 		err := render.Render(w, r, response(rep))
 		if err != nil {
-			appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+			appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 			rs.logger.Error.WithError(err).Error("error rendering response")
 		}
 	case validationError := <-errChan:
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, validationError.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, validationError.Error(), true)
 		rs.logger.Error.WithError(validationError).Error("error validating transaction")
 
 		var e error
@@ -157,7 +157,7 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if e != nil {
-			appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, e.Error(), false)
+			appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, e.Error(), true)
 			rs.logger.Error.WithError(e).Error("error rendering response")
 		}
 	}

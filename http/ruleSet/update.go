@@ -36,7 +36,7 @@ func (rs Resource) Update(w http.ResponseWriter, r *http.Request) {
 	payload := UpdateRuleSetPayload{}
 
 	if err := render.Bind(r, &payload); err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 		_ = render.Render(w, r, errorResponse.MalformedParameters(err.Error()))
 		return
 	}
@@ -56,7 +56,7 @@ func (rs Resource) Update(w http.ResponseWriter, r *http.Request) {
 	ruleSet, err := app.Execute(ctx, entityId, ruleSetId, payload.Name, payload.Action, rules)
 
 	if err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 
 		switch err {
 		case updateRuleSet.InvalidAction:
@@ -82,7 +82,7 @@ func (rs Resource) Update(w http.ResponseWriter, r *http.Request) {
 	err = render.Render(w, r, response)
 
 	if err != nil {
-		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), false)
+		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)
 		rs.logger.Error.WithError(err).Error("error rendering response")
 	}
 }
