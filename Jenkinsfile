@@ -4,14 +4,18 @@ pipeline {
     agent { label 'master' }
     environment {
         LOG_LEVEL = "error"
+        TAG = sh(
+            script: "printf \$(git rev-parse --short ${GIT_COMMIT})",
+            returnStdout: true
+        )
     }
     stages {
         stage('Docker build') {
             steps {
                 configFileProvider([configFile(fileId: '.env', targetLocation: '.env')]) {
-                    sh 'docker build --target build -t validation-service .'
-                    sh 'docker create --name validation-service validation-service'
-                    sh 'docker cp validation-service:/build_artifacts .'
+                    sh 'docker build --target build -t validation-service:${env.TAG} .'
+                    sh 'docker create --name validation-service-${env.TAG} validation-service:${env.TAG}'
+                    sh 'docker cp validation-service-${env.TAG}:/build_artifacts .'
                 }
             }
         }
@@ -23,7 +27,8 @@ pipeline {
             archiveArtifacts artifacts: 'build_artifacts/**', fingerprint: true
 
             configFileProvider([configFile(fileId: '.env', targetLocation: '.env')]) {
-                sh 'docker rm -f -v validation-service'
+                sh 'docker rm -f -v validation-service-${env.TAG}'
+                sh 'docker rmi validation-service:${env.TAG}'
             }
 
             cleanWs()
