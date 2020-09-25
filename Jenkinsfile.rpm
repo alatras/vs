@@ -14,6 +14,7 @@ pipeline {
                     sh "mkdir artifacts"
                     sh "mv validation-service-${TAG}-1.el7.x86_64.rpm artifacts/"
                     sh "createrepo --database --update ./artifacts"
+                    archiveArtifacts artifacts: 'artifacts/**', fingerprint: true
                 }
             }
         }
