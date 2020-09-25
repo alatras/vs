@@ -4,15 +4,18 @@ pipeline {
         stage('RPM build') {
             steps {
                 withDockerRegistry([credentialsId: 'ecr:eu-west-1:aws-ecr', url: 'https://099399110699.dkr.ecr.eu-west-1.amazonaws.com']) {
-                    sh 'git archive --prefix="validation-service/" -o ~/rpmbuild/SOURCES/validation-service.tar.gz `git rev-parse --short HEAD`'
-                    sh 'rpmbuild -bb --define "_rpmdir /var/www/yum" --define "rev `git rev-parse --short HEAD`" --define "epoch `date +%s`" rpm/validation-service.spec'
-                    sh 'createrepo --database --update /var/www/yum'
+                    sh 'make rpm'
+                    sh 'createrepo --database --update ./'
                 }
             }
         }
     }
     post {
         always {
+            configFileProvider([configFile(fileId: '.env', targetLocation: '.env')]) {
+                sh 'make clean'
+            }
+
             cleanWs()
         }
         failure {
