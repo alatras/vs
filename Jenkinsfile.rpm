@@ -28,10 +28,10 @@ pipeline {
             cleanWs()
         }
         failure {
-            slackSend channel: "#ci", color: "danger", message: "*Validation Service RPM FAILED* `${env.JOB_NAME}` on ${env.STAGE_NAME}\n- ${env.BUILD_DISPLAY_NAME}: ${env.RUN_DISPLAY_URL}\n- PR: ${env.CHANGE_URL}\n- Commit: `${env.GIT_PREVIOUS_COMMIT}`", tokenCredentialId: "slack-api"
+            slackSend channel: "#ci", color: "danger", message: "*Validation Service RPM FAILED* `${env.JOB_NAME}` on ${env.STAGE_NAME}\n- ${env.BUILD_DISPLAY_NAME}: ${env.RUN_DISPLAY_URL}\n- Commit: `${env.GIT_PREVIOUS_COMMIT}`", tokenCredentialId: "slack-api"
         }
         success {
-            slackSend channel: "#ci", color: "good", message: "*Validation Service RPM SUCCESS* `${env.JOB_NAME}`\n- ${env.BUILD_DISPLAY_NAME}: ${env.RUN_DISPLAY_URL}\n- PR: ${env.CHANGE_URL}\n- Commit: `${env.GIT_PREVIOUS_COMMIT}`", tokenCredentialId: "slack-api"
+            slackSend channel: "#ci", color: "good", message: "*Validation Service RPM SUCCESS* `${env.JOB_NAME}`\n- ${env.BUILD_DISPLAY_NAME}: ${env.RUN_DISPLAY_URL}\n- Commit: `${env.GIT_PREVIOUS_COMMIT}`", tokenCredentialId: "slack-api"
         }
     }
 }
