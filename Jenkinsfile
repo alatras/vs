@@ -17,7 +17,6 @@ pipeline {
                     sh "docker create --name validation-service-${env.TAG} validation-service:${env.TAG}"
                     sh "docker cp validation-service-${env.TAG}:/build_artifacts ."
 
-                    junit 'build_artifacts/coverage.xml'
                     archiveArtifacts artifacts: 'build_artifacts/**', fingerprint: true
                 }
             }
