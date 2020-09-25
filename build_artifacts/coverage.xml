@@ -1,0 +1,1564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
+<coverage line-rate="0.7551402" branch-rate="0" version="" timestamp="1601020758708" lines-covered="404" lines-valid="535" branches-covered="0" branches-valid="0" complexity="0">
+	<sources>
+		<source>/usr/local/go/src</source>
+		<source>/go/src</source>
+	</sources>
+	<packages>
+		<package name="bitbucket.verifone.com/validation-service/app/validateTransaction" line-rate="0.6814815" branch-rate="0" complexity="0">
+			<classes>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/app/validateTransaction/errors.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="NewError" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="22" hits="1"></line>
+								<line number="23" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="22" hits="1"></line>
+						<line number="23" hits="1"></line>
+					</lines>
+				</class>
+				<class name="AppError" filename="bitbucket.verifone.com/validation-service/app/validateTransaction/errors.go" line-rate="0.21428572" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Error" signature="" line-rate="0" branch-rate="0" complexity="0">
+							<lines>
+								<line number="25" hits="0"></line>
+								<line number="26" hits="0"></line>
+								<line number="27" hits="0"></line>
+								<line number="28" hits="0"></line>
+								<line number="29" hits="0"></line>
+								<line number="30" hits="0"></line>
+								<line number="31" hits="0"></line>
+								<line number="32" hits="0"></line>
+							</lines>
+						</method>
+						<method name="Is" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="36" hits="1"></line>
+								<line number="37" hits="1"></line>
+								<line number="38" hits="1"></line>
+							</lines>
+						</method>
+						<method name="HasError" signature="" line-rate="0" branch-rate="0" complexity="0">
+							<lines>
+								<line number="40" hits="0"></line>
+								<line number="41" hits="0"></line>
+								<line number="42" hits="0"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="25" hits="0"></line>
+						<line number="26" hits="0"></line>
+						<line number="27" hits="0"></line>
+						<line number="28" hits="0"></line>
+						<line number="29" hits="0"></line>
+						<line number="30" hits="0"></line>
+						<line number="31" hits="0"></line>
+						<line number="32" hits="0"></line>
+						<line number="36" hits="1"></line>
+						<line number="37" hits="1"></line>
+						<line number="38" hits="1"></line>
+						<line number="40" hits="0"></line>
+						<line number="41" hits="0"></line>
+						<line number="42" hits="0"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/app/validateTransaction/instrumentation.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newInstrumentation" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="22" hits="1"></line>
+								<line number="23" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="22" hits="1"></line>
+						<line number="23" hits="1"></line>
+					</lines>
+				</class>
+				<class name="instrumentation" filename="bitbucket.verifone.com/validation-service/app/validateTransaction/instrumentation.go" line-rate="0.8125" branch-rate="0" complexity="0">
+					<methods>
+						<method name="setContext" signature="" line-rate="0.25" branch-rate="0" complexity="0">
+							<lines>
+								<line number="25" hits="1"></line>
+								<line number="26" hits="0"></line>
+								<line number="27" hits="0"></line>
+								<line number="28" hits="0"></line>
+							</lines>
+						</method>
+						<method name="setMetadata" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="31" hits="1"></line>
+								<line number="32" hits="1"></line>
+								<line number="33" hits="1"></line>
+							</lines>
+						</method>
+						<method name="startTransactionValidation" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="35" hits="1"></line>
+								<line number="36" hits="1"></line>
+								<line number="37" hits="1"></line>
+								<line number="38" hits="1"></line>
+								<line number="39" hits="1"></line>
+							</lines>
+						</method>
+						<method name="endTransactionValidation" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="41" hits="1"></line>
+								<line number="42" hits="1"></line>
+								<line number="43" hits="1"></line>
+								<line number="44" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="25" hits="1"></line>
+						<line number="26" hits="0"></line>
+						<line number="27" hits="0"></line>
+						<line number="28" hits="0"></line>
+						<line number="31" hits="1"></line>
+						<line number="32" hits="1"></line>
+						<line number="33" hits="1"></line>
+						<line number="35" hits="1"></line>
+						<line number="36" hits="1"></line>
+						<line number="37" hits="1"></line>
+						<line number="38" hits="1"></line>
+						<line number="39" hits="1"></line>
+						<line number="41" hits="1"></line>
+						<line number="42" hits="1"></line>
+						<line number="43" hits="1"></line>
+						<line number="44" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/app/validateTransaction/validateTransaction.go" line-rate="0.95238096" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newTask" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="32" hits="1"></line>
+								<line number="33" hits="1"></line>
+								<line number="34" hits="1"></line>
+								<line number="35" hits="1"></line>
+								<line number="36" hits="1"></line>
+								<line number="37" hits="1"></line>
+								<line number="38" hits="1"></line>
+								<line number="39" hits="1"></line>
+								<line number="40" hits="1"></line>
+								<line number="41" hits="1"></line>
+								<line number="42" hits="1"></line>
+								<line number="43" hits="1"></line>
+								<line number="44" hits="1"></line>
+								<line number="45" hits="1"></line>
+								<line number="46" hits="1"></line>
+								<line number="47" hits="1"></line>
+								<line number="48" hits="1"></line>
+							</lines>
+						</method>
+						<method name="NewValidatorService" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="99" hits="1"></line>
+								<line number="100" hits="1"></line>
+								<line number="101" hits="1"></line>
+								<line number="102" hits="1"></line>
+								<line number="103" hits="1"></line>
+								<line number="104" hits="1"></line>
+								<line number="105" hits="1"></line>
+								<line number="106" hits="1"></line>
+								<line number="107" hits="1"></line>
+								<line number="108" hits="1"></line>
+								<line number="109" hits="1"></line>
+								<line number="110" hits="1"></line>
+								<line number="112" hits="1"></line>
+							</lines>
+						</method>
+						<method name="newWorker" signature="" line-rate="0.8333333" branch-rate="0" complexity="0">
+							<lines>
+								<line number="141" hits="1"></line>
+								<line number="142" hits="1"></line>
+								<line number="143" hits="1"></line>
+								<line number="144" hits="1"></line>
+								<line number="145" hits="1"></line>
+								<line number="146" hits="1"></line>
+								<line number="147" hits="1"></line>
+								<line number="148" hits="1"></line>
+								<line number="149" hits="1"></line>
+								<line number="150" hits="0"></line>
+								<line number="151" hits="0"></line>
+								<line number="156" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="32" hits="1"></line>
+						<line number="33" hits="1"></line>
+						<line number="34" hits="1"></line>
+						<line number="35" hits="1"></line>
+						<line number="36" hits="1"></line>
+						<line number="37" hits="1"></line>
+						<line number="38" hits="1"></line>
+						<line number="39" hits="1"></line>
+						<line number="40" hits="1"></line>
+						<line number="41" hits="1"></line>
+						<line number="42" hits="1"></line>
+						<line number="43" hits="1"></line>
+						<line number="44" hits="1"></line>
+						<line number="45" hits="1"></line>
+						<line number="46" hits="1"></line>
+						<line number="47" hits="1"></line>
+						<line number="48" hits="1"></line>
+						<line number="99" hits="1"></line>
+						<line number="100" hits="1"></line>
+						<line number="101" hits="1"></line>
+						<line number="102" hits="1"></line>
+						<line number="103" hits="1"></line>
+						<line number="104" hits="1"></line>
+						<line number="105" hits="1"></line>
+						<line number="106" hits="1"></line>
+						<line number="107" hits="1"></line>
+						<line number="108" hits="1"></line>
+						<line number="109" hits="1"></line>
+						<line number="110" hits="1"></line>
+						<line number="112" hits="1"></line>
+						<line number="141" hits="1"></line>
+						<line number="142" hits="1"></line>
+						<line number="143" hits="1"></line>
+						<line number="144" hits="1"></line>
+						<line number="145" hits="1"></line>
+						<line number="146" hits="1"></line>
+						<line number="147" hits="1"></line>
+						<line number="148" hits="1"></line>
+						<line number="149" hits="1"></line>
+						<line number="150" hits="0"></line>
+						<line number="151" hits="0"></line>
+						<line number="156" hits="1"></line>
+					</lines>
+				</class>
+				<class name="task" filename="bitbucket.verifone.com/validation-service/app/validateTransaction/validateTransaction.go" line-rate="0.6333333" branch-rate="0" complexity="0">
+					<methods>
+						<method name="run" signature="" line-rate="0.6333333" branch-rate="0" complexity="0">
+							<lines>
+								<line number="50" hits="1"></line>
+								<line number="51" hits="1"></line>
+								<line number="52" hits="1"></line>
+								<line number="53" hits="1"></line>
+								<line number="54" hits="1"></line>
+								<line number="55" hits="1"></line>
+								<line number="56" hits="1"></line>
+								<line number="57" hits="1"></line>
+								<line number="58" hits="1"></line>
+								<line number="59" hits="1"></line>
+								<line number="60" hits="1"></line>
+								<line number="61" hits="1"></line>
+								<line number="62" hits="1"></line>
+								<line number="63" hits="1"></line>
+								<line number="65" hits="1"></line>
+								<line number="66" hits="1"></line>
+								<line number="67" hits="0"></line>
+								<line number="68" hits="0"></line>
+								<line number="69" hits="0"></line>
+								<line number="70" hits="0"></line>
+								<line number="71" hits="0"></line>
+								<line number="72" hits="0"></line>
+								<line number="74" hits="0"></line>
+								<line number="75" hits="0"></line>
+								<line number="76" hits="0"></line>
+								<line number="77" hits="0"></line>
+								<line number="78" hits="0"></line>
+								<line number="82" hits="1"></line>
+								<line number="83" hits="1"></line>
+								<line number="84" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="50" hits="1"></line>
+						<line number="51" hits="1"></line>
+						<line number="52" hits="1"></line>
+						<line number="53" hits="1"></line>
+						<line number="54" hits="1"></line>
+						<line number="55" hits="1"></line>
+						<line number="56" hits="1"></line>
+						<line number="57" hits="1"></line>
+						<line number="58" hits="1"></line>
+						<line number="59" hits="1"></line>
+						<line number="60" hits="1"></line>
+						<line number="61" hits="1"></line>
+						<line number="62" hits="1"></line>
+						<line number="63" hits="1"></line>
+						<line number="65" hits="1"></line>
+						<line number="66" hits="1"></line>
+						<line number="67" hits="0"></line>
+						<line number="68" hits="0"></line>
+						<line number="69" hits="0"></line>
+						<line number="70" hits="0"></line>
+						<line number="71" hits="0"></line>
+						<line number="72" hits="0"></line>
+						<line number="74" hits="0"></line>
+						<line number="75" hits="0"></line>
+						<line number="76" hits="0"></line>
+						<line number="77" hits="0"></line>
+						<line number="78" hits="0"></line>
+						<line number="82" hits="1"></line>
+						<line number="83" hits="1"></line>
+						<line number="84" hits="1"></line>
+					</lines>
+				</class>
+				<class name="App" filename="bitbucket.verifone.com/validation-service/app/validateTransaction/validateTransaction.go" line-rate="0.23809524" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Enqueue" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="115" hits="1"></line>
+								<line number="116" hits="1"></line>
+								<line number="117" hits="1"></line>
+								<line number="118" hits="1"></line>
+								<line number="119" hits="1"></line>
+							</lines>
+						</method>
+						<method name="ResizeWorkers" signature="" line-rate="0" branch-rate="0" complexity="0">
+							<lines>
+								<line number="121" hits="0"></line>
+								<line number="122" hits="0"></line>
+								<line number="123" hits="0"></line>
+								<line number="124" hits="0"></line>
+								<line number="125" hits="0"></line>
+								<line number="126" hits="0"></line>
+								<line number="127" hits="0"></line>
+								<line number="128" hits="0"></line>
+								<line number="129" hits="0"></line>
+								<line number="130" hits="0"></line>
+								<line number="131" hits="0"></line>
+								<line number="132" hits="0"></line>
+								<line number="133" hits="0"></line>
+								<line number="134" hits="0"></line>
+								<line number="135" hits="0"></line>
+								<line number="138" hits="0"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="115" hits="1"></line>
+						<line number="116" hits="1"></line>
+						<line number="117" hits="1"></line>
+						<line number="118" hits="1"></line>
+						<line number="119" hits="1"></line>
+						<line number="121" hits="0"></line>
+						<line number="122" hits="0"></line>
+						<line number="123" hits="0"></line>
+						<line number="124" hits="0"></line>
+						<line number="125" hits="0"></line>
+						<line number="126" hits="0"></line>
+						<line number="127" hits="0"></line>
+						<line number="128" hits="0"></line>
+						<line number="129" hits="0"></line>
+						<line number="130" hits="0"></line>
+						<line number="131" hits="0"></line>
+						<line number="132" hits="0"></line>
+						<line number="133" hits="0"></line>
+						<line number="134" hits="0"></line>
+						<line number="135" hits="0"></line>
+						<line number="138" hits="0"></line>
+					</lines>
+				</class>
+			</classes>
+		</package>
+		<package name="bitbucket.verifone.com/validation-service/http/healthCheck" line-rate="0.90625" branch-rate="0" complexity="0">
+			<classes>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/http/healthCheck/healthCheck.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="NewResource" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="22" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="22" hits="1"></line>
+					</lines>
+				</class>
+				<class name="Resource" filename="bitbucket.verifone.com/validation-service/http/healthCheck/healthCheck.go" line-rate="0.88461536" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Routes" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="24" hits="1"></line>
+								<line number="25" hits="1"></line>
+								<line number="26" hits="1"></line>
+								<line number="27" hits="1"></line>
+								<line number="28" hits="1"></line>
+								<line number="29" hits="1"></line>
+								<line number="30" hits="1"></line>
+							</lines>
+						</method>
+						<method name="HealthCheck" signature="" line-rate="0.84210527" branch-rate="0" complexity="0">
+							<lines>
+								<line number="32" hits="1"></line>
+								<line number="33" hits="1"></line>
+								<line number="34" hits="1"></line>
+								<line number="35" hits="1"></line>
+								<line number="36" hits="1"></line>
+								<line number="37" hits="0"></line>
+								<line number="38" hits="0"></line>
+								<line number="39" hits="0"></line>
+								<line number="41" hits="1"></line>
+								<line number="42" hits="1"></line>
+								<line number="43" hits="1"></line>
+								<line number="44" hits="1"></line>
+								<line number="45" hits="1"></line>
+								<line number="46" hits="1"></line>
+								<line number="47" hits="1"></line>
+								<line number="48" hits="1"></line>
+								<line number="49" hits="1"></line>
+								<line number="50" hits="1"></line>
+								<line number="52" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="24" hits="1"></line>
+						<line number="25" hits="1"></line>
+						<line number="26" hits="1"></line>
+						<line number="27" hits="1"></line>
+						<line number="28" hits="1"></line>
+						<line number="29" hits="1"></line>
+						<line number="30" hits="1"></line>
+						<line number="32" hits="1"></line>
+						<line number="33" hits="1"></line>
+						<line number="34" hits="1"></line>
+						<line number="35" hits="1"></line>
+						<line number="36" hits="1"></line>
+						<line number="37" hits="0"></line>
+						<line number="38" hits="0"></line>
+						<line number="39" hits="0"></line>
+						<line number="41" hits="1"></line>
+						<line number="42" hits="1"></line>
+						<line number="43" hits="1"></line>
+						<line number="44" hits="1"></line>
+						<line number="45" hits="1"></line>
+						<line number="46" hits="1"></line>
+						<line number="47" hits="1"></line>
+						<line number="48" hits="1"></line>
+						<line number="49" hits="1"></line>
+						<line number="50" hits="1"></line>
+						<line number="52" hits="1"></line>
+					</lines>
+				</class>
+			</classes>
+		</package>
+		<package name="bitbucket.verifone.com/validation-service/http/transaction" line-rate="0.57462686" branch-rate="0" complexity="0">
+			<classes>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/http/transaction/transaction.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="NewResource" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="14" hits="1"></line>
+								<line number="15" hits="1"></line>
+								<line number="16" hits="1"></line>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="14" hits="1"></line>
+						<line number="15" hits="1"></line>
+						<line number="16" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+					</lines>
+				</class>
+				<class name="Resource" filename="bitbucket.verifone.com/validation-service/http/transaction/transaction.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Routes" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="22" hits="1"></line>
+								<line number="23" hits="1"></line>
+								<line number="24" hits="1"></line>
+								<line number="25" hits="1"></line>
+								<line number="26" hits="1"></line>
+								<line number="27" hits="1"></line>
+								<line number="28" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="22" hits="1"></line>
+						<line number="23" hits="1"></line>
+						<line number="24" hits="1"></line>
+						<line number="25" hits="1"></line>
+						<line number="26" hits="1"></line>
+						<line number="27" hits="1"></line>
+						<line number="28" hits="1"></line>
+					</lines>
+				</class>
+				<class name="ValidateTransactionPayload" filename="bitbucket.verifone.com/validation-service/http/transaction/validateTransaction.go" line-rate="0.18181819" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Bind" signature="" line-rate="0.18181819" branch-rate="0" complexity="0">
+							<lines>
+								<line number="23" hits="1"></line>
+								<line number="24" hits="0"></line>
+								<line number="25" hits="0"></line>
+								<line number="26" hits="0"></line>
+								<line number="28" hits="0"></line>
+								<line number="29" hits="0"></line>
+								<line number="30" hits="0"></line>
+								<line number="32" hits="0"></line>
+								<line number="33" hits="0"></line>
+								<line number="34" hits="0"></line>
+								<line number="36" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="23" hits="1"></line>
+						<line number="24" hits="0"></line>
+						<line number="25" hits="0"></line>
+						<line number="26" hits="0"></line>
+						<line number="28" hits="0"></line>
+						<line number="29" hits="0"></line>
+						<line number="30" hits="0"></line>
+						<line number="32" hits="0"></line>
+						<line number="33" hits="0"></line>
+						<line number="34" hits="0"></line>
+						<line number="36" hits="1"></line>
+					</lines>
+				</class>
+				<class name="ValidateTransactionResponse" filename="bitbucket.verifone.com/validation-service/http/transaction/validateTransaction.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Render" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="39" hits="1"></line>
+								<line number="40" hits="1"></line>
+								<line number="41" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="39" hits="1"></line>
+						<line number="40" hits="1"></line>
+						<line number="41" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/http/transaction/validateTransaction.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="response" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="43" hits="1"></line>
+								<line number="44" hits="1"></line>
+								<line number="45" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="43" hits="1"></line>
+						<line number="44" hits="1"></line>
+						<line number="45" hits="1"></line>
+					</lines>
+				</class>
+				<class name="Resource" filename="bitbucket.verifone.com/validation-service/http/transaction/validateTransaction.go" line-rate="0.53846157" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Validate" signature="" line-rate="0.53846157" branch-rate="0" complexity="0">
+							<lines>
+								<line number="47" hits="1"></line>
+								<line number="48" hits="1"></line>
+								<line number="49" hits="1"></line>
+								<line number="50" hits="1"></line>
+								<line number="51" hits="1"></line>
+								<line number="52" hits="0"></line>
+								<line number="53" hits="0"></line>
+								<line number="54" hits="0"></line>
+								<line number="56" hits="1"></line>
+								<line number="57" hits="1"></line>
+								<line number="58" hits="1"></line>
+								<line number="59" hits="1"></line>
+								<line number="60" hits="0"></line>
+								<line number="61" hits="0"></line>
+								<line number="62" hits="0"></line>
+								<line number="63" hits="0"></line>
+								<line number="64" hits="0"></line>
+								<line number="66" hits="1"></line>
+								<line number="67" hits="1"></line>
+								<line number="68" hits="1"></line>
+								<line number="69" hits="1"></line>
+								<line number="70" hits="1"></line>
+								<line number="71" hits="1"></line>
+								<line number="72" hits="0"></line>
+								<line number="73" hits="0"></line>
+								<line number="74" hits="0"></line>
+								<line number="75" hits="0"></line>
+								<line number="76" hits="0"></line>
+								<line number="78" hits="1"></line>
+								<line number="79" hits="1"></line>
+								<line number="80" hits="0"></line>
+								<line number="81" hits="0"></line>
+								<line number="82" hits="0"></line>
+								<line number="83" hits="0"></line>
+								<line number="84" hits="0"></line>
+								<line number="85" hits="0"></line>
+								<line number="86" hits="0"></line>
+								<line number="87" hits="0"></line>
+								<line number="88" hits="0"></line>
+								<line number="89" hits="0"></line>
+								<line number="91" hits="0"></line>
+								<line number="92" hits="0"></line>
+								<line number="93" hits="0"></line>
+								<line number="94" hits="0"></line>
+								<line number="95" hits="0"></line>
+								<line number="97" hits="0"></line>
+								<line number="98" hits="0"></line>
+								<line number="99" hits="0"></line>
+								<line number="100" hits="0"></line>
+								<line number="101" hits="0"></line>
+								<line number="102" hits="0"></line>
+								<line number="103" hits="0"></line>
+								<line number="105" hits="1"></line>
+								<line number="106" hits="1"></line>
+								<line number="107" hits="1"></line>
+								<line number="108" hits="1"></line>
+								<line number="109" hits="1"></line>
+								<line number="110" hits="1"></line>
+								<line number="111" hits="1"></line>
+								<line number="112" hits="1"></line>
+								<line number="113" hits="1"></line>
+								<line number="114" hits="1"></line>
+								<line number="115" hits="1"></line>
+								<line number="116" hits="1"></line>
+								<line number="117" hits="1"></line>
+								<line number="118" hits="1"></line>
+								<line number="119" hits="1"></line>
+								<line number="121" hits="1"></line>
+								<line number="122" hits="1"></line>
+								<line number="123" hits="1"></line>
+								<line number="126" hits="0"></line>
+								<line number="127" hits="0"></line>
+								<line number="128" hits="0"></line>
+								<line number="129" hits="0"></line>
+								<line number="130" hits="0"></line>
+								<line number="133" hits="1"></line>
+								<line number="134" hits="1"></line>
+								<line number="135" hits="1"></line>
+								<line number="136" hits="1"></line>
+								<line number="137" hits="1"></line>
+								<line number="138" hits="1"></line>
+								<line number="139" hits="0"></line>
+								<line number="140" hits="0"></line>
+								<line number="141" hits="0"></line>
+								<line number="142" hits="0"></line>
+								<line number="143" hits="1"></line>
+								<line number="144" hits="1"></line>
+								<line number="145" hits="1"></line>
+								<line number="146" hits="1"></line>
+								<line number="147" hits="1"></line>
+								<line number="148" hits="1"></line>
+								<line number="149" hits="1"></line>
+								<line number="150" hits="1"></line>
+								<line number="151" hits="1"></line>
+								<line number="152" hits="1"></line>
+								<line number="153" hits="1"></line>
+								<line number="154" hits="1"></line>
+								<line number="155" hits="1"></line>
+								<line number="156" hits="1"></line>
+								<line number="157" hits="1"></line>
+								<line number="159" hits="0"></line>
+								<line number="160" hits="0"></line>
+								<line number="161" hits="0"></line>
+								<line number="162" hits="0"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="47" hits="1"></line>
+						<line number="48" hits="1"></line>
+						<line number="49" hits="1"></line>
+						<line number="50" hits="1"></line>
+						<line number="51" hits="1"></line>
+						<line number="52" hits="0"></line>
+						<line number="53" hits="0"></line>
+						<line number="54" hits="0"></line>
+						<line number="56" hits="1"></line>
+						<line number="57" hits="1"></line>
+						<line number="58" hits="1"></line>
+						<line number="59" hits="1"></line>
+						<line number="60" hits="0"></line>
+						<line number="61" hits="0"></line>
+						<line number="62" hits="0"></line>
+						<line number="63" hits="0"></line>
+						<line number="64" hits="0"></line>
+						<line number="66" hits="1"></line>
+						<line number="67" hits="1"></line>
+						<line number="68" hits="1"></line>
+						<line number="69" hits="1"></line>
+						<line number="70" hits="1"></line>
+						<line number="71" hits="1"></line>
+						<line number="72" hits="0"></line>
+						<line number="73" hits="0"></line>
+						<line number="74" hits="0"></line>
+						<line number="75" hits="0"></line>
+						<line number="76" hits="0"></line>
+						<line number="78" hits="1"></line>
+						<line number="79" hits="1"></line>
+						<line number="80" hits="0"></line>
+						<line number="81" hits="0"></line>
+						<line number="82" hits="0"></line>
+						<line number="83" hits="0"></line>
+						<line number="84" hits="0"></line>
+						<line number="85" hits="0"></line>
+						<line number="86" hits="0"></line>
+						<line number="87" hits="0"></line>
+						<line number="88" hits="0"></line>
+						<line number="89" hits="0"></line>
+						<line number="91" hits="0"></line>
+						<line number="92" hits="0"></line>
+						<line number="93" hits="0"></line>
+						<line number="94" hits="0"></line>
+						<line number="95" hits="0"></line>
+						<line number="97" hits="0"></line>
+						<line number="98" hits="0"></line>
+						<line number="99" hits="0"></line>
+						<line number="100" hits="0"></line>
+						<line number="101" hits="0"></line>
+						<line number="102" hits="0"></line>
+						<line number="103" hits="0"></line>
+						<line number="105" hits="1"></line>
+						<line number="106" hits="1"></line>
+						<line number="107" hits="1"></line>
+						<line number="108" hits="1"></line>
+						<line number="109" hits="1"></line>
+						<line number="110" hits="1"></line>
+						<line number="111" hits="1"></line>
+						<line number="112" hits="1"></line>
+						<line number="113" hits="1"></line>
+						<line number="114" hits="1"></line>
+						<line number="115" hits="1"></line>
+						<line number="116" hits="1"></line>
+						<line number="117" hits="1"></line>
+						<line number="118" hits="1"></line>
+						<line number="119" hits="1"></line>
+						<line number="121" hits="1"></line>
+						<line number="122" hits="1"></line>
+						<line number="123" hits="1"></line>
+						<line number="126" hits="0"></line>
+						<line number="127" hits="0"></line>
+						<line number="128" hits="0"></line>
+						<line number="129" hits="0"></line>
+						<line number="130" hits="0"></line>
+						<line number="133" hits="1"></line>
+						<line number="134" hits="1"></line>
+						<line number="135" hits="1"></line>
+						<line number="136" hits="1"></line>
+						<line number="137" hits="1"></line>
+						<line number="138" hits="1"></line>
+						<line number="139" hits="0"></line>
+						<line number="140" hits="0"></line>
+						<line number="141" hits="0"></line>
+						<line number="142" hits="0"></line>
+						<line number="143" hits="1"></line>
+						<line number="144" hits="1"></line>
+						<line number="145" hits="1"></line>
+						<line number="146" hits="1"></line>
+						<line number="147" hits="1"></line>
+						<line number="148" hits="1"></line>
+						<line number="149" hits="1"></line>
+						<line number="150" hits="1"></line>
+						<line number="151" hits="1"></line>
+						<line number="152" hits="1"></line>
+						<line number="153" hits="1"></line>
+						<line number="154" hits="1"></line>
+						<line number="155" hits="1"></line>
+						<line number="156" hits="1"></line>
+						<line number="157" hits="1"></line>
+						<line number="159" hits="0"></line>
+						<line number="160" hits="0"></line>
+						<line number="161" hits="0"></line>
+						<line number="162" hits="0"></line>
+					</lines>
+				</class>
+			</classes>
+		</package>
+		<package name="bitbucket.verifone.com/validation-service/ruleSet/compare" line-rate="1" branch-rate="0" complexity="0">
+			<classes>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/compare/string.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="EqualString" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="5" hits="1"></line>
+								<line number="6" hits="1"></line>
+								<line number="7" hits="1"></line>
+								<line number="8" hits="1"></line>
+							</lines>
+						</method>
+						<method name="NotEqualString" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="11" hits="1"></line>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="5" hits="1"></line>
+						<line number="6" hits="1"></line>
+						<line number="7" hits="1"></line>
+						<line number="8" hits="1"></line>
+						<line number="11" hits="1"></line>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/compare/uint.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="LessThanUint64" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="5" hits="1"></line>
+								<line number="6" hits="1"></line>
+								<line number="7" hits="1"></line>
+								<line number="8" hits="1"></line>
+							</lines>
+						</method>
+						<method name="LessThanOrEqualUint64" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="11" hits="1"></line>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+							</lines>
+						</method>
+						<method name="EqualUint64" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+							</lines>
+						</method>
+						<method name="NotEqualUint64" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="23" hits="1"></line>
+								<line number="24" hits="1"></line>
+								<line number="25" hits="1"></line>
+								<line number="26" hits="1"></line>
+							</lines>
+						</method>
+						<method name="GreaterThanOrEqualUint64" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="29" hits="1"></line>
+								<line number="30" hits="1"></line>
+								<line number="31" hits="1"></line>
+								<line number="32" hits="1"></line>
+							</lines>
+						</method>
+						<method name="GreaterThanUint64" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="35" hits="1"></line>
+								<line number="36" hits="1"></line>
+								<line number="37" hits="1"></line>
+								<line number="38" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="5" hits="1"></line>
+						<line number="6" hits="1"></line>
+						<line number="7" hits="1"></line>
+						<line number="8" hits="1"></line>
+						<line number="11" hits="1"></line>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="23" hits="1"></line>
+						<line number="24" hits="1"></line>
+						<line number="25" hits="1"></line>
+						<line number="26" hits="1"></line>
+						<line number="29" hits="1"></line>
+						<line number="30" hits="1"></line>
+						<line number="31" hits="1"></line>
+						<line number="32" hits="1"></line>
+						<line number="35" hits="1"></line>
+						<line number="36" hits="1"></line>
+						<line number="37" hits="1"></line>
+						<line number="38" hits="1"></line>
+					</lines>
+				</class>
+			</classes>
+		</package>
+		<package name="bitbucket.verifone.com/validation-service/ruleSet/rule" line-rate="0.9" branch-rate="0" complexity="0">
+			<classes>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/amountValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newAmountValidator" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+								<line number="15" hits="1"></line>
+								<line number="16" hits="1"></line>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="22" hits="1"></line>
+								<line number="23" hits="1"></line>
+								<line number="24" hits="1"></line>
+								<line number="25" hits="1"></line>
+								<line number="26" hits="1"></line>
+								<line number="27" hits="1"></line>
+								<line number="28" hits="1"></line>
+								<line number="29" hits="1"></line>
+								<line number="30" hits="1"></line>
+								<line number="33" hits="1"></line>
+								<line number="34" hits="1"></line>
+								<line number="35" hits="1"></line>
+								<line number="36" hits="1"></line>
+								<line number="37" hits="1"></line>
+								<line number="39" hits="1"></line>
+								<line number="40" hits="1"></line>
+								<line number="41" hits="1"></line>
+								<line number="42" hits="1"></line>
+								<line number="43" hits="1"></line>
+								<line number="44" hits="1"></line>
+								<line number="46" hits="1"></line>
+								<line number="49" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+						<line number="15" hits="1"></line>
+						<line number="16" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="22" hits="1"></line>
+						<line number="23" hits="1"></line>
+						<line number="24" hits="1"></line>
+						<line number="25" hits="1"></line>
+						<line number="26" hits="1"></line>
+						<line number="27" hits="1"></line>
+						<line number="28" hits="1"></line>
+						<line number="29" hits="1"></line>
+						<line number="30" hits="1"></line>
+						<line number="33" hits="1"></line>
+						<line number="34" hits="1"></line>
+						<line number="35" hits="1"></line>
+						<line number="36" hits="1"></line>
+						<line number="37" hits="1"></line>
+						<line number="39" hits="1"></line>
+						<line number="40" hits="1"></line>
+						<line number="41" hits="1"></line>
+						<line number="42" hits="1"></line>
+						<line number="43" hits="1"></line>
+						<line number="44" hits="1"></line>
+						<line number="46" hits="1"></line>
+						<line number="49" hits="1"></line>
+					</lines>
+				</class>
+				<class name="amountValidator" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/amountValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Validate" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="52" hits="1"></line>
+								<line number="53" hits="1"></line>
+								<line number="54" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="52" hits="1"></line>
+						<line number="53" hits="1"></line>
+						<line number="54" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/cardValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newCardValidator" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+								<line number="15" hits="1"></line>
+								<line number="16" hits="1"></line>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="24" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+						<line number="15" hits="1"></line>
+						<line number="16" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="24" hits="1"></line>
+					</lines>
+				</class>
+				<class name="cardValidator" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/cardValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Validate" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="27" hits="1"></line>
+								<line number="28" hits="1"></line>
+								<line number="29" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="27" hits="1"></line>
+						<line number="28" hits="1"></line>
+						<line number="29" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/currencyCodeValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newCurrencyCodeValidator" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+								<line number="15" hits="1"></line>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="22" hits="1"></line>
+								<line number="23" hits="1"></line>
+								<line number="24" hits="1"></line>
+								<line number="25" hits="1"></line>
+								<line number="28" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+						<line number="15" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="22" hits="1"></line>
+						<line number="23" hits="1"></line>
+						<line number="24" hits="1"></line>
+						<line number="25" hits="1"></line>
+						<line number="28" hits="1"></line>
+					</lines>
+				</class>
+				<class name="currencyCodeValidator" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/currencyCodeValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Validate" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="31" hits="1"></line>
+								<line number="32" hits="1"></line>
+								<line number="33" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="31" hits="1"></line>
+						<line number="32" hits="1"></line>
+						<line number="33" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/customerCountryCodeValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newCustomerCountryCodeValidator" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+								<line number="15" hits="1"></line>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="22" hits="1"></line>
+								<line number="23" hits="1"></line>
+								<line number="24" hits="1"></line>
+								<line number="25" hits="1"></line>
+								<line number="28" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+						<line number="15" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="22" hits="1"></line>
+						<line number="23" hits="1"></line>
+						<line number="24" hits="1"></line>
+						<line number="25" hits="1"></line>
+						<line number="28" hits="1"></line>
+					</lines>
+				</class>
+				<class name="customerCountryCodeValidator" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/customerCountryCodeValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Validate" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="31" hits="1"></line>
+								<line number="32" hits="1"></line>
+								<line number="33" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="31" hits="1"></line>
+						<line number="32" hits="1"></line>
+						<line number="33" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/customerIPCountryCodeValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newCustomerIPCountryCodeValidator" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+								<line number="15" hits="1"></line>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="22" hits="1"></line>
+								<line number="23" hits="1"></line>
+								<line number="24" hits="1"></line>
+								<line number="25" hits="1"></line>
+								<line number="28" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+						<line number="15" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="22" hits="1"></line>
+						<line number="23" hits="1"></line>
+						<line number="24" hits="1"></line>
+						<line number="25" hits="1"></line>
+						<line number="28" hits="1"></line>
+					</lines>
+				</class>
+				<class name="customerIPCountryCodeValidator" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/customerIPCountryCodeValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Validate" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="31" hits="1"></line>
+								<line number="32" hits="1"></line>
+								<line number="33" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="31" hits="1"></line>
+						<line number="32" hits="1"></line>
+						<line number="33" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/customerIPValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newCustomerIPValidator" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+								<line number="15" hits="1"></line>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="22" hits="1"></line>
+								<line number="23" hits="1"></line>
+								<line number="24" hits="1"></line>
+								<line number="25" hits="1"></line>
+								<line number="28" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+						<line number="15" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="22" hits="1"></line>
+						<line number="23" hits="1"></line>
+						<line number="24" hits="1"></line>
+						<line number="25" hits="1"></line>
+						<line number="28" hits="1"></line>
+					</lines>
+				</class>
+				<class name="customerIPValidator" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/customerIPValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Validate" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="31" hits="1"></line>
+								<line number="32" hits="1"></line>
+								<line number="33" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="31" hits="1"></line>
+						<line number="32" hits="1"></line>
+						<line number="33" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/customerIdValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newCustomerIdValidator" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+								<line number="15" hits="1"></line>
+								<line number="16" hits="1"></line>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="24" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+						<line number="15" hits="1"></line>
+						<line number="16" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="24" hits="1"></line>
+					</lines>
+				</class>
+				<class name="customerIdValidator" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/customerIdValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Validate" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="27" hits="1"></line>
+								<line number="28" hits="1"></line>
+								<line number="29" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="27" hits="1"></line>
+						<line number="28" hits="1"></line>
+						<line number="29" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/entityIdValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newEntityIdValidator" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+								<line number="15" hits="1"></line>
+								<line number="16" hits="1"></line>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="24" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+						<line number="15" hits="1"></line>
+						<line number="16" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="24" hits="1"></line>
+					</lines>
+				</class>
+				<class name="entityIdValidator" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/entityIdValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Validate" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="27" hits="1"></line>
+								<line number="28" hits="1"></line>
+								<line number="29" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="27" hits="1"></line>
+						<line number="28" hits="1"></line>
+						<line number="29" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/issuerCountryCodeValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="newIssuerCountryCodeValidator" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+								<line number="14" hits="1"></line>
+								<line number="15" hits="1"></line>
+								<line number="17" hits="1"></line>
+								<line number="18" hits="1"></line>
+								<line number="19" hits="1"></line>
+								<line number="20" hits="1"></line>
+								<line number="21" hits="1"></line>
+								<line number="22" hits="1"></line>
+								<line number="23" hits="1"></line>
+								<line number="24" hits="1"></line>
+								<line number="25" hits="1"></line>
+								<line number="28" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+						<line number="14" hits="1"></line>
+						<line number="15" hits="1"></line>
+						<line number="17" hits="1"></line>
+						<line number="18" hits="1"></line>
+						<line number="19" hits="1"></line>
+						<line number="20" hits="1"></line>
+						<line number="21" hits="1"></line>
+						<line number="22" hits="1"></line>
+						<line number="23" hits="1"></line>
+						<line number="24" hits="1"></line>
+						<line number="25" hits="1"></line>
+						<line number="28" hits="1"></line>
+					</lines>
+				</class>
+				<class name="issuerCountryCodeValidator" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/issuerCountryCodeValidator.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="Validate" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="31" hits="1"></line>
+								<line number="32" hits="1"></line>
+								<line number="33" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="31" hits="1"></line>
+						<line number="32" hits="1"></line>
+						<line number="33" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/ruleSet/rule/rule.go" line-rate="0.3448276" branch-rate="0" complexity="0">
+					<methods>
+						<method name="NewValidator" signature="" line-rate="0.3448276" branch-rate="0" complexity="0">
+							<lines>
+								<line number="49" hits="1"></line>
+								<line number="50" hits="1"></line>
+								<line number="51" hits="1"></line>
+								<line number="52" hits="1"></line>
+								<line number="53" hits="1"></line>
+								<line number="54" hits="1"></line>
+								<line number="55" hits="1"></line>
+								<line number="56" hits="0"></line>
+								<line number="57" hits="0"></line>
+								<line number="58" hits="0"></line>
+								<line number="59" hits="0"></line>
+								<line number="60" hits="0"></line>
+								<line number="61" hits="0"></line>
+								<line number="62" hits="0"></line>
+								<line number="63" hits="0"></line>
+								<line number="64" hits="0"></line>
+								<line number="65" hits="0"></line>
+								<line number="66" hits="0"></line>
+								<line number="67" hits="0"></line>
+								<line number="68" hits="0"></line>
+								<line number="69" hits="0"></line>
+								<line number="70" hits="0"></line>
+								<line number="71" hits="0"></line>
+								<line number="72" hits="1"></line>
+								<line number="73" hits="1"></line>
+								<line number="76" hits="0"></line>
+								<line number="77" hits="0"></line>
+								<line number="78" hits="0"></line>
+								<line number="80" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="49" hits="1"></line>
+						<line number="50" hits="1"></line>
+						<line number="51" hits="1"></line>
+						<line number="52" hits="1"></line>
+						<line number="53" hits="1"></line>
+						<line number="54" hits="1"></line>
+						<line number="55" hits="1"></line>
+						<line number="56" hits="0"></line>
+						<line number="57" hits="0"></line>
+						<line number="58" hits="0"></line>
+						<line number="59" hits="0"></line>
+						<line number="60" hits="0"></line>
+						<line number="61" hits="0"></line>
+						<line number="62" hits="0"></line>
+						<line number="63" hits="0"></line>
+						<line number="64" hits="0"></line>
+						<line number="65" hits="0"></line>
+						<line number="66" hits="0"></line>
+						<line number="67" hits="0"></line>
+						<line number="68" hits="0"></line>
+						<line number="69" hits="0"></line>
+						<line number="70" hits="0"></line>
+						<line number="71" hits="0"></line>
+						<line number="72" hits="1"></line>
+						<line number="73" hits="1"></line>
+						<line number="76" hits="0"></line>
+						<line number="77" hits="0"></line>
+						<line number="78" hits="0"></line>
+						<line number="80" hits="1"></line>
+					</lines>
+				</class>
+			</classes>
+		</package>
+		<package name="bitbucket.verifone.com/validation-service/transaction" line-rate="0.25" branch-rate="0" complexity="0">
+			<classes>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/transaction/CountryCodeIso31661Alpha2.go" line-rate="0" branch-rate="0" complexity="0">
+					<methods>
+						<method name="IsCountryCodeIso31661Alpha2" signature="" line-rate="0" branch-rate="0" complexity="0">
+							<lines>
+								<line number="5" hits="0"></line>
+								<line number="6" hits="0"></line>
+								<line number="7" hits="0"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="5" hits="0"></line>
+						<line number="6" hits="0"></line>
+						<line number="7" hits="0"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/transaction/IPv4.go" line-rate="1" branch-rate="0" complexity="0">
+					<methods>
+						<method name="IsIPv4" signature="" line-rate="1" branch-rate="0" complexity="0">
+							<lines>
+								<line number="11" hits="1"></line>
+								<line number="12" hits="1"></line>
+								<line number="13" hits="1"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="11" hits="1"></line>
+						<line number="12" hits="1"></line>
+						<line number="13" hits="1"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/transaction/countryCodeIso31661Alpha3.go" line-rate="0" branch-rate="0" complexity="0">
+					<methods>
+						<method name="IsCountryCodeIso31661Alpha3" signature="" line-rate="0" branch-rate="0" complexity="0">
+							<lines>
+								<line number="5" hits="0"></line>
+								<line number="6" hits="0"></line>
+								<line number="7" hits="0"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="5" hits="0"></line>
+						<line number="6" hits="0"></line>
+						<line number="7" hits="0"></line>
+					</lines>
+				</class>
+				<class name="-" filename="bitbucket.verifone.com/validation-service/transaction/currencyCode.go" line-rate="0" branch-rate="0" complexity="0">
+					<methods>
+						<method name="IsCurrencyCode" signature="" line-rate="0" branch-rate="0" complexity="0">
+							<lines>
+								<line number="5" hits="0"></line>
+								<line number="6" hits="0"></line>
+								<line number="7" hits="0"></line>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="5" hits="0"></line>
+						<line number="6" hits="0"></line>
+						<line number="7" hits="0"></line>
+					</lines>
+				</class>
+			</classes>
+		</package>
+	</packages>
+</coverage>

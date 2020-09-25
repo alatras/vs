@@ -16,16 +16,15 @@ pipeline {
                     sh "docker build --target build -t validation-service:${env.TAG} ."
                     sh "docker create --name validation-service-${env.TAG} validation-service:${env.TAG}"
                     sh "docker cp validation-service-${env.TAG}:/build_artifacts ."
+
+                    junit 'build_artifacts/coverage.xml'
+                    archiveArtifacts artifacts: 'build_artifacts/**', fingerprint: true
                 }
             }
         }
     }
     post {
         always {
-            junit './build_artifacts/coverage.xml'
-
-            archiveArtifacts artifacts: 'build_artifacts/**', fingerprint: true
-
             configFileProvider([configFile(fileId: '.env', targetLocation: '.env')]) {
                 sh "docker rm -f -v validation-service-${env.TAG}"
                 sh "docker rmi validation-service:${env.TAG}"
