@@ -9,22 +9,17 @@ pipeline {
     stages {
         stage("RPM build") {
             steps {
-                withDockerRegistry([credentialsId: "ecr:eu-west-1:aws-ecr", url: "https://099399110699.dkr.ecr.eu-west-1.amazonaws.com"]) {
-                    sh "make rpm"
-                    sh "mkdir artifacts"
-                    sh "mv validation-service-${TAG}-1.el7.x86_64.rpm artifacts/"
-                    sh "createrepo --database --update ./artifacts"
-                    archiveArtifacts artifacts: 'artifacts/**', fingerprint: true
-                }
+                sh "make rpm"
+                sh "mkdir artifacts"
+                sh "mv validation-service-${TAG}-1.el7.x86_64.rpm artifacts/"
+                sh "createrepo --database --update ./artifacts"
+                archiveArtifacts artifacts: 'artifacts/**', fingerprint: true
             }
         }
     }
     post {
         always {
-            configFileProvider([configFile(fileId: ".env", targetLocation: ".env")]) {
-                sh "make clean"
-            }
-
+            sh "make clean"
             cleanWs()
         }
         failure {
