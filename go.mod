@@ -11,13 +11,10 @@ require github.com/sirupsen/logrus v1.4.2
 
 require (
 	github.com/bitly/go-simplejson v0.5.0
-	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/xdg/stringprep v1.0.0 // indirect
-	go.mongodb.org/mongo-driver v1.3.5
+	go.mongodb.org/mongo-driver v1.4.2
 	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7 // indirect
-	golang.org/x/net v0.0.0-20190921015927-1a5e07d1ff72 // indirect
-	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	gopkg.in/yaml.v2 v2.3.0
 )
