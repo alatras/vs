@@ -253,7 +253,6 @@ func (r MongoRuleSetRepository) Ping(ctx context.Context) error {
 
 func createIndexes(collection *mongo.Collection) error {
 	indexOptions := options.Index()
-	indexOptions.SetBackground(true)
 	indexOptions.SetName("entity_index")
 
 	_, err := collection.Indexes().CreateOne(context.Background(), mongo.IndexModel{
