@@ -26,6 +26,9 @@ mkdir -p ./_build/src/bitbucket.verifone.com/
 ln -s $(pwd) ./_build/src/bitbucket.verifone.com/validation-service
 
 export GOPATH=$(pwd)/_build:%{gopath}
+
+go test -v -timeout 30s ./...
+
 go build -o validation-service -ldflags "-X main.version=%{version} -s -w" .
 
 %pre
