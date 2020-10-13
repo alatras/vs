@@ -10,10 +10,10 @@ pipeline {
         stage("RPM build") {
             steps {
                 sh "make rpm"
-                sh "mkdir artifacts"
-                sh "mv validation-service-${TAG}-1.el7.x86_64.rpm artifacts/"
-                sh "createrepo --database --update ./artifacts"
-                archiveArtifacts artifacts: 'artifacts/**', fingerprint: true
+                sh "mkdir -p /var/www/yum"
+                sh "mv validation-service-${TAG}-1.el7.x86_64.rpm /var/www/yum/"
+                sh "createrepo --database --update /var/www/yum"
+                archiveArtifacts artifacts: '/var/www/yum/validation-service-${TAG}-1.el7.x86_64.rpm', fingerprint: true
             }
         }
     }
