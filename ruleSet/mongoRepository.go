@@ -1,28 +1,33 @@
 package ruleSet
 
 import (
+	"context"
+	"fmt"
+	"time"
+
 	appd "bitbucket.verifone.com/validation-service/appdynamics"
 	"bitbucket.verifone.com/validation-service/enums/appdBackend"
 	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/logger"
-	"context"
-	"errors"
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
-	"time"
 )
+
+var retryableCodes = []int32{11600, 11602, 10107, 13435, 13436, 189, 91, 7, 6, 89, 9001, 262}
+
+const networkErrorLabel = "NetworkError"
 
 type MongoRuleSetRepository struct {
 	mongoClient       *mongo.Client
 	ruleSetCollection *mongo.Collection
 	logger            *logger.Logger
+	retryDelay        time.Duration
 }
 
-func NewMongoRepository(url string, dbName string, logger *logger.Logger) (*MongoRuleSetRepository, error) {
+func NewMongoRepository(url string, dbName string, retryDelay time.Duration, logger *logger.Logger) (*MongoRuleSetRepository, error) {
 	client, err := connectToMongo(url, logger)
 
 	if err != nil {
@@ -34,6 +39,7 @@ func NewMongoRepository(url string, dbName string, logger *logger.Logger) (*Mong
 		mongoClient:       client,
 		ruleSetCollection: ruleSetCollection,
 		logger:            logger.Scoped("MongoRuleSetRepository"),
+		retryDelay:        retryDelay,
 	}
 
 	err = createIndexes(ruleSetCollection)
@@ -60,7 +66,7 @@ func (r MongoRuleSetRepository) Create(ctx context.Context, ruleSet RuleSet) err
 	_, err := r.ruleSetCollection.InsertOne(ctx, ruleSet)
 
 	if err != nil {
-		return errors.New("failed to create rule set in repository")
+		return fmt.Errorf("failed to create rule set in repository: %w", err)
 	}
 
 	return nil
@@ -84,10 +90,19 @@ func (r MongoRuleSetRepository) GetById(ctx context.Context, entityId string, ru
 
 	var ruleSet RuleSet
 
-	err := r.ruleSetCollection.FindOne(context.TODO(), query).Decode(&ruleSet)
+	var err error
+
+	retryErr := backOffRetryWithContext(ctx, r.retryDelay, func() (retry bool) {
+		err = r.ruleSetCollection.FindOne(ctx, query).Decode(&ruleSet)
+		return isRetryableError(err)
+	})
 
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
+	}
+
+	if retryErr != nil && err == nil {
+		err = retryErr
 	}
 
 	if err != nil {
@@ -114,10 +129,20 @@ func (r MongoRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds .
 	_ = appd.SetExitcallDetails(exitCallHandle, fmt.Sprintf("Find: %s", query))
 	defer appd.EndExitcall(exitCallHandle)
 
-	cursor, err := r.ruleSetCollection.Find(ctx, query)
+	var err error
+	var cursor *mongo.Cursor
+
+	retryErr := backOffRetryWithContext(ctx, r.retryDelay, func() (retry bool) {
+		cursor, err = r.ruleSetCollection.Find(ctx, query)
+		return isRetryableError(err)
+	})
+
+	if retryErr != nil && err == nil {
+		err = retryErr
+	}
 
 	if err != nil {
-		return nil, errors.New("error while listing rule sets by entity ids")
+		return nil, fmt.Errorf("error while listing rule sets by entity ids: %w", err)
 	}
 
 	var ruleSets []RuleSet
@@ -125,8 +150,9 @@ func (r MongoRuleSetRepository) ListByEntityIds(ctx context.Context, entityIds .
 	for cursor.Next(ctx) {
 		var ruleSet RuleSet
 		err := cursor.Decode(&ruleSet)
+
 		if err != nil {
-			return nil, errors.New("error while decoding rule set from db")
+			return nil, fmt.Errorf("error while decoding rule set from db: %w", err)
 		}
 		ruleSets = append(ruleSets, ruleSet)
 	}
@@ -155,7 +181,7 @@ func (r MongoRuleSetRepository) Replace(ctx context.Context, entityId string, ru
 	result, err := r.ruleSetCollection.ReplaceOne(ctx, query, ruleSet)
 
 	if err != nil {
-		return replaced, errors.New("error while replacing rule set")
+		return replaced, fmt.Errorf("error while replacing rule set: %w", err)
 	}
 
 	if result.ModifiedCount > 0 {
@@ -188,7 +214,7 @@ func (r MongoRuleSetRepository) Delete(ctx context.Context, entityId string, rul
 	result, err := r.ruleSetCollection.DeleteMany(ctx, query)
 
 	if err != nil {
-		return deleted, errors.New("error while deleting rule set from db")
+		return deleted, fmt.Errorf("error while deleting rule set from db: %w", err)
 	}
 
 	if result.DeletedCount > 0 {
@@ -202,16 +228,16 @@ func connectToMongo(url string, logger *logger.Logger) (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(url))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(url).SetRetryWrites(true))
 
 	if err != nil {
 		logger.Error.WithError(err).Error("failed to establish MongoDB connection")
-		return nil, errors.New("error while establishing connection to MongoDB")
+		return nil, fmt.Errorf("error while establishing connection to MongoDB: %w", err)
 	}
 
 	if err := client.Ping(ctx, nil); err != nil {
 		logger.Error.WithError(err).Error("failed to ping MongoDB")
-		return nil, errors.New("error while ensuring connection to MongoDB")
+		return nil, fmt.Errorf("error while ensuring connection to MongoDB: %w", err)
 	}
 
 	return client, nil
@@ -243,7 +269,7 @@ func (r MongoRuleSetRepository) Ping(ctx context.Context) error {
 
 	if err != nil {
 		errorLog.WithError(err).Error("mongo is not healthy")
-		return errors.New("cannot connect to mongo")
+		return fmt.Errorf("cannot connect to mongo: %w", err)
 	}
 
 	log.Trace("mongo is healthy")
@@ -261,4 +287,28 @@ func createIndexes(collection *mongo.Collection) error {
 	})
 
 	return err
+}
+
+func isRetryableError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	cmdErr, ok := err.(mongo.CommandError)
+
+	if !ok {
+		return false
+	}
+
+	if cmdErr.HasErrorLabel(networkErrorLabel) {
+		return true
+	}
+
+	for _, code := range retryableCodes {
+		if cmdErr.Code == code {
+			return true
+		}
+	}
+
+	return false
 }

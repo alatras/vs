@@ -20,9 +20,13 @@ type Server struct {
 
 // Mongo MongoDB configuration parameters
 type Mongo struct {
-	URL string `yaml:"url"`
-	DB  string `yaml:"db"`
+	URL               string `yaml:"url"`
+	DB                string `yaml:"db"`
+	RetryMilliseconds int    `yaml:"retryMilliseconds"`
 }
+
+// DefaultMongoRetryMilliseconds default setting for Mongo RetryMilliseconds
+const DefaultMongoRetryMilliseconds = 1
 
 // AppD App Dynamics configuration parameters
 type AppD struct {

@@ -1,29 +1,44 @@
 package ruleSet
 
 import (
+	"context"
+	"errors"
 	"math/rand"
 	"time"
 )
 
 const maxJitter = 1000
 
-func doRetry(attempt, maxAttempts int, fn func() (err error, retry bool)) error {
-	err, retry := fn()
+var errMaxAttemptsReached = errors.New("max attempts reached")
+
+func doBackOffRetry(ctx context.Context, attempt, maxAttempts int, initialDelay time.Duration, fn func() (retry bool)) error {
+	retry := fn()
 
 	attempt++
 
-	if !retry || err == nil || attempt >= maxAttempts {
-		return err
+	if !retry {
+		return nil
 	}
 
-	delay := time.Duration(1<<attempt) * time.Millisecond
+	if maxAttempts > 0 && attempt >= maxAttempts {
+		return errMaxAttemptsReached
+	}
+
+	delay := time.Duration(1<<attempt) * initialDelay
 	delay += time.Duration(rand.Int31n(maxJitter)) * time.Microsecond
 
-	time.Sleep(delay)
-
-	return doRetry(attempt, maxAttempts, fn)
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-time.After(delay):
+		return doBackOffRetry(ctx, attempt, maxAttempts, initialDelay, fn)
+	}
 }
 
-func retry(maxAttempts int, fn func() (error, bool)) error {
-	return doRetry(0, maxAttempts, fn)
+func backOffRetry(maxAttempts int, initialDelay time.Duration, fn func() bool) error {
+	return doBackOffRetry(context.TODO(), 0, maxAttempts, initialDelay, fn)
+}
+
+func backOffRetryWithContext(ctx context.Context, initialDelay time.Duration, fn func() bool) error {
+	return doBackOffRetry(ctx, 0, 0, initialDelay, fn)
 }

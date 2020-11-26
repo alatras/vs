@@ -1,6 +1,11 @@
 package cmd
 
 import (
+	"log"
+	"os"
+	"runtime"
+	"time"
+
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
@@ -16,9 +21,6 @@ import (
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"github.com/go-chi/chi"
-	"log"
-	"os"
-	"runtime"
 )
 
 func StartServer(config config.Server) error {
@@ -125,7 +127,20 @@ func setupAppD(appDConfig config.AppD) {
 }
 
 func createRuleSetRepository(mongoConfig config.Mongo, logger *logger.Logger) *ruleSet.MongoRuleSetRepository {
-	ruleSetRepository, err := ruleSet.NewMongoRepository(mongoConfig.URL, mongoConfig.DB, logger)
+	var mongoRetryDelay time.Duration
+
+	if mongoConfig.RetryMilliseconds != 0 {
+		mongoRetryDelay = time.Duration(mongoConfig.RetryMilliseconds) * time.Millisecond
+	} else {
+		mongoRetryDelay = time.Duration(config.DefaultMongoRetryMilliseconds) * time.Millisecond
+	}
+
+	ruleSetRepository, err := ruleSet.NewMongoRepository(
+		mongoConfig.URL,
+		mongoConfig.DB,
+		mongoRetryDelay,
+		logger,
+	)
 
 	if err != nil {
 		logger.Error.WithError(err).Error("Failed to initialize RuleSetRepository")
