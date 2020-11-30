@@ -1,6 +1,10 @@
 package http
 
 import (
+	"fmt"
+	"net/http"
+	"time"
+
 	"bitbucket.verifone.com/validation-service/app/createRuleSet"
 	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
 	"bitbucket.verifone.com/validation-service/app/getRuleSet"
@@ -15,12 +19,9 @@ import (
 	"bitbucket.verifone.com/validation-service/http/transaction"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
-	"fmt"
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
-	"net/http"
-	"time"
 )
 
 type Server struct {
@@ -71,9 +72,9 @@ func NewServer(
 func (s *Server) Start() error {
 	r := s.router
 
-	r.Use(chiMiddleware.Logger)
-	r.Use(chiMiddleware.URLFormat)
 	r.Use(httpMiddleware.SetContextWithTraceId)
+	r.Use(httpMiddleware.Logger(s.logger))
+	r.Use(chiMiddleware.URLFormat)
 	r.Use(httpMiddleware.SetContextWithBusinessTransaction)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
