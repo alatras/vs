@@ -43,24 +43,13 @@ func TestRetry_SuccessAfterFailure(t *testing.T) {
 	recoverOnAttempt := 3
 	count := 0
 
-	var err error
-
 	retryErr := backOffRetry(attempts, testDelay, func() (retry bool) {
 		count++
-
-		if count == recoverOnAttempt {
-			return false
-		}
-
-		return true
+		return (count != recoverOnAttempt)
 	})
 
 	if retryErr != nil {
 		t.Fatalf("Retry should return no error but got '%s'", retryErr)
-	}
-
-	if err != nil {
-		t.Fatal("No error should be returned")
 	}
 
 	if count != recoverOnAttempt {
