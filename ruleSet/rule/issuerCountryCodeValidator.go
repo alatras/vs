@@ -29,5 +29,9 @@ func newIssuerCountryCodeValidator(operator Operator, value string) (*issuerCoun
 }
 
 func (i issuerCountryCodeValidator) Validate(transaction transaction.Transaction) bool {
+	if transaction.IssuerCountryCode == "" {
+		return false
+	}
+
 	return i.comparator(string(transaction.IssuerCountryCode))
 }
