@@ -1,17 +1,18 @@
 package transaction
 
 import (
+	"errors"
+	"net/http"
+	"strconv"
+	"strings"
+
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	appd "bitbucket.verifone.com/validation-service/appdynamics"
 	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"bitbucket.verifone.com/validation-service/http/errorResponse"
 	"bitbucket.verifone.com/validation-service/report"
 	trx "bitbucket.verifone.com/validation-service/transaction"
-	"errors"
 	"github.com/go-chi/render"
-	"net/http"
-	"strconv"
-	"strings"
 )
 
 const cardInstrument = "CARD"

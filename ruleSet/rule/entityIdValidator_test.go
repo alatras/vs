@@ -1,22 +1,23 @@
 package rule
 
 import (
-	"bitbucket.verifone.com/validation-service/transaction"
 	"testing"
+
+	"bitbucket.verifone.com/validation-service/transaction"
 )
 
 func TestNewEntityIdValidatorSuccess(t *testing.T) {
 	var err error
 
 	// Should create a new entity validator where validation equals value
-	_, err = newEntityIdValidator(equal, "1234")
+	_, err = newEntityIdValidator(OperatorEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new entity validator", err.Error())
 	}
 
 	// Should create a new entity validator where validation does not equal value
-	_, err = newEntityIdValidator(notEqual, "1234")
+	_, err = newEntityIdValidator(OperatorNotEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new entity validator", err.Error())
@@ -37,7 +38,7 @@ func TestEntityIdValidator_Validate(t *testing.T) {
 	var err error
 
 	// Equal
-	validator, err = newEntityIdValidator(equal, "1234")
+	validator, err = newEntityIdValidator(OperatorEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new entity validator:", err.Error())
@@ -63,7 +64,7 @@ func TestEntityIdValidator_Validate(t *testing.T) {
 	}
 
 	// Not equal
-	validator, err = newEntityIdValidator(notEqual, "1234")
+	validator, err = newEntityIdValidator(OperatorNotEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new entity validator:", err.Error())

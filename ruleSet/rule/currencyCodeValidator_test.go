@@ -1,22 +1,23 @@
 package rule
 
 import (
-	"bitbucket.verifone.com/validation-service/transaction"
 	"testing"
+
+	"bitbucket.verifone.com/validation-service/transaction"
 )
 
 func TestNewCurrencyCodeValidator(t *testing.T) {
 	var err error
 
 	// Should create a new currency code validator where validation equals value
-	_, err = newCurrencyCodeValidator(equal, "EUR")
+	_, err = newCurrencyCodeValidator(OperatorEqual, "EUR")
 
 	if err != nil {
 		t.Error("unexpected error while creating new currency code validator", err.Error())
 	}
 
 	// Should create a new currency code validator where validation does not equal value
-	_, err = newCurrencyCodeValidator(notEqual, "EUR")
+	_, err = newCurrencyCodeValidator(OperatorNotEqual, "EUR")
 
 	if err != nil {
 		t.Error("unexpected error while creating new currency code validator", err.Error())
@@ -30,7 +31,7 @@ func TestNewCurrencyCodeValidator(t *testing.T) {
 	}
 
 	// Should return an error when factory receives an invalid value
-	_, err = newCurrencyCodeValidator(equal, "a")
+	_, err = newCurrencyCodeValidator(OperatorEqual, "a")
 
 	if err != InvalidValueError {
 		t.Error("expected error while creating new currency code validator with invalid operator")
@@ -42,7 +43,7 @@ func TestCurrencyCodeValidator_Validate(t *testing.T) {
 	var err error
 
 	// Equal
-	validator, err = newCurrencyCodeValidator(equal, "EUR")
+	validator, err = newCurrencyCodeValidator(OperatorEqual, "EUR")
 
 	if err != nil {
 		t.Error("unexpected error while creating new currency code validator:", err.Error())
@@ -66,7 +67,7 @@ func TestCurrencyCodeValidator_Validate(t *testing.T) {
 	}
 
 	// Not equal
-	validator, err = newCurrencyCodeValidator(notEqual, "EUR")
+	validator, err = newCurrencyCodeValidator(OperatorNotEqual, "EUR")
 
 	if err != nil {
 		t.Error("unexpected error while creating new currency code validator:", err.Error())

@@ -29,12 +29,12 @@ const (
 type Operator string
 
 const (
-	less           Operator = "<"
-	lessOrEqual    Operator = "<="
-	equal          Operator = "=="
-	notEqual       Operator = "!="
-	greaterOrEqual Operator = ">="
-	greater        Operator = ">"
+	OperatorLess           Operator = "<"
+	OperatorLessOrEqual    Operator = "<="
+	OperatorEqual          Operator = "=="
+	OperatorNotEqual       Operator = "!="
+	OperatorGreaterOrEqual Operator = ">="
+	OperatorGreater        Operator = ">"
 )
 
 type Metadata struct {

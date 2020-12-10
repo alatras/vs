@@ -8,7 +8,7 @@ type dummyCardValidator struct {
 }
 
 func newCardValidator(operator Operator, value string) (*dummyCardValidator, error) {
-	if operator != equal && operator != notEqual {
+	if operator != OperatorEqual && operator != OperatorNotEqual {
 		return nil, InvalidOperatorError
 	}
 
