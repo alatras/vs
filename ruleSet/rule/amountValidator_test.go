@@ -1,50 +1,51 @@
 package rule
 
 import (
-	"bitbucket.verifone.com/validation-service/transaction"
 	"testing"
+
+	"bitbucket.verifone.com/validation-service/transaction"
 )
 
 func TestNewAmountValidator(t *testing.T) {
 	var err error
 
 	// Should create a new amount validator where validation is less than 10
-	_, err = newAmountValidator(less, "10")
+	_, err = newAmountValidator(OperatorLess, "10")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
 	}
 
 	// Should create a new amount validator where validation is less than or equal to 10
-	_, err = newAmountValidator(lessOrEqual, "10")
+	_, err = newAmountValidator(OperatorLessOrEqual, "10")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
 	}
 
 	// Should create a new amount validator where validation is equal to 10
-	_, err = newAmountValidator(equal, "10")
+	_, err = newAmountValidator(OperatorEqual, "10")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
 	}
 
 	// Should create a new amount validator where validation is not equal to 10
-	_, err = newAmountValidator(notEqual, "10")
+	_, err = newAmountValidator(OperatorNotEqual, "10")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
 	}
 
 	// Should create a new amount validator where validation is greater than or equal to 10
-	_, err = newAmountValidator(greaterOrEqual, "10")
+	_, err = newAmountValidator(OperatorGreaterOrEqual, "10")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
 	}
 
 	// Should create a new amount validator where validation is greater than 10
-	_, err = newAmountValidator(greater, "10")
+	_, err = newAmountValidator(OperatorGreater, "10")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
@@ -58,7 +59,7 @@ func TestNewAmountValidator(t *testing.T) {
 	}
 
 	// Should return an error when factory receives an invalid value
-	_, err = newAmountValidator(greater, "foo")
+	_, err = newAmountValidator(OperatorGreater, "foo")
 
 	if err != InvalidValueError {
 		t.Error("expected error while creating new amount validator with invalid operator")
@@ -70,7 +71,7 @@ func TestAmountValidator_Validate(t *testing.T) {
 	var err error
 
 	// Less than
-	validator, err = newAmountValidator(less, "2")
+	validator, err = newAmountValidator(OperatorLess, "2")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
@@ -96,7 +97,7 @@ func TestAmountValidator_Validate(t *testing.T) {
 	}
 
 	// Less than or equal
-	validator, err = newAmountValidator(lessOrEqual, "2")
+	validator, err = newAmountValidator(OperatorLessOrEqual, "2")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
@@ -122,7 +123,7 @@ func TestAmountValidator_Validate(t *testing.T) {
 	}
 
 	// Equal
-	validator, err = newAmountValidator(equal, "2")
+	validator, err = newAmountValidator(OperatorEqual, "2")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
@@ -148,7 +149,7 @@ func TestAmountValidator_Validate(t *testing.T) {
 	}
 
 	// Greater or equal
-	validator, err = newAmountValidator(greaterOrEqual, "2")
+	validator, err = newAmountValidator(OperatorGreaterOrEqual, "2")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
@@ -174,7 +175,7 @@ func TestAmountValidator_Validate(t *testing.T) {
 	}
 
 	// Greater than
-	validator, err = newAmountValidator(greater, "2")
+	validator, err = newAmountValidator(OperatorGreater, "2")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
@@ -200,7 +201,7 @@ func TestAmountValidator_Validate(t *testing.T) {
 	}
 
 	// Minor units
-	validator, err = newAmountValidator(equal, "20")
+	validator, err = newAmountValidator(OperatorEqual, "20")
 
 	if err != nil {
 		t.Error("unexpected error while creating new amount validator:", err.Error())
