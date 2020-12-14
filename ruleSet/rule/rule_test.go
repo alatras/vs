@@ -10,7 +10,7 @@ func TestNewValidator(t *testing.T) {
 	// Should successfully create a trx amount is equal to 10 validator
 	_, err = NewValidator(Metadata{
 		Property: "amount",
-		Operator: equal,
+		Operator: OperatorEqual,
 		Value:    "10",
 	})
 
@@ -21,7 +21,7 @@ func TestNewValidator(t *testing.T) {
 	// Should not successfully create a trx undefined field is equal to 10 validator
 	_, err = NewValidator(Metadata{
 		Property: "foo",
-		Operator: equal,
+		Operator: OperatorEqual,
 		Value:    "10",
 	})
 

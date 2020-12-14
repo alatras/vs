@@ -1,22 +1,23 @@
 package rule
 
 import (
-	"bitbucket.verifone.com/validation-service/transaction"
 	"testing"
+
+	"bitbucket.verifone.com/validation-service/transaction"
 )
 
 func TestNewCustomerIdValidatorSuccess(t *testing.T) {
 	var err error
 
 	// Should create a new customer id validator where validation equals value
-	_, err = newCustomerIdValidator(equal, "1234")
+	_, err = newCustomerIdValidator(OperatorEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer id validator", err.Error())
 	}
 
 	// Should create a new customer id validator where validation does not equal value
-	_, err = newCustomerIdValidator(notEqual, "1234")
+	_, err = newCustomerIdValidator(OperatorNotEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer id validator", err.Error())
@@ -38,7 +39,7 @@ func TestCustomerIdValidator_Validate(t *testing.T) {
 	var err error
 
 	// Equal
-	validator, err = newCustomerIdValidator(equal, "1234")
+	validator, err = newCustomerIdValidator(OperatorEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer id validator:", err.Error())
@@ -64,7 +65,7 @@ func TestCustomerIdValidator_Validate(t *testing.T) {
 	}
 
 	// Not equal
-	validator, err = newCustomerIdValidator(notEqual, "1234")
+	validator, err = newCustomerIdValidator(OperatorNotEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer id validator:", err.Error())

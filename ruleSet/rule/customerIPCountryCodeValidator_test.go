@@ -1,22 +1,23 @@
 package rule
 
 import (
-	"bitbucket.verifone.com/validation-service/transaction"
 	"testing"
+
+	"bitbucket.verifone.com/validation-service/transaction"
 )
 
 func TestNewCustomerIPCountryCodeValidatorSuccess(t *testing.T) {
 	var err error
 
 	// Should create a new customer ip country code validator where validation equals value
-	_, err = newCustomerIPCountryCodeValidator(equal, "NL")
+	_, err = newCustomerIPCountryCodeValidator(OperatorEqual, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer ip country code validator", err.Error())
 	}
 
 	// Should create a new customer ip country code validator where validation does not equal value
-	_, err = newCustomerIPCountryCodeValidator(notEqual, "NL")
+	_, err = newCustomerIPCountryCodeValidator(OperatorNotEqual, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer ip country code validator", err.Error())
@@ -32,7 +33,7 @@ func TestNewCustomerIPCountryCodeValidatorFailure(t *testing.T) {
 	}
 
 	// Should return an error when factory receives an invalid value
-	_, err = newCustomerIPCountryCodeValidator(equal, "a")
+	_, err = newCustomerIPCountryCodeValidator(OperatorEqual, "a")
 
 	if err != InvalidValueError {
 		t.Error("expected error while creating new customer ip country code validator with invalid operator")
@@ -44,7 +45,7 @@ func TestCustomerIPCountryCodeValidator_Validate(t *testing.T) {
 	var err error
 
 	// Equal
-	validator, err = newCustomerIPCountryCodeValidator(equal, "NL")
+	validator, err = newCustomerIPCountryCodeValidator(OperatorEqual, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer ip country code validator:", err.Error())
@@ -70,7 +71,7 @@ func TestCustomerIPCountryCodeValidator_Validate(t *testing.T) {
 	}
 
 	// Not equal
-	validator, err = newCustomerIPCountryCodeValidator(notEqual, "NL")
+	validator, err = newCustomerIPCountryCodeValidator(OperatorNotEqual, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer ip country code validator:", err.Error())
