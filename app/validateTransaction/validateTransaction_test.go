@@ -1,14 +1,16 @@
 package validateTransaction
 
 import (
+	"context"
+	"errors"
+	"testing"
+
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/report"
 	"bitbucket.verifone.com/validation-service/ruleSet"
+	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"bitbucket.verifone.com/validation-service/transaction"
-	"context"
-	"errors"
 	"github.com/google/uuid"
-	"testing"
 )
 
 var trx = transaction.Transaction{
@@ -17,11 +19,53 @@ var trx = transaction.Transaction{
 	CurrencyCode:        "EUR",
 	CustomerCountryCode: "NL",
 	IssuerCountryCode:   "NLD",
+	Card:                "123123123123",
 }
 
 func Test_App_ValidateTransaction_Success(t *testing.T) {
 	log := logger.NewStubLogger()
 	repo, _ := ruleSet.NewStubRepository(nil)
+
+	app := NewValidatorService(1, repo, log)
+
+	reportChan, errorChan := app.Enqueue(context.TODO(), trx)
+
+	select {
+	case rep := <-reportChan:
+		if rep.Action != report.Pass {
+			t.Errorf("expected action PASS, but got %s", rep.Action)
+		}
+	case validationError := <-errorChan:
+		t.Error(validationError)
+	}
+}
+
+func Test_App_ValidateTransaction_Success_SkipCardValidation(t *testing.T) {
+	log := logger.NewStubLogger()
+	repo, _ := ruleSet.NewStubRepository(nil)
+
+	err := repo.Create(context.TODO(), ruleSet.RuleSet{
+		Id:       "1234",
+		EntityId: trx.EntityId,
+		Action:   ruleSet.Block,
+		Name:     "block ruleset",
+		RuleMetadata: []rule.Metadata{
+			{
+				Property: rule.PropertyCard,
+				Operator: rule.OperatorEqual,
+				Value:    trx.Card,
+			},
+			{
+				Property: rule.PropertyCurrencyCode,
+				Operator: rule.OperatorEqual,
+				Value:    string(trx.CurrencyCode),
+			},
+		},
+	})
+
+	if err != nil {
+		t.Errorf("expected create blocking ruleset, but got error %s", err)
+	}
 
 	app := NewValidatorService(1, repo, log)
 

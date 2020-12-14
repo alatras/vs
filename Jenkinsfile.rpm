@@ -13,8 +13,7 @@ pipeline {
                 sh "mkdir -p /var/www/yum"
                 sh "mkdir artifacts"
                 sh "cp validation-service-${TAG}-1.el7.x86_64.rpm artifacts/"
-                sh "cp validation-service-${TAG}-1.el7.x86_64.rpm /var/www/yum/"
-                sh "createrepo --database --update /var/www/yum"
+                sh "aws s3 cp validation-service-${TAG}-1.el7.x86_64.rpm s3://verifone.dimebox.com/rpm/validation-service/"
                 archiveArtifacts artifacts: 'artifacts/**', fingerprint: true
             }
         }

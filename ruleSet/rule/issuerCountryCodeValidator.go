@@ -17,9 +17,9 @@ func newIssuerCountryCodeValidator(operator Operator, value string) (*issuerCoun
 	var comparator compare.StringComparator
 
 	switch operator {
-	case equal:
+	case OperatorEqual:
 		comparator = compare.EqualString(value)
-	case notEqual:
+	case OperatorNotEqual:
 		comparator = compare.NotEqualString(value)
 	default:
 		return nil, InvalidOperatorError
@@ -29,5 +29,9 @@ func newIssuerCountryCodeValidator(operator Operator, value string) (*issuerCoun
 }
 
 func (i issuerCountryCodeValidator) Validate(transaction transaction.Transaction) bool {
+	if transaction.IssuerCountryCode == "" {
+		return false
+	}
+
 	return i.comparator(string(transaction.IssuerCountryCode))
 }

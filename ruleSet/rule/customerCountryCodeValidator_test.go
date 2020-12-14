@@ -1,22 +1,23 @@
 package rule
 
 import (
-	"bitbucket.verifone.com/validation-service/transaction"
 	"testing"
+
+	"bitbucket.verifone.com/validation-service/transaction"
 )
 
 func TestNewCustomerCountryCodeValidator(t *testing.T) {
 	var err error
 
 	// Should create a new customer country code validator where validation equals value
-	_, err = newCustomerCountryCodeValidator(equal, "NL")
+	_, err = newCustomerCountryCodeValidator(OperatorEqual, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer country code validator", err.Error())
 	}
 
 	// Should create a new customer country code validator where validation does not equal value
-	_, err = newCustomerCountryCodeValidator(notEqual, "NL")
+	_, err = newCustomerCountryCodeValidator(OperatorNotEqual, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer country code validator", err.Error())
@@ -30,7 +31,7 @@ func TestNewCustomerCountryCodeValidator(t *testing.T) {
 	}
 
 	// Should return an error when factory receives an invalid value
-	_, err = newCustomerCountryCodeValidator(equal, "foo")
+	_, err = newCustomerCountryCodeValidator(OperatorEqual, "foo")
 
 	if err != InvalidValueError {
 		t.Error("expected error while creating new customer country code validator with invalid operator")
@@ -42,7 +43,7 @@ func TestCustomerCountryCodeValidator_Validate(t *testing.T) {
 	var err error
 
 	// Equal
-	validator, err = newCustomerCountryCodeValidator(equal, "NL")
+	validator, err = newCustomerCountryCodeValidator(OperatorEqual, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer country code validator:", err.Error())
@@ -62,7 +63,7 @@ func TestCustomerCountryCodeValidator_Validate(t *testing.T) {
 	}
 
 	// Not equal
-	validator, err = newCustomerCountryCodeValidator(notEqual, "NL")
+	validator, err = newCustomerCountryCodeValidator(OperatorNotEqual, "NL")
 
 	if err != nil {
 		t.Error("unexpected error while creating new customer country code validator:", err.Error())

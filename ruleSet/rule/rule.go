@@ -1,8 +1,9 @@
 package rule
 
 import (
-	"bitbucket.verifone.com/validation-service/transaction"
 	"errors"
+
+	"bitbucket.verifone.com/validation-service/transaction"
 )
 
 var (
@@ -14,26 +15,26 @@ var (
 type Property string
 
 const (
-	amount                Property = "amount"
-	currencyCode          Property = "currencyCode"
-	customerCountryCode   Property = "customerCountryCode"
-	card                  Property = "card"
-	issuerCountryCode     Property = "issuerCountryCode"
-	entityId              Property = "entityId"
-	customerId            Property = "customerId"
-	customerIP            Property = "customerIP"
-	customerIPCountryCode Property = "customerIPCountryCode"
+	PropertyAmount                Property = "amount"
+	PropertyCurrencyCode          Property = "currencyCode"
+	PropertyCustomerCountryCode   Property = "customerCountryCode"
+	PropertyCard                  Property = "card"
+	PropertyIssuerCountryCode     Property = "issuerCountryCode"
+	PropertyEntityId              Property = "entityId"
+	PropertyCustomerId            Property = "customerId"
+	PropertyCustomerIP            Property = "customerIP"
+	PropertyCustomerIPCountryCode Property = "customerIPCountryCode"
 )
 
 type Operator string
 
 const (
-	less           Operator = "<"
-	lessOrEqual    Operator = "<="
-	equal          Operator = "=="
-	notEqual       Operator = "!="
-	greaterOrEqual Operator = ">="
-	greater        Operator = ">"
+	OperatorLess           Operator = "<"
+	OperatorLessOrEqual    Operator = "<="
+	OperatorEqual          Operator = "=="
+	OperatorNotEqual       Operator = "!="
+	OperatorGreaterOrEqual Operator = ">="
+	OperatorGreater        Operator = ">"
 )
 
 type Metadata struct {
@@ -51,23 +52,23 @@ func NewValidator(metadata Metadata) (Validator, error) {
 	var err error
 
 	switch metadata.Property {
-	case amount:
+	case PropertyAmount:
 		validator, err = newAmountValidator(metadata.Operator, metadata.Value)
-	case currencyCode:
+	case PropertyCurrencyCode:
 		validator, err = newCurrencyCodeValidator(metadata.Operator, metadata.Value)
-	case customerCountryCode:
+	case PropertyCustomerCountryCode:
 		validator, err = newCustomerCountryCodeValidator(metadata.Operator, metadata.Value)
-	case card:
+	case PropertyCard:
 		validator, err = newCardValidator(metadata.Operator, metadata.Value)
-	case issuerCountryCode:
+	case PropertyIssuerCountryCode:
 		validator, err = newIssuerCountryCodeValidator(metadata.Operator, metadata.Value)
-	case entityId:
+	case PropertyEntityId:
 		validator, err = newEntityIdValidator(metadata.Operator, metadata.Value)
-	case customerId:
+	case PropertyCustomerId:
 		validator, err = newCustomerIdValidator(metadata.Operator, metadata.Value)
-	case customerIP:
+	case PropertyCustomerIP:
 		validator, err = newCustomerIPValidator(metadata.Operator, metadata.Value)
-	case customerIPCountryCode:
+	case PropertyCustomerIPCountryCode:
 		validator, err = newCustomerIPCountryCodeValidator(metadata.Operator, metadata.Value)
 	default:
 		return nil, InvalidPropertyError

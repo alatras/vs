@@ -1,22 +1,23 @@
 package rule
 
 import (
-	"bitbucket.verifone.com/validation-service/transaction"
 	"testing"
+
+	"bitbucket.verifone.com/validation-service/transaction"
 )
 
 func TestNewCardValidatorSuccess(t *testing.T) {
 	var err error
 
 	// Should create a new card validator where validation equals value
-	_, err = newCardValidator(equal, "1234")
+	_, err = newCardValidator(OperatorEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new card validator", err.Error())
 	}
 
 	// Should create a new card validator where validation does not equal value
-	_, err = newCardValidator(notEqual, "1234")
+	_, err = newCardValidator(OperatorNotEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new card validator", err.Error())
@@ -37,7 +38,7 @@ func TestCardValidator_Validate(t *testing.T) {
 	var err error
 
 	// Equal
-	validator, err = newCardValidator(equal, "1234")
+	validator, err = newCardValidator(OperatorEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new card validator:", err.Error())
@@ -49,8 +50,8 @@ func TestCardValidator_Validate(t *testing.T) {
 		CurrencyCode: transaction.EUR,
 		EntityId:     "1",
 		Card:         "1234",
-	}); !ok {
-		t.Error("expected validation to pass")
+	}); ok {
+		t.Error("expected to not match, card rules are skipped")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
@@ -59,11 +60,11 @@ func TestCardValidator_Validate(t *testing.T) {
 		EntityId:     "1",
 		Card:         "12345",
 	}); ok {
-		t.Error("expected validation to fail")
+		t.Error("expected to not match, card rules are skipped")
 	}
 
 	// Not equal
-	validator, err = newCardValidator(notEqual, "1234")
+	validator, err = newCardValidator(OperatorNotEqual, "1234")
 
 	if err != nil {
 		t.Error("unexpected error while creating new card validator:", err.Error())
@@ -76,7 +77,7 @@ func TestCardValidator_Validate(t *testing.T) {
 		EntityId:     "1",
 		Card:         "1234",
 	}); ok {
-		t.Error("expected validation to fail")
+		t.Error("expected to not match, card rules are skipped")
 	}
 
 	if ok := validator.Validate(transaction.Transaction{
@@ -84,7 +85,7 @@ func TestCardValidator_Validate(t *testing.T) {
 		CurrencyCode: transaction.USD,
 		EntityId:     "1",
 		Card:         "12345",
-	}); !ok {
-		t.Error("expected validation to pass")
+	}); ok {
+		t.Error("expected to not match, card rules are skipped")
 	}
 }
