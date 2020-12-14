@@ -17,9 +17,9 @@ func newCustomerIPCountryCodeValidator(operator Operator, value string) (*custom
 	var comparator compare.StringComparator
 
 	switch operator {
-	case equal:
+	case OperatorEqual:
 		comparator = compare.EqualString(value)
-	case notEqual:
+	case OperatorNotEqual:
 		comparator = compare.NotEqualString(value)
 	default:
 		return nil, InvalidOperatorError

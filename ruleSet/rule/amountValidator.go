@@ -1,9 +1,10 @@
 package rule
 
 import (
+	"strconv"
+
 	"bitbucket.verifone.com/validation-service/ruleSet/compare"
 	"bitbucket.verifone.com/validation-service/transaction"
-	"strconv"
 )
 
 type amountValidator struct {
@@ -14,17 +15,17 @@ func newAmountValidator(operator Operator, value string) (*amountValidator, erro
 	var amountComparator func(uint64) compare.Uint64Comparator
 
 	switch operator {
-	case less:
+	case OperatorLess:
 		amountComparator = compare.LessThanUint64
-	case lessOrEqual:
+	case OperatorLessOrEqual:
 		amountComparator = compare.LessThanOrEqualUint64
-	case equal:
+	case OperatorEqual:
 		amountComparator = compare.EqualUint64
-	case notEqual:
+	case OperatorNotEqual:
 		amountComparator = compare.NotEqualUint64
-	case greaterOrEqual:
+	case OperatorGreaterOrEqual:
 		amountComparator = compare.GreaterThanOrEqualUint64
-	case greater:
+	case OperatorGreater:
 		amountComparator = compare.GreaterThanUint64
 	default:
 		return nil, InvalidOperatorError

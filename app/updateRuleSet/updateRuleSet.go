@@ -1,11 +1,13 @@
 package updateRuleSet
 
 import (
+	"context"
+	"errors"
+	"fmt"
+
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/ruleSet/rule"
-	"context"
-	"errors"
 )
 
 var (
@@ -65,6 +67,12 @@ func (app *App) Execute(ctx context.Context, entityId string, ruleSetId string, 
 			Value:    currentRule.Value,
 		}
 
+		if app.isPropertyBlacklisted(ruleMetadata.Property) {
+			err := fmt.Errorf("update of rules with key '%s' is not allowed", currentRule.Key)
+			app.instrumentation.ruleMetadataInvalid(ruleMetadata, err)
+			return nil, InvalidRule
+		}
+
 		if _, err := rule.NewValidator(ruleMetadata); err != nil {
 			app.instrumentation.ruleMetadataInvalid(ruleMetadata, err)
 			return nil, InvalidRule
@@ -96,4 +104,13 @@ func (app *App) Execute(ctx context.Context, entityId string, ruleSetId string, 
 	app.instrumentation.finishUpdatingRuleSet(replaceRuleSet)
 
 	return &replaceRuleSet, nil
+}
+
+func (app App) isPropertyBlacklisted(property rule.Property) bool {
+	switch property {
+	case rule.PropertyCard:
+		return true
+	}
+
+	return false
 }

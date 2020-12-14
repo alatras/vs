@@ -1,18 +1,19 @@
 package transaction
 
 import (
+	"bytes"
+	"errors"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"bitbucket.verifone.com/validation-service/app/validateTransaction"
 	"bitbucket.verifone.com/validation-service/logger"
 	"bitbucket.verifone.com/validation-service/report"
 	"bitbucket.verifone.com/validation-service/ruleSet"
 	"bitbucket.verifone.com/validation-service/ruleSet/rule"
-	"bytes"
-	"errors"
-	"fmt"
 	"github.com/bitly/go-simplejson"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func setupRecorder(t *testing.T, request *http.Request, report *report.Report, err *validateTransaction.AppError) *httptest.ResponseRecorder {
