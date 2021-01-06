@@ -1,15 +1,16 @@
 package listAncestors
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
-	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
 	"errors"
-	"github.com/bitly/go-simplejson"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"validation-service/app/listAncestorsRuleSet"
+	"validation-service/http/ruleSet"
+	"validation-service/logger"
+
+	"github.com/bitly/go-simplejson"
 )
 
 func setupEntityFormatIncorrectErrorRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {

@@ -1,13 +1,13 @@
 package healthCheck
 
 import (
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
 	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"validation-service/logger"
+	"validation-service/ruleSet"
 )
 
 func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {

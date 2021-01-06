@@ -1,7 +1,7 @@
 package rule
 
 import (
-	"bitbucket.verifone.com/validation-service/transaction"
+	"validation-service/transaction"
 )
 
 type dummyCardValidator struct {

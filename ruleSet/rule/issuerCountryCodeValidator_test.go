@@ -3,7 +3,7 @@ package rule
 import (
 	"testing"
 
-	"bitbucket.verifone.com/validation-service/transaction"
+	"validation-service/transaction"
 )
 
 func TestNewIssuerCountryCodeValidatorSuccess(t *testing.T) {

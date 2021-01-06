@@ -1,14 +1,15 @@
 package list
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listRuleSet"
-	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
-	"github.com/bitly/go-simplejson"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"validation-service/app/listRuleSet"
+	"validation-service/http/ruleSet"
+	"validation-service/logger"
+
+	"github.com/bitly/go-simplejson"
 )
 
 func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {

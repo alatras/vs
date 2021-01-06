@@ -1,14 +1,14 @@
 package create
 
 import (
-	"bitbucket.verifone.com/validation-service/app/createRuleSet"
-	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"validation-service/app/createRuleSet"
+	"validation-service/http/ruleSet"
+	"validation-service/logger"
 )
 
 func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {

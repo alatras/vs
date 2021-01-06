@@ -1,9 +1,9 @@
 package listDescendantsRuleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
+	"validation-service/logger"
+	"validation-service/ruleSet"
 )
 
 type ListDescendantsRuleSet interface {

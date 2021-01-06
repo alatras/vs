@@ -1,10 +1,10 @@
 package listAncestors
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"context"
+	"validation-service/app/listAncestorsRuleSet"
+	"validation-service/ruleSet"
+	"validation-service/ruleSet/rule"
 )
 
 const (

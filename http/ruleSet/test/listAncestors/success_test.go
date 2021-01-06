@@ -1,14 +1,14 @@
 package listAncestors
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
-	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/logger"
 	"bytes"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"validation-service/app/listAncestorsRuleSet"
+	"validation-service/http/ruleSet"
+	"validation-service/logger"
 )
 
 func setupSuccessRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {

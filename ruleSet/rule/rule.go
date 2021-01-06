@@ -3,7 +3,7 @@ package rule
 import (
 	"errors"
 
-	"bitbucket.verifone.com/validation-service/transaction"
+	"validation-service/transaction"
 )
 
 var (

@@ -3,9 +3,8 @@
 ## Getting Started
 
 ```bash
-$ git clone ssh://git@bitbucket.verifone.com:7999/cpdb/validation-service.git $GOPATH/src/bitbucket.verifone.com/validation-service
+git clone git@github.com:dimebox/validation-service.git
 ```
-
 
 ## Rule sets in stub repository
 

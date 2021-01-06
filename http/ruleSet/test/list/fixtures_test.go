@@ -1,9 +1,9 @@
 package list
 
 import (
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"context"
+	"validation-service/ruleSet"
+	"validation-service/ruleSet/rule"
 )
 
 const unexpectedErrorMessage = "Unexpected error: if the error persists, please contact an administrator, quoting the code and timestamp of this error"

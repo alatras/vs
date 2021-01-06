@@ -1,11 +1,11 @@
 package getRuleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/enums/contextKey"
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
 	"time"
+	"validation-service/enums/contextKey"
+	"validation-service/logger"
+	"validation-service/ruleSet"
 )
 
 type metadata = logger.Metadata

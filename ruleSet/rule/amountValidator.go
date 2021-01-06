@@ -3,8 +3,8 @@ package rule
 import (
 	"strconv"
 
-	"bitbucket.verifone.com/validation-service/ruleSet/compare"
-	"bitbucket.verifone.com/validation-service/transaction"
+	"validation-service/ruleSet/compare"
+	"validation-service/transaction"
 )
 
 type amountValidator struct {

@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"context"
-	"github.com/google/uuid"
 	"net/http"
+	"validation-service/enums/contextKey"
+
+	"github.com/google/uuid"
 )
 
 func SetContextWithTraceId(next http.Handler) http.Handler {

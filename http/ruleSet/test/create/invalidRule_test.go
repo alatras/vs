@@ -6,9 +6,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"bitbucket.verifone.com/validation-service/app/createRuleSet"
-	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/logger"
+	"validation-service/app/createRuleSet"
+	"validation-service/http/ruleSet"
+	"validation-service/logger"
+
 	"github.com/bitly/go-simplejson"
 )
 

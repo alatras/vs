@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
+	"validation-service/logger"
+	"validation-service/ruleSet"
+	"validation-service/ruleSet/rule"
 )
 
 var (

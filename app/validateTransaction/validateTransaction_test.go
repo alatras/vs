@@ -5,11 +5,12 @@ import (
 	"errors"
 	"testing"
 
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/report"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
-	"bitbucket.verifone.com/validation-service/transaction"
+	"validation-service/logger"
+	"validation-service/report"
+	"validation-service/ruleSet"
+	"validation-service/ruleSet/rule"
+	"validation-service/transaction"
+
 	"github.com/google/uuid"
 )
 

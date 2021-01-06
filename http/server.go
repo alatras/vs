@@ -1,26 +1,27 @@
 package http
 
 import (
-	"bitbucket.verifone.com/validation-service/app/createRuleSet"
-	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
-	"bitbucket.verifone.com/validation-service/app/getRuleSet"
-	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
-	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
-	"bitbucket.verifone.com/validation-service/app/listRuleSet"
-	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
-	"bitbucket.verifone.com/validation-service/app/validateTransaction"
-	"bitbucket.verifone.com/validation-service/http/healthCheck"
-	httpMiddleware "bitbucket.verifone.com/validation-service/http/middleware"
-	httpRuleSet "bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/http/transaction"
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"fmt"
+	"net/http"
+	"time"
+	"validation-service/app/createRuleSet"
+	"validation-service/app/deleteRuleSet"
+	"validation-service/app/getRuleSet"
+	"validation-service/app/listAncestorsRuleSet"
+	"validation-service/app/listDescendantsRuleSet"
+	"validation-service/app/listRuleSet"
+	"validation-service/app/updateRuleSet"
+	"validation-service/app/validateTransaction"
+	"validation-service/http/healthCheck"
+	httpMiddleware "validation-service/http/middleware"
+	httpRuleSet "validation-service/http/ruleSet"
+	"validation-service/http/transaction"
+	"validation-service/logger"
+	"validation-service/ruleSet"
+
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
-	"net/http"
-	"time"
 )
 
 type Server struct {

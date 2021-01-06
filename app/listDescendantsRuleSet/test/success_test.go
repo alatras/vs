@@ -1,11 +1,11 @@
 package test
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
 	"testing"
+	"validation-service/app/listDescendantsRuleSet"
+	"validation-service/logger"
+	"validation-service/ruleSet"
 )
 
 func Test_App_ListDescendantsRuleSet_Success(t *testing.T) {

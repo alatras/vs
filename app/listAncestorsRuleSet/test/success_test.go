@@ -1,11 +1,11 @@
 package test
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
 	"testing"
+	"validation-service/app/listAncestorsRuleSet"
+	"validation-service/logger"
+	"validation-service/ruleSet"
 )
 
 func Test_App_ListAncestorsRuleSet_Success(t *testing.T) {

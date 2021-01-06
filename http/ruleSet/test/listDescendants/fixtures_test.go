@@ -1,10 +1,10 @@
 package listDescendants
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"context"
+	"validation-service/app/listDescendantsRuleSet"
+	"validation-service/ruleSet"
+	"validation-service/ruleSet/rule"
 )
 
 const (

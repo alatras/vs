@@ -1,10 +1,10 @@
 package listDescendantsRuleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/enums/contextKey"
-	"bitbucket.verifone.com/validation-service/logger"
 	"context"
 	"time"
+	"validation-service/enums/contextKey"
+	"validation-service/logger"
 )
 
 type metadata = logger.Metadata

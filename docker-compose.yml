@@ -7,13 +7,13 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./:/go/src/bitbucket.verifone.com/validation-service
+      - ./:/go/src/validation-service
     links:
       - mongo
     depends_on:
       - mongo
   mongo:
-    image: mongo:4.2.2
+    image: mongo:4.4.1
     restart: always
     environment:
       - MONGO_DATA_DIR=/data/db

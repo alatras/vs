@@ -1,9 +1,9 @@
 package delete
 
 import (
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"context"
+	"validation-service/ruleSet"
+	"validation-service/ruleSet/rule"
 )
 
 const (

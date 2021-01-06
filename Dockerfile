@@ -17,7 +17,7 @@ RUN go get github.com/t-yuki/gocover-cobertura
 
 RUN mkdir -p /build_artifacts
 
-WORKDIR /go/src/bitbucket.verifone.com/validation-service
+WORKDIR /go/src/validation-service
 
 COPY . .
 
@@ -43,9 +43,9 @@ WORKDIR /go/bin
 
 ENV LD_LIBRARY_PATH=/go/lib
 
-COPY --from=build /go/src/bitbucket.verifone.com/validation-service/appdynamics/lib /go/lib
+COPY --from=build /go/src/validation-service/appdynamics/lib /go/lib
 COPY --from=build /go/bin/validation-service /go/bin/validation-service
-COPY --from=build /go/src/bitbucket.verifone.com/validation-service/config.yml /go/bin/
+COPY --from=build /go/src/validation-service/config.yml /go/bin/
 
 EXPOSE 8080
 

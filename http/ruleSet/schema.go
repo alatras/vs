@@ -1,9 +1,9 @@
 package ruleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"errors"
 	"fmt"
+	"validation-service/ruleSet"
 )
 
 type RulePayload struct {

@@ -1,13 +1,14 @@
 package get
 
 import (
-	"bitbucket.verifone.com/validation-service/app/getRuleSet"
-	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/logger"
-	"github.com/bitly/go-simplejson"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"validation-service/app/getRuleSet"
+	"validation-service/http/ruleSet"
+	"validation-service/logger"
+
+	"github.com/bitly/go-simplejson"
 )
 
 func setupNotFoundErrorRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
