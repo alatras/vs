@@ -72,9 +72,9 @@ func NewServer(
 func (s *Server) Start() error {
 	r := s.router
 
-	r.Use(chiMiddleware.Logger)
-	r.Use(chiMiddleware.URLFormat)
 	r.Use(httpMiddleware.SetContextWithTraceId)
+	r.Use(httpMiddleware.Logger(s.logger))
+	r.Use(chiMiddleware.URLFormat)
 	r.Use(httpMiddleware.SetContextWithBusinessTransaction)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
