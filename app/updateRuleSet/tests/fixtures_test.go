@@ -1,9 +1,9 @@
 package tests
 
 import (
-	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
+	"validation-service/app/updateRuleSet"
+	"validation-service/ruleSet"
+	"validation-service/ruleSet/rule"
 )
 
 var mockUpdateRules = []updateRuleSet.Rule{

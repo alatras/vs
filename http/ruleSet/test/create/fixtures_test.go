@@ -1,10 +1,10 @@
 package create
 
 import (
-	"bitbucket.verifone.com/validation-service/app/createRuleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
 	"context"
+	"validation-service/app/createRuleSet"
+	"validation-service/ruleSet"
+	"validation-service/ruleSet/rule"
 )
 
 const (

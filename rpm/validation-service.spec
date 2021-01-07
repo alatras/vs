@@ -10,7 +10,7 @@ Summary:  Validation Service
 License:  Commercial
 Source:  validation-service.tar.gz
 
-BuildRequires: golang >= 1.13.11
+BuildRequires: golang >= 1.13.14
 BuildRequires: glibc >= 2.12
 Requires: glibc >= 2.12
 AutoReqProv: no
@@ -22,8 +22,8 @@ Validation Service for the Greenbox environment
 %setup -n %{name}
 
 %build
-mkdir -p ./_build/src/bitbucket.verifone.com/
-ln -s $(pwd) ./_build/src/bitbucket.verifone.com/validation-service
+mkdir -p ./_build/src
+ln -s $(pwd) ./_build/src/validation-service
 
 export GOPATH=$(pwd)/_build:%{gopath}
 

@@ -1,9 +1,10 @@
 package ruleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
-	"bitbucket.verifone.com/validation-service/transaction"
 	"context"
+	"validation-service/ruleSet/rule"
+	"validation-service/transaction"
+
 	"github.com/google/uuid"
 )
 

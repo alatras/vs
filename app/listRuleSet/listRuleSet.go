@@ -1,10 +1,10 @@
 package listRuleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
 	"errors"
+	"validation-service/logger"
+	"validation-service/ruleSet"
 )
 
 var (

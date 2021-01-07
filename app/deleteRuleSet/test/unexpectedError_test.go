@@ -1,12 +1,12 @@
 package test
 
 import (
-	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
 	"errors"
 	"testing"
+	"validation-service/app/deleteRuleSet"
+	"validation-service/logger"
+	"validation-service/ruleSet"
 )
 
 func Test_App_DeleteRuleSet_UnexpectedError(t *testing.T) {

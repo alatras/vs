@@ -1,13 +1,14 @@
 package ruleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
-	appd "bitbucket.verifone.com/validation-service/appdynamics"
-	"bitbucket.verifone.com/validation-service/enums/contextKey"
-	"bitbucket.verifone.com/validation-service/http/errorResponse"
+	"net/http"
+	"validation-service/app/deleteRuleSet"
+	appd "validation-service/appdynamics"
+	"validation-service/enums/contextKey"
+	"validation-service/http/errorResponse"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"net/http"
 )
 
 func (rs Resource) Delete(w http.ResponseWriter, r *http.Request) {

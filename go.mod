@@ -1,4 +1,4 @@
-module bitbucket.verifone.com/validation-service
+module validation-service
 
 go 1.13
 

@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"bitbucket.verifone.com/validation-service/enums/contextKey"
-	"bitbucket.verifone.com/validation-service/logger"
+	"validation-service/enums/contextKey"
+	"validation-service/logger"
+
 	chi "github.com/go-chi/chi/middleware"
 	"github.com/sirupsen/logrus"
 )

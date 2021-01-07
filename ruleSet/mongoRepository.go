@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	appd "bitbucket.verifone.com/validation-service/appdynamics"
-	"bitbucket.verifone.com/validation-service/enums/appdBackend"
-	"bitbucket.verifone.com/validation-service/enums/contextKey"
-	"bitbucket.verifone.com/validation-service/logger"
+	appd "validation-service/appdynamics"
+	"validation-service/enums/appdBackend"
+	"validation-service/enums/contextKey"
+	"validation-service/logger"
+
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"

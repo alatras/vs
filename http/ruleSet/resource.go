@@ -1,26 +1,27 @@
 package ruleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/app/createRuleSet"
-	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
-	"bitbucket.verifone.com/validation-service/app/getRuleSet"
-	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
-	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
-	"bitbucket.verifone.com/validation-service/app/listRuleSet"
-	"bitbucket.verifone.com/validation-service/app/updateRuleSet"
-	"bitbucket.verifone.com/validation-service/logger"
+	"validation-service/app/createRuleSet"
+	"validation-service/app/deleteRuleSet"
+	"validation-service/app/getRuleSet"
+	"validation-service/app/listAncestorsRuleSet"
+	"validation-service/app/listDescendantsRuleSet"
+	"validation-service/app/listRuleSet"
+	"validation-service/app/updateRuleSet"
+	"validation-service/logger"
+
 	"github.com/go-chi/chi"
 )
 
 type Resource struct {
-	logger                  *logger.Logger
-	createRuleSetAppFactory func() createRuleSet.CreateRuleSet
-	listRuleSetAppFactory   func() listRuleSet.ListRuleSet
+	logger                           *logger.Logger
+	createRuleSetAppFactory          func() createRuleSet.CreateRuleSet
+	listRuleSetAppFactory            func() listRuleSet.ListRuleSet
 	listAncestorsRuleSetAppFactory   func() listAncestorsRuleSet.ListAncestorsRuleSet
 	listDescendantsRuleSetAppFactory func() listDescendantsRuleSet.ListDescendantsRuleSet
-	getRuleSetAppFactory    func() getRuleSet.GetRuleSet
-	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet
-	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet
+	getRuleSetAppFactory             func() getRuleSet.GetRuleSet
+	deleteRuleSetAppFactory          func() deleteRuleSet.DeleteRuleSet
+	updateRuleSetAppFactory          func() updateRuleSet.UpdateRuleSet
 }
 
 func NewResource(
@@ -34,14 +35,14 @@ func NewResource(
 	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet,
 ) Resource {
 	return Resource{
-		logger:                  logger,
-		createRuleSetAppFactory: createRuleSetAppFactory,
-		listRuleSetAppFactory:   listRuleSetAppFactory,
+		logger:                           logger,
+		createRuleSetAppFactory:          createRuleSetAppFactory,
+		listRuleSetAppFactory:            listRuleSetAppFactory,
 		listAncestorsRuleSetAppFactory:   listAncestorsRuleSetAppFactory,
 		listDescendantsRuleSetAppFactory: listDescendantsRuleSetAppFactory,
-		getRuleSetAppFactory:    getRuleSetAppFactory,
-		deleteRuleSetAppFactory: deleteRuleSetAppFactory,
-		updateRuleSetAppFactory: updateRuleSetAppFactory,
+		getRuleSetAppFactory:             getRuleSetAppFactory,
+		deleteRuleSetAppFactory:          deleteRuleSetAppFactory,
+		updateRuleSetAppFactory:          updateRuleSetAppFactory,
 	}
 }
 

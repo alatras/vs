@@ -1,7 +1,7 @@
 package transaction
 
 import (
-	"bitbucket.verifone.com/validation-service/report"
+	"validation-service/report"
 )
 
 type ValidateTransactionPayload struct {

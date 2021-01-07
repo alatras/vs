@@ -1,11 +1,11 @@
 package validateTransaction
 
 import (
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/report"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/transaction"
 	"context"
+	"validation-service/logger"
+	"validation-service/report"
+	"validation-service/ruleSet"
+	"validation-service/transaction"
 )
 
 type ValidatorService interface {

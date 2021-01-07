@@ -1,7 +1,8 @@
 package config
 
 import (
-	"bitbucket.verifone.com/validation-service/logger"
+	"validation-service/logger"
+
 	"github.com/sirupsen/logrus"
 )
 

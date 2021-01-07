@@ -1,12 +1,12 @@
 package delete
 
 import (
-	"bitbucket.verifone.com/validation-service/app/deleteRuleSet"
-	"bitbucket.verifone.com/validation-service/http/ruleSet"
-	"bitbucket.verifone.com/validation-service/logger"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"validation-service/app/deleteRuleSet"
+	"validation-service/http/ruleSet"
+	"validation-service/logger"
 )
 
 func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {

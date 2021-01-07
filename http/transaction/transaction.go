@@ -1,8 +1,9 @@
 package transaction
 
 import (
-	"bitbucket.verifone.com/validation-service/app/validateTransaction"
-	"bitbucket.verifone.com/validation-service/logger"
+	"validation-service/app/validateTransaction"
+	"validation-service/logger"
+
 	"github.com/go-chi/chi"
 )
 

@@ -1,8 +1,8 @@
 package test
 
 import (
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
+	"validation-service/ruleSet"
+	"validation-service/ruleSet/rule"
 )
 
 var mockRuleSet = ruleSet.New(

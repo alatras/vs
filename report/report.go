@@ -1,7 +1,7 @@
 package report
 
 import (
-	"bitbucket.verifone.com/validation-service/ruleSet"
+	"validation-service/ruleSet"
 )
 
 type Action string

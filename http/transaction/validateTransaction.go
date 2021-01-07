@@ -6,12 +6,13 @@ import (
 	"strconv"
 	"strings"
 
-	"bitbucket.verifone.com/validation-service/app/validateTransaction"
-	appd "bitbucket.verifone.com/validation-service/appdynamics"
-	"bitbucket.verifone.com/validation-service/enums/contextKey"
-	"bitbucket.verifone.com/validation-service/http/errorResponse"
-	"bitbucket.verifone.com/validation-service/report"
-	trx "bitbucket.verifone.com/validation-service/transaction"
+	"validation-service/app/validateTransaction"
+	appd "validation-service/appdynamics"
+	"validation-service/enums/contextKey"
+	"validation-service/http/errorResponse"
+	"validation-service/report"
+	trx "validation-service/transaction"
+
 	"github.com/go-chi/render"
 )
 

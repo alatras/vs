@@ -1,15 +1,16 @@
 package ruleSet
 
 import (
-	"bitbucket.verifone.com/validation-service/app/listAncestorsRuleSet"
-	"bitbucket.verifone.com/validation-service/app/listDescendantsRuleSet"
-	appd "bitbucket.verifone.com/validation-service/appdynamics"
-	"bitbucket.verifone.com/validation-service/enums/contextKey"
-	"bitbucket.verifone.com/validation-service/http/errorResponse"
-	"bitbucket.verifone.com/validation-service/ruleSet"
+	"net/http"
+	"validation-service/app/listAncestorsRuleSet"
+	"validation-service/app/listDescendantsRuleSet"
+	appd "validation-service/appdynamics"
+	"validation-service/enums/contextKey"
+	"validation-service/http/errorResponse"
+	"validation-service/ruleSet"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"net/http"
 )
 
 func (resp ListRuleSetResponse) Render(w http.ResponseWriter, r *http.Request) error {

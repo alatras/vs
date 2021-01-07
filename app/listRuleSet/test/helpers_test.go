@@ -1,9 +1,9 @@
 package test
 
 import (
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"reflect"
 	"testing"
+	"validation-service/ruleSet"
 )
 
 func AssertRuleSet(t *testing.T, expected, actual ruleSet.RuleSet) {

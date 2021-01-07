@@ -1,12 +1,13 @@
 package main
 
 import (
-	"bitbucket.verifone.com/validation-service/cmd"
-	"bitbucket.verifone.com/validation-service/config"
-	"github.com/jessevdk/go-flags"
-	"gopkg.in/yaml.v2"
 	"log"
 	"os"
+	"validation-service/cmd"
+	"validation-service/config"
+
+	"github.com/jessevdk/go-flags"
+	"gopkg.in/yaml.v2"
 )
 
 var version = "unknown"

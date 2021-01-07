@@ -8,11 +8,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"bitbucket.verifone.com/validation-service/app/validateTransaction"
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/report"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"bitbucket.verifone.com/validation-service/ruleSet/rule"
+	"validation-service/app/validateTransaction"
+	"validation-service/logger"
+	"validation-service/report"
+	"validation-service/ruleSet"
+	"validation-service/ruleSet/rule"
+
 	"github.com/bitly/go-simplejson"
 )
 

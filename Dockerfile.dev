@@ -15,7 +15,7 @@ RUN go get github.com/codegangsta/gin
 # Expose port 3000 to the host so we can access the gin proxy
 EXPOSE 3000
 
-WORKDIR /go/src/bitbucket.verifone.com/validation-service
+WORKDIR /go/src/validation-service
 
 COPY . .
 

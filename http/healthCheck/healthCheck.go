@@ -1,12 +1,13 @@
 package healthCheck
 
 import (
-	appd "bitbucket.verifone.com/validation-service/appdynamics"
-	"bitbucket.verifone.com/validation-service/enums/contextKey"
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
-	"github.com/go-chi/chi"
 	"net/http"
+	appd "validation-service/appdynamics"
+	"validation-service/enums/contextKey"
+	"validation-service/logger"
+	"validation-service/ruleSet"
+
+	"github.com/go-chi/chi"
 )
 
 type Resource struct {

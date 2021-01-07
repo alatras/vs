@@ -1,11 +1,11 @@
 package test
 
 import (
-	"bitbucket.verifone.com/validation-service/app/getRuleSet"
-	"bitbucket.verifone.com/validation-service/logger"
-	"bitbucket.verifone.com/validation-service/ruleSet"
 	"context"
 	"testing"
+	"validation-service/app/getRuleSet"
+	"validation-service/logger"
+	"validation-service/ruleSet"
 )
 
 func Test_App_GetRuleSet_Success(t *testing.T) {

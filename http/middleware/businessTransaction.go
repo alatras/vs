@@ -1,12 +1,13 @@
 package middleware
 
 import (
-	appd "bitbucket.verifone.com/validation-service/appdynamics"
-	"bitbucket.verifone.com/validation-service/enums/contextKey"
 	"context"
-	"github.com/google/uuid"
 	"net/http"
 	"regexp"
+	appd "validation-service/appdynamics"
+	"validation-service/enums/contextKey"
+
+	"github.com/google/uuid"
 )
 
 func SetContextWithBusinessTransaction(next http.Handler) http.Handler {

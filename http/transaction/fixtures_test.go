@@ -1,10 +1,10 @@
 package transaction
 
 import (
-	"bitbucket.verifone.com/validation-service/app/validateTransaction"
-	"bitbucket.verifone.com/validation-service/report"
-	trx "bitbucket.verifone.com/validation-service/transaction"
 	"context"
+	"validation-service/app/validateTransaction"
+	"validation-service/report"
+	trx "validation-service/transaction"
 )
 
 const (
