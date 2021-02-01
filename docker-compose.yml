@@ -8,6 +8,8 @@ services:
       - "3000:3000"
     volumes:
       - ./:/go/src/validation-service
+    environment:
+      - ENVIRONMENT=development
     links:
       - mongo
     depends_on:

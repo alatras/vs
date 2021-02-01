@@ -110,3 +110,11 @@ response:
     ]
 }
 ```
+
+## Deployment
+
+If ENVIRONMENT is not set to `development`, the app needs the following environment variables of the DB:
+```
+MONGO_URL
+MONGO_DB
+```
