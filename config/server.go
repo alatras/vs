@@ -24,7 +24,7 @@ type Server struct {
 type Mongo struct {
 	URL               string `yaml:"url"`
 	DB                string `yaml:"db"`
-	RetryMilliseconds int    `yaml:"retryMilliseconds"`
+	RetryMilliseconds string `yaml:"retryMilliseconds"`
 }
 
 // GetConfig either from struct or environment
@@ -35,6 +35,8 @@ func (m Mongo) GetConfig(key string) string {
 			return m.URL
 		case "db":
 			return m.DB
+		case "RetryMilliseconds":
+			return m.RetryMilliseconds
 		default:
 			return "n/a"
 		}

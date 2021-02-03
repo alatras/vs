@@ -37,7 +37,7 @@ func main() {
 	file, err := os.Open(opts.ConfigFile)
 
 	if err != nil {
-		log.Printf("[ERROR] failed to read configuration file with error: %+v", err)
+		log.Printf("[ERROR] failed to read configuration with error: %+v", err)
 		os.Exit(1)
 	}
 
@@ -48,12 +48,12 @@ func main() {
 	var serverConfig config.Server
 
 	if err := decoder.Decode(&serverConfig); err != nil {
-		log.Printf("[ERROR] failed to decode configuration file with error: %+v", err)
+		log.Printf("[ERROR] failed to decode configuration with error: %+v", err)
 		os.Exit(1)
 	}
 
 	if err := serverConfig.Validate(); err != nil {
-		log.Printf("[ERROR] configuration file is invalid: %+v", err)
+		log.Printf("[ERROR] configuration is invalid: %+v", err)
 		os.Exit(1)
 	}
 

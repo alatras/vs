@@ -11,6 +11,6 @@ func Read() {
 	envErr := godotenv.Load(".env")
 
 	if envErr != nil {
-		log.Print("No .env file")
+		log.Print("Pass environment file in 'run' command if you need it.")
 	}
 }
