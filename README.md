@@ -3,7 +3,7 @@
 ### Getting Started
 
 ```bash
-git clone git@github.com:dimebox/validation-service.git
+$ git clone git@github.com:dimebox/validation-service.git
 ```
 
 ### Rule sets in stub repository
@@ -21,7 +21,7 @@ git clone git@github.com:dimebox/validation-service.git
 #### With Go
 
 ```bash
-go build main.go && ./main -> listening on port 8080
+$ go build main.go && ./main -> listening on port 8080
 ```
 
 POST localhost:8080/transaction/validate
@@ -29,7 +29,7 @@ POST localhost:8080/transaction/validate
 #### With Docker
 
 ```bash
-docker-compose up
+$ docker-compose up
 ```
 
 With Docker you don't need .env file. Configurations are within.
@@ -133,19 +133,35 @@ response:
 
 ### Deployment
 
-Build image:
+#### Build image
 
 ```bash
-docker build ./
+$ docker build ./
 ```
 
-Run container:
+#### Run container
+
+##### Using environment file:
 
 ```bash
-docker run -dp [SERVER PORT]:8080 --env-file=.env [IMAGE ID]
+$ docker run -dp [SERVER PORT]:8080 --env-file=[ENV FILE NAME] [IMAGE ID]
 ```
 
-Environment file needs:
+or:
+
+##### Passing environment vars in run command:
+
+```bash
+$ docker run -p [SERVER PORT]:8080 \
+	-e MONGO_URL=[VALUE] \
+	-e MONGO_DB=[VALUE] \
+	-e MONGO_DB_RETRYMILLISECONDS=[VALUE] \
+	[IMAGE ID]
+```
+
+##### .env file:
+
+If using .env file, it needs:
 
 ```text
 MONGO_URL=[VALUE]
