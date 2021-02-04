@@ -142,7 +142,7 @@ docker build ./
 Run container:
 
 ```bash
-docker run -dp [SERVER PORT]:8080 --env-file=.env [CONTAINER ID]
+docker run -dp [SERVER PORT]:8080 --env-file=.env [IMAGE ID]
 ```
 
 Environment file needs:
