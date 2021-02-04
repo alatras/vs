@@ -139,12 +139,16 @@ response:
 $ docker build ./
 ```
 
+This will build the API image. It will connect to a MondoDB that should run on the same host network (not Docker network).
+
 #### Run container
 
 ##### Using environment file:
 
 ```bash
-$ docker run -dp [SERVER PORT]:8080 --env-file=[ENV FILE NAME] [IMAGE ID]
+$ docker run -dp [SERVER PORT]:8080 \
+	--env-file=[ENV FILE NAME] \
+	[IMAGE ID]
 ```
 
 or:
