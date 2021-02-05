@@ -1,7 +1,6 @@
 # Binary file
 validation-service
-
 # MacOS metadata files
 .DS_Store
-
 .env
+.idea

@@ -5,6 +5,7 @@ import (
 	"os"
 	"validation-service/cmd"
 	"validation-service/config"
+	"validation-service/environment"
 
 	"github.com/jessevdk/go-flags"
 	"gopkg.in/yaml.v2"
@@ -13,11 +14,14 @@ import (
 var version = "unknown"
 var appName = "Validation Service"
 
+// ConfigFileOpts is the opts type
 type ConfigFileOpts struct {
 	ConfigFile string `long:"config" short:"f" default:"config.yml" description:"YAML configuration file path"`
 }
 
 func main() {
+	environment.Read()
+
 	config.AppName = appName
 	config.Version = version
 
@@ -33,7 +37,7 @@ func main() {
 	file, err := os.Open(opts.ConfigFile)
 
 	if err != nil {
-		log.Printf("[ERROR] failed to read configuration file with error: %+v", err)
+		log.Printf("[ERROR] failed to read configuration with error: %+v", err)
 		os.Exit(1)
 	}
 
@@ -44,12 +48,12 @@ func main() {
 	var serverConfig config.Server
 
 	if err := decoder.Decode(&serverConfig); err != nil {
-		log.Printf("[ERROR] failed to decode configuration file with error: %+v", err)
+		log.Printf("[ERROR] failed to decode configuration with error: %+v", err)
 		os.Exit(1)
 	}
 
 	if err := serverConfig.Validate(); err != nil {
-		log.Printf("[ERROR] configuration file is invalid: %+v", err)
+		log.Printf("[ERROR] configuration is invalid: %+v", err)
 		os.Exit(1)
 	}
 

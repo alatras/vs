@@ -1,112 +1,182 @@
 # Validation Service
 
-## Getting Started
+### Getting Started
 
 ```bash
-git clone git@github.com:dimebox/validation-service.git
+$ git clone git@github.com:dimebox/validation-service.git
 ```
 
-## Rule sets in stub repository
+### Rule sets in stub repository
 
-### Entity 1
-* Is greater than 5 and less than 5000
+#### Entity 1
 
-### Entity 2
-* Is greater than 500 and less than 1000
+- Is greater than 5 and less than 5000
 
-## Getting started
+#### Entity 2
+
+- Is greater than 500 and less than 1000
+
+### Run in development
+
+#### With Go
 
 ```bash
 $ go build main.go && ./main -> listening on port 8080
 ```
 
-POST localhost:8080/validate
+POST localhost:8080/transaction/validate
 
-### Example 1
+#### With Docker
+
+```bash
+$ docker-compose up
+```
+
+With Docker you don't need .env file. Configurations are within.
+
+POST localhost:3000/transaction/validate
+
+#### Example 1
 
 request:
+
 ```json
 {
-	"amount": 4000,
-	"entity": "1"
+  "amount": 4000,
+  "entity": "1"
 }
 ```
 
 response:
+
 ```json
 {
-    "action": "PASS",
-    "block": [],
-    "tags": []
+  "action": "PASS",
+  "block": [],
+  "tags": []
 }
 ```
 
-### Example 2
+#### Example 2
 
 request:
+
 ```json
 {
-	"amount": 900,
-	"entity": "1"
+  "amount": 900,
+  "entity": "1"
 }
 ```
 
 response:
+
 ```json
 {
-    "action": "BLOCK",
-    "block": [
+  "action": "BLOCK",
+  "block": [
+    {
+      "name": "Is greater than 5 and less than 5000",
+      "rules": [
         {
-            "name": "Is greater than 5 and less than 5000",
-            "rules": [
-                {
-                    "key": "amount",
-                    "operator": "<",
-                    "value": "5000"
-                },
-                {
-                    "key": "amount",
-                    "operator": ">",
-                    "value": "5"
-                }
-            ]
+          "key": "amount",
+          "operator": "<",
+          "value": "5000"
+        },
+        {
+          "key": "amount",
+          "operator": ">",
+          "value": "5"
         }
-    ],
-    "tags": []
+      ]
+    }
+  ],
+  "tags": []
 }
 ```
 
-### Example 3
+#### Example 3
 
 request:
+
 ```json
 {
-	"amount": 900,
-	"entity": "2"
+  "amount": 900,
+  "entity": "2"
 }
 ```
 
 response:
+
 ```json
 {
-    "action": "PASS",
-    "block": [],
-    "tags": [
+  "action": "PASS",
+  "block": [],
+  "tags": [
+    {
+      "name": "Is greater than 500 and less than 1000",
+      "rules": [
         {
-            "name": "Is greater than 500 and less than 1000",
-            "rules": [
-                {
-                    "key": "amount",
-                    "operator": "<",
-                    "value": "1000"
-                },
-                {
-                    "key": "amount",
-                    "operator": ">",
-                    "value": "500"
-                }
-            ]
+          "key": "amount",
+          "operator": "<",
+          "value": "1000"
+        },
+        {
+          "key": "amount",
+          "operator": ">",
+          "value": "500"
         }
-    ]
+      ]
+    }
+  ]
 }
+```
+
+### Deployment
+
+#### Build image
+
+```bash
+$ docker build ./
+```
+
+This will build the API image. It will connect to a MondoDB that should run on the same host network (not Docker network).
+
+#### Run container
+
+##### Using environment file:
+
+```bash
+$ docker run -dp [SERVER PORT]:8080 \
+	--env-file=[ENV FILE NAME] \
+	[IMAGE ID]
+```
+
+or:
+
+##### Passing environment vars in run command:
+
+```bash
+$ docker run -p [SERVER PORT]:8080 \
+	-e MONGO_URL=[VALUE] \
+	-e MONGO_DB=[VALUE] \
+	-e MONGO_DB_RETRYMILLISECONDS=[VALUE] \
+	[IMAGE ID]
+```
+
+##### .env file:
+
+If using .env file, it needs:
+
+```text
+MONGO_URL=[VALUE]
+MONGO_DB=[VALUE]
+MONGO_DB_RETRYMILLISECONDS=[VALUE]
+```
+
+Example:
+
+```text
+MONGO_URL=mongodb://host.docker.internal:27017
+MONGO_DB=validationService
+MONGO_DB_RETRYMILLISECONDS=0
 ```

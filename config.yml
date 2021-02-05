@@ -5,6 +5,7 @@ httpPort: 8080
 mongo:
   url: mongodb://mongo
   db: validationService
+  retryMilliseconds: "0"
 appd:
   appName: validationService
   tierName: transaction

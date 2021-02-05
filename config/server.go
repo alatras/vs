@@ -2,12 +2,14 @@ package config
 
 import (
 	"errors"
+	"os"
+	"strings"
 )
 
 var Version = "unknown"
 var AppName = "Validation Service"
 
-// ServerConfiguration with command line flags and env
+// Server is configuration with command line flags and env
 type Server struct {
 	Mongo Mongo `yaml:"mongo"`
 
@@ -22,7 +24,25 @@ type Server struct {
 type Mongo struct {
 	URL               string `yaml:"url"`
 	DB                string `yaml:"db"`
-	RetryMilliseconds int    `yaml:"retryMilliseconds"`
+	RetryMilliseconds string `yaml:"retryMilliseconds"`
+}
+
+// GetConfig either from struct or environment
+func (m Mongo) GetConfig(key string) string {
+	if os.Getenv("ENVIRONMENT") == "development" {
+		switch key {
+		case "url":
+			return m.URL
+		case "db":
+			return m.DB
+		case "RetryMilliseconds":
+			return m.RetryMilliseconds
+		default:
+			return "n/a"
+		}
+	}
+
+	return os.Getenv("MONGO_" + strings.ToUpper(key))
 }
 
 // DefaultMongoRetryMilliseconds default setting for Mongo RetryMilliseconds
@@ -64,11 +84,11 @@ func (c Server) Validate() error {
 }
 
 func (c Mongo) Validate() error {
-	if c.URL == "" {
+	if c.GetConfig("url") == "" {
 		return errors.New("mongo.url is missing")
 	}
 
-	if c.DB == "" {
+	if c.GetConfig("db") == "" {
 		return errors.New("mongo.db is missing")
 	}
 
