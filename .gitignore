@@ -1,6 +1,11 @@
 # Binary file
 validation-service
+
 # MacOS metadata files
 .DS_Store
-.env
+
+# IDE files
 .idea
+
+# Environment files
+.env
