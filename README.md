@@ -160,6 +160,7 @@ $ docker run -p [SERVER PORT]:8080 \
 	-e MONGO_URL=[VALUE] \
 	-e MONGO_DB=[VALUE] \
 	-e MONGO_DB_RETRYMILLISECONDS=[VALUE] \
+  -e LOG_ROTATING_COUNT= [VALUE] \
 	[IMAGE ID]
 ```
 
@@ -171,6 +172,7 @@ If using .env file, it needs:
 MONGO_URL=[VALUE]
 MONGO_DB=[VALUE]
 MONGO_DB_RETRYMILLISECONDS=[VALUE]
+LOG_ROTATING_COUNT=[VALUE]
 ```
 
 Example:
@@ -179,4 +181,5 @@ Example:
 MONGO_URL=mongodb://host.docker.internal:27017
 MONGO_DB=validationService
 MONGO_DB_RETRYMILLISECONDS=0
+LOG_ROTATING_COUNT=30
 ```
