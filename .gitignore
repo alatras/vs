@@ -12,3 +12,4 @@ validation-service
 
 # Log files
 logs/
+*.log

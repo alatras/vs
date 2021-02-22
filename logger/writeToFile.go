@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-// WriteToFile : write logs into log file
+// WriteToFile writes extra logs into log file
 func WriteToFile(fl FileLogger) {
 	m, err := json.Marshal(fl)
 

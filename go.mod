@@ -11,6 +11,7 @@ require github.com/sirupsen/logrus v1.4.2
 
 require (
 	github.com/bitly/go-simplejson v0.5.0
+	github.com/go-co-op/gocron v0.6.0
 	github.com/google/uuid v1.1.1
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/joho/godotenv v1.3.0

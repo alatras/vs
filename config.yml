@@ -1,6 +1,6 @@
 log:
   level: info
-  format: text
+  format: json
 httpPort: 8080
 mongo:
   url: mongodb://mongo

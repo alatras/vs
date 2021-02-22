@@ -2,8 +2,10 @@ package logger
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"io"
 	"os"
+
+	"github.com/sirupsen/logrus"
 )
 
 type LogFormat = string
@@ -51,9 +53,17 @@ func NewLogger(appName string, appVersion string, format LogFormat, level logrus
 		return nil, fmt.Errorf("invalid log format %s", format)
 	}
 
+	logFile, err := ProvideLogFile()
+
+	if err != nil {
+		return nil, fmt.Errorf("[ERROR] failed to provide log file with error: %+v", err)
+	}
+
+	mw := io.MultiWriter(os.Stdout, logFile)
+
 	logger := logrus.New()
 	logger.SetLevel(level)
-	logger.SetOutput(os.Stdout)
+	logger.SetOutput(mw)
 	logger.SetFormatter(formatter)
 
 	errorLogger := logrus.New()
