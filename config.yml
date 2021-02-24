@@ -1,6 +1,7 @@
 log:
   level: info
   format: json
+  logFile: "./logs/ValidationService.log"
 httpPort: 8080
 mongo:
   url: mongodb://mongo

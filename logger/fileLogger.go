@@ -17,7 +17,7 @@ type ErrorDetails struct {
 }
 
 // Error for log
-type Error struct {
+type LogError struct {
 	Message string
 	Name    string
 	Stack   string
@@ -26,7 +26,7 @@ type Error struct {
 }
 
 // FileLogger for extra log
-type FileLogger struct {
+type FileLogRecord struct {
 	Time     time.Time
 	TraceID  string
 	Name     string // service name
@@ -36,7 +36,7 @@ type FileLogger struct {
 	Level    string
 	Scope    string
 	Metadata Metadata
-	Error    Error
+	Error    LogError
 	Fields   []Field
 	Message  string
 }

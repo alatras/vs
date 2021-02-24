@@ -93,6 +93,7 @@ func setupLogger(logConfig config.Log) *logger.Logger {
 		config.Version,
 		logConfig.FormatValue(),
 		logConfig.LevelValue(),
+		logConfig.LogFileValue(),
 	)
 
 	if err != nil {
