@@ -20,7 +20,7 @@ type ConfigFileOpts struct {
 }
 
 func main() {
-	environment.Read()
+	environment.Config()
 
 	config.AppName = appName
 	config.Version = version

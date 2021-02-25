@@ -2,8 +2,12 @@ package logger
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"io"
 	"os"
+	"validation-service/environment"
+
+	"github.com/sirupsen/logrus"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 type LogFormat = string
@@ -33,7 +37,13 @@ func NewStubLogger() *Logger {
 	}
 }
 
-func NewLogger(appName string, appVersion string, format LogFormat, level logrus.Level) (*Logger, error) {
+func NewLogger(
+	appName string,
+	appVersion string,
+	format LogFormat,
+	level logrus.Level,
+	logfile string,
+) (*Logger, error) {
 	logFields := logrus.Fields{
 		"name":    appName,
 		"version": appVersion,
@@ -51,9 +61,19 @@ func NewLogger(appName string, appVersion string, format LogFormat, level logrus
 		return nil, fmt.Errorf("invalid log format %s", format)
 	}
 
+	logFile := &lumberjack.Logger{
+		Filename:   logfile,
+		MaxSize:    environment.GetDigits("LOG_FILE_MAX_SIZE", 600), // megabytes
+		MaxBackups: environment.GetDigits("LOG_ROTATING_COUNT", 30), // no. of files
+		MaxAge:     environment.GetDigits("LOG_ROTATING_PERIOD", 1), // days
+		Compress:   true,                                            // default is false
+	}
+
+	mw := io.MultiWriter(os.Stdout, logFile)
+
 	logger := logrus.New()
 	logger.SetLevel(level)
-	logger.SetOutput(os.Stdout)
+	logger.SetOutput(mw)
 	logger.SetFormatter(formatter)
 
 	errorLogger := logrus.New()

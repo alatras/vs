@@ -146,9 +146,10 @@ This will build the API image. It will connect to a MondoDB that should run on t
 ##### Using environment file:
 
 ```bash
-$ docker run -dp [SERVER PORT]:8080 \
-	--env-file=[ENV FILE NAME] \
-	[IMAGE ID]
+$ docker run -p [SERVER PORT]:8080 \
+    --mount type=bind,source=/var/log/dimebox,target=/logs \
+    --env-file=[ENV FILE NAME] \
+    [IMAGE ID]
 ```
 
 or:
@@ -157,26 +158,25 @@ or:
 
 ```bash
 $ docker run -p [SERVER PORT]:8080 \
-	-e MONGO_URL=[VALUE] \
-	-e MONGO_DB=[VALUE] \
-	-e MONGO_DB_RETRYMILLISECONDS=[VALUE] \
-	[IMAGE ID]
+    --mount type=bind,source=/var/log/dimebox,target=/logs \
+    -e MONGO_URL=[VALUE] \
+    -e MONGO_DB=[VALUE] \
+    -e MONGO_DB_RETRYMILLISECONDS=[VALUE] \
+    -e LOG_FILE_MAX_SIZE=[VALUE] \
+    -e LOG_ROTATING_COUNT=[VALUE] \
+    -e LOG_ROTATING_PERIOD=[VALUE] \
+    [IMAGE ID]
 ```
 
-##### .env file:
+Note: The path `/var/log/dimebox` must exist in host. Edit it if you need.
 
-If using .env file, it needs:
-
-```text
-MONGO_URL=[VALUE]
-MONGO_DB=[VALUE]
-MONGO_DB_RETRYMILLISECONDS=[VALUE]
-```
-
-Example:
+##### Examples of environment variables:
 
 ```text
 MONGO_URL=mongodb://host.docker.internal:27017
 MONGO_DB=validationService
 MONGO_DB_RETRYMILLISECONDS=0
+LOG_FILE_MAX_SIZE=600mb
+LOG_ROTATING_COUNT=30
+LOG_ROTATING_PERIOD=1d
 ```

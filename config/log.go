@@ -8,8 +8,9 @@ import (
 
 // Log logging configuration parameters
 type Log struct {
-	Level  string `yaml:"level"`
-	Format string `yaml:"format"`
+	Level   string `yaml:"level"`
+	Format  string `yaml:"format"`
+	LogFile string `yaml:"logFile"`
 }
 
 func (log Log) LevelValue() logrus.Level {
@@ -38,4 +39,8 @@ func (log Log) FormatValue() logger.LogFormat {
 	default:
 		return logger.JsonFormat
 	}
+}
+
+func (log Log) LogFileValue() logger.LogFormat {
+	return log.LogFile
 }
