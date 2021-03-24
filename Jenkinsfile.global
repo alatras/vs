@@ -1,5 +1,9 @@
 /* groovylint-disable-next-line CompileStatic */
 pipeline {
+    // options
+    // {
+    //     buildDiscarder(logRotator(numToKeepStr: '7'))
+    // }
     // agent { label 'master' }
     agent any
     environment {
@@ -10,14 +14,15 @@ pipeline {
         )
         ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/validation-service'
         IMAGE = "validation-service:${env.TAG}"
+        CONTAINER = "validation-service-${env.TAG}"
         ECRCRED = 'ecr:eu-west-2:aws-ecr-global-1'
     }
     stages {
         stage('Docker build') {
             steps {
-                sh "docker build --target build -t validation-service:${env.TAG} ."
-                sh "docker create --name validation-service-${env.TAG} validation-service:${env.TAG}"
-                sh "docker cp validation-service-${env.TAG}:/build_artifacts ."
+                sh "docker build --target build -t ${IMAGE} ."
+                sh "docker create --name ${CONTAINER} ${IMAGE}"
+                sh "docker cp ${CONTAINER}:/build_artifacts ."
 
                 archiveArtifacts artifacts: 'build_artifacts/**', fingerprint: true
             }
@@ -41,8 +46,8 @@ pipeline {
     }
     post {
         always {
-            sh "docker rm -f -v validation-service-${env.TAG}"
-            sh "docker rmi validation-service:${env.TAG}"
+            sh "docker rm -f -v ${CONTAINER}"
+            sh "docker rmi ${IMAGE}"
 
             cleanWs()
         }
