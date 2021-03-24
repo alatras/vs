@@ -14,7 +14,7 @@ pipeline {
         )
         ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/validation-service'
         // ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/paypal-ecom-service'
-        IMAGE = 'validation-service::latest'
+        IMAGE = 'validation-service:latest'
         // IMAGE = 'paypal-ecom-service:latest'
         CONTAINER = "validation-service-${env.TAG}"
         ECRCRED = 'ecr:eu-west-2:aws-ecr-global-1'
