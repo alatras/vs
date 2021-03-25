@@ -1,9 +1,5 @@
 /* groovylint-disable-next-line CompileStatic */
 pipeline {
-    // options
-    // {
-    //     buildDiscarder(logRotator(numToKeepStr: '7'))
-    // }
     // agent { label 'master' }
     agent any
     environment {
@@ -12,9 +8,9 @@ pipeline {
             script: "printf \$(git rev-parse --short ${GIT_COMMIT})",
             returnStdout: true
         )
-        ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/validation-service'
-        // ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/paypal-ecom-service'
-        IMAGE = 'validation-service'
+        // ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/validation-service'
+        ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/paypal-ecom-service'
+        IMAGE = 'validation-service:latest'
         CONTAINER = "validation-service-${env.TAG}"
         ECRCRED = 'ecr:eu-west-2:aws-ecr-global-1'
     }
