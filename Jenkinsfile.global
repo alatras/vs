@@ -1,27 +1,47 @@
 /* groovylint-disable-next-line CompileStatic */
-pipeline {
-    // agent { label 'master' }
+pipeline
+{
+    options
+    {
+        buildDiscarder(logRotator(numToKeepStr: '7'))
+    }
     agent any
-    environment {
-        LOG_LEVEL = 'error'
-        TAG = sh(
-            script: "printf \$(git rev-parse --short ${GIT_COMMIT})",
-            returnStdout: true
-        )
-        // ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/validation-service'
-        ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/paypal-ecom-service'
-        IMAGE = 'validation-service:latest'
-        CONTAINER = "validation-service-${env.TAG}"
+    environment
+    {
+        VERSION = 'latest'
+        PROJECT = 'validation-service'
+        IMAGE = 'paypal-ecom-service:latest'
+        ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/validation-service'
         ECRCRED = 'ecr:eu-west-2:aws-ecr-global-1'
     }
-    stages {
-        stage('Docker build') {
-            steps {
-                sh "docker build --target build -t ${IMAGE} ."
-                sh "docker create --name ${CONTAINER} ${IMAGE}"
-                sh "docker cp ${CONTAINER}:/build_artifacts ."
-
-                archiveArtifacts artifacts: 'build_artifacts/**', fingerprint: true
+    stages
+    {
+        stage('Build preparations')
+        {
+            steps
+            {
+                script
+                {
+                    // calculate GIT lastest commit short-hash
+                    gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    shortCommitHash = gitCommitHash.take(7)
+                    // calculate a sample version tag
+                    VERSION = shortCommitHash
+                    // set the build display name
+                    currentBuild.displayName = "${PROJECT}-${VERSION}"
+                    IMAGE = "staging/ecom/$PROJECT:$VERSION"
+                }
+            }
+        }
+        stage('Docker build')
+        {
+            steps
+            {
+                script
+                {
+                    // Build the docker image using a Dockerfile
+                    docker.build("$IMAGE", "-f Dockerfile.global .")
+                }
             }
         }
         stage('Docker push')
@@ -41,20 +61,13 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            sh "docker rm -f -v ${CONTAINER}"
-            sh "docker rmi ${IMAGE}"
 
-            cleanWs()
-        }
-        failure {
-            /* groovylint-disable-next-line LineLength */
-            slackSend channel: '#ci', color: 'danger', message: "*Validation Service FAILED* `${env.JOB_NAME}` on ${env.STAGE_NAME}\n- ${env.BUILD_DISPLAY_NAME}: ${env.RUN_DISPLAY_URL}\n- Commit: `${env.GIT_PREVIOUS_COMMIT}`", tokenCredentialId: 'slack-api'
-        }
-        success {
-            /* groovylint-disable-next-line DuplicateStringLiteral, LineLength */
-            slackSend channel: '#ci', color: 'good', message: "*Validation Service SUCCESS* `${env.JOB_NAME}`\n- ${env.BUILD_DISPLAY_NAME}: ${env.RUN_DISPLAY_URL}\n- Commit: `${env.GIT_PREVIOUS_COMMIT}`", tokenCredentialId: 'slack-api'
+    post
+    {
+        always
+        {
+            // make sure that the Docker image is removed
+            sh "docker rmi $IMAGE | true"
         }
     }
 }
