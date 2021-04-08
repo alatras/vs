@@ -40,7 +40,7 @@ pipeline
                 script
                 {
                     // Build the docker image using a Dockerfile
-                    docker.build("$IMAGE", "-f Dockerfile.global .")
+                    docker.build("$IMAGE", '-f Dockerfile.global .')
                 }
             }
         }
