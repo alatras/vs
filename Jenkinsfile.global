@@ -1,0 +1,73 @@
+/* groovylint-disable-next-line CompileStatic */
+pipeline
+{
+    options
+    {
+        buildDiscarder(logRotator(numToKeepStr: '7'))
+    }
+    agent any
+    environment
+    {
+        VERSION = 'latest'
+        PROJECT = 'validation-service'
+        IMAGE = 'paypal-ecom-service:latest'
+        ECRURL = 'https://099139769505.dkr.ecr.eu-west-2.amazonaws.com/staging/ecom/validation-service'
+        ECRCRED = 'ecr:eu-west-2:aws-ecr-global-1'
+    }
+    stages
+    {
+        stage('Build preparations')
+        {
+            steps
+            {
+                script
+                {
+                    // calculate GIT lastest commit short-hash
+                    gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    shortCommitHash = gitCommitHash.take(7)
+                    // calculate a sample version tag
+                    VERSION = shortCommitHash
+                    // set the build display name
+                    currentBuild.displayName = "${PROJECT}-${VERSION}"
+                    IMAGE = "staging/ecom/$PROJECT:$VERSION"
+                }
+            }
+        }
+        stage('Docker build')
+        {
+            steps
+            {
+                script
+                {
+                    // Build the docker image using a Dockerfile
+                    docker.build("$IMAGE", '-f Dockerfile.global .')
+                }
+            }
+        }
+        stage('Docker push')
+        {
+            steps
+            {
+                script
+                {
+                    sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
+                    // Push the Docker image to ECR
+                    docker.withRegistry(ECRURL, ECRCRED)
+                    /* groovylint-disable-next-line NestedBlockDepth */
+                    {
+                        docker.image(IMAGE).push()
+                    }
+                }
+            }
+        }
+    }
+
+    post
+    {
+        always
+        {
+            // make sure that the Docker image is removed
+            sh "docker rmi $IMAGE | true"
+        }
+    }
+}
