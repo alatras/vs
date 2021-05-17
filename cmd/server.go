@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"runtime"
-	"strconv"
 	"time"
 
 	"validation-service/app/createRuleSet"
@@ -94,6 +93,9 @@ func setupLogger(logConfig config.Log) *logger.Logger {
 		logConfig.FormatValue(),
 		logConfig.LevelValue(),
 		logConfig.LogFileValue(),
+		logConfig.LogFileMaxMbValue(),
+		logConfig.LogFileRotationCountValue(),
+		logConfig.LogFileRotationDaysValue(),
 	)
 
 	if err != nil {
@@ -132,17 +134,15 @@ func setupAppD(appDConfig config.AppD) {
 func createRuleSetRepository(mongoConfig config.Mongo, logger *logger.Logger) *ruleSet.MongoRuleSetRepository {
 	var mongoRetryDelay time.Duration
 
-	rt, _ := strconv.Atoi(mongoConfig.GetConfig("RetryMilliseconds"))
-
-	if rt != 0 {
-		mongoRetryDelay = time.Duration(rt) * time.Millisecond
+	if mongoConfig.RetryMilliseconds != 0 {
+		mongoRetryDelay = time.Duration(mongoConfig.RetryMilliseconds) * time.Millisecond
 	} else {
 		mongoRetryDelay = time.Duration(config.DefaultMongoRetryMilliseconds) * time.Millisecond
 	}
 
 	ruleSetRepository, err := ruleSet.NewMongoRepository(
-		mongoConfig.GetConfig("url"),
-		mongoConfig.GetConfig("db"),
+		mongoConfig.URL,
+		mongoConfig.DB,
 		mongoRetryDelay,
 		logger,
 	)

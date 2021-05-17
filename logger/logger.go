@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"validation-service/environment"
 
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -43,6 +42,9 @@ func NewLogger(
 	format LogFormat,
 	level logrus.Level,
 	logfile string,
+	logFileMaxMb int,
+	logFileRotationCount int,
+	logFileRotationDays int,
 ) (*Logger, error) {
 	logFields := logrus.Fields{
 		"name":    appName,
@@ -63,10 +65,10 @@ func NewLogger(
 
 	logFile := &lumberjack.Logger{
 		Filename:   logfile,
-		MaxSize:    environment.GetDigits("LOG_FILE_MAX_SIZE", 600), // megabytes
-		MaxBackups: environment.GetDigits("LOG_ROTATING_COUNT", 30), // no. of files
-		MaxAge:     environment.GetDigits("LOG_ROTATING_PERIOD", 1), // days
-		Compress:   true,                                            // default is false
+		MaxSize:    logFileMaxMb,         // megabytes
+		MaxBackups: logFileRotationCount, // no. of files
+		MaxAge:     logFileRotationDays,  // days
+		Compress:   true,                 // default is false
 	}
 
 	mw := io.MultiWriter(os.Stdout, logFile)

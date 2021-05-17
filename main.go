@@ -5,7 +5,6 @@ import (
 	"os"
 	"validation-service/cmd"
 	"validation-service/config"
-	"validation-service/environment"
 
 	"github.com/jessevdk/go-flags"
 	"gopkg.in/yaml.v2"
@@ -20,8 +19,6 @@ type ConfigFileOpts struct {
 }
 
 func main() {
-	environment.Config()
-
 	config.AppName = appName
 	config.Version = version
 

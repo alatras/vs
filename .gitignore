@@ -1,6 +1,9 @@
 # Binary file
 validation-service
 
+# rpm
+file.rpm
+
 # MacOS metadata files
 .DS_Store
 
