@@ -141,8 +141,8 @@ func createRuleSetRepository(mongoConfig config.Mongo, logger *logger.Logger) *r
 	}
 
 	ruleSetRepository, err := ruleSet.NewMongoRepository(
-		mongoConfig.URL,
-		mongoConfig.DB,
+		mongoConfig.GetConfig("MONGO_URL"),
+		mongoConfig.GetConfig("MONGO_DB"),
 		mongoRetryDelay,
 		logger,
 	)
