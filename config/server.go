@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"os"
 )
 
 var Version = "unknown"
@@ -23,6 +24,24 @@ type Mongo struct {
 	URL               string `yaml:"url"`
 	DB                string `yaml:"db"`
 	RetryMilliseconds int    `yaml:"retryMilliseconds"`
+}
+
+// GetConfig either from struct or environment
+func (m Mongo) GetConfig(key string) string {
+	v := os.Getenv(key)
+
+	if v != "" {
+		return v
+	}
+
+	switch key {
+	case "MONGO_URL":
+		return m.URL
+	case "MONGO_DB":
+		return m.DB
+	default:
+		return "n/a"
+	}
 }
 
 // DefaultMongoRetryMilliseconds default setting for Mongo RetryMilliseconds
@@ -64,11 +83,11 @@ func (c Server) Validate() error {
 }
 
 func (c Mongo) Validate() error {
-	if c.URL == "" {
+	if c.GetConfig("url") == "" {
 		return errors.New("mongo.url is missing")
 	}
 
-	if c.DB == "" {
+	if c.GetConfig("db") == "" {
 		return errors.New("mongo.db is missing")
 	}
 

@@ -16,3 +16,7 @@ file.rpm
 # Log files
 logs/
 *.log
+
+# Binaries
+listening
+main
