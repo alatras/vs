@@ -11,4 +11,5 @@ type Transaction struct {
 	CustomerId          string
 	CustomerIP          string
 	CustomerIPCountry   string
+	FraudScore          string
 }

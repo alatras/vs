@@ -54,7 +54,9 @@ func (rs Resource) Update(w http.ResponseWriter, r *http.Request) {
 		rules[i] = appRule
 	}
 
-	ruleSet, err := app.Execute(ctx, entityId, ruleSetId, payload.Name, payload.Action, rules)
+	tag := payload.Tag
+
+	ruleSet, err := app.Execute(ctx, entityId, ruleSetId, payload.Name, payload.Action, rules, tag)
 
 	if err != nil {
 		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)

@@ -24,6 +24,7 @@ type CreateRuleSetPayload struct {
 	Name   string        `json:"name"`
 	Action string        `json:"action"`
 	Rules  []RulePayload `json:"rules"`
+	Tag    string        `json:"tag"`
 }
 
 type CreateRuleSetResponse struct {
@@ -36,6 +37,7 @@ type UpdateRuleSetPayload struct {
 	Name   string        `json:"name"`
 	Action string        `json:"action"`
 	Rules  []RulePayload `json:"rules"`
+	Tag    string        `json:"tag"`
 }
 
 type UpdateRuleSetResponse struct {
