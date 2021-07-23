@@ -22,13 +22,13 @@ var (
 			Operator: ">=",
 			Value:    "1000",
 		},
-	})
+	}, "TEST TAG")
 )
 
 type successApp struct {
 }
 
-func (app *successApp) Execute(ctx context.Context, entityId string, ruleSetId string, name string, action string, rules []updateRuleSet.Rule) (*ruleSet.RuleSet, error) {
+func (app *successApp) Execute(ctx context.Context, entityId string, ruleSetId string, name string, action string, rules []updateRuleSet.Rule, tag string) (*ruleSet.RuleSet, error) {
 	return &mockRuleSet, nil
 }
 
@@ -36,6 +36,6 @@ type errorApp struct {
 	error error
 }
 
-func (app *errorApp) Execute(ctx context.Context, entityId string, ruleSetId string, name string, action string, rules []updateRuleSet.Rule) (*ruleSet.RuleSet, error) {
+func (app *errorApp) Execute(ctx context.Context, entityId string, ruleSetId string, name string, action string, rules []updateRuleSet.Rule, tag string) (*ruleSet.RuleSet, error) {
 	return nil, app.error
 }

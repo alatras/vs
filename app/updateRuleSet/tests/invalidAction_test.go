@@ -26,6 +26,7 @@ func Test_App_UpdateRuleSet_InvalidAction(t *testing.T) {
 		mockUpdatedRuleSet.Name,
 		"INVALID",
 		mockUpdateRules,
+		"TEST TAG",
 	)
 
 	if err == nil {

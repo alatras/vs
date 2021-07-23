@@ -26,6 +26,7 @@ func Test_App_CreateRuleSet_Success(t *testing.T) {
 		mockRuleSet.Name,
 		string(mockRuleSet.Action),
 		mockRules,
+		"TEST TAG",
 	)
 
 	if err != nil {
@@ -69,6 +70,7 @@ func Test_App_CreateRuleSet_Success_Amount_AllOperators(t *testing.T) {
 					Value:    "1000",
 				},
 			},
+			"TEST TAG",
 		)
 
 		newRuleSet, err := app.Execute(
@@ -77,6 +79,7 @@ func Test_App_CreateRuleSet_Success_Amount_AllOperators(t *testing.T) {
 			mockRuleSet.Name,
 			string(mockRuleSet.Action),
 			mockRules,
+			"TEST TAG",
 		)
 
 		if err != nil {

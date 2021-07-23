@@ -21,6 +21,7 @@ func Test_App_CreateRuleSet_UnexpectedError(t *testing.T) {
 		mockRuleSet.Name,
 		string(mockRuleSet.Action),
 		mockRules,
+		"TEST TAG",
 	)
 
 	if err == nil {
