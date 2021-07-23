@@ -45,7 +45,8 @@ func Test_HTTP_RuleSet_Create_Success(t *testing.T) {
 					"operator": ">=",
 					"value": "1000"
 				}
-			]
+			],
+			"tag": "TEST TAG"
 		}`
 
 	req, err := http.NewRequest("POST", "/12345/rulesets", bytes.NewBuffer([]byte(requestBody)))
@@ -75,7 +76,8 @@ func Test_HTTP_RuleSet_Create_Success(t *testing.T) {
 					"operator": ">=",
 					"value": "1000"
 				}
-			]
+			],
+			"tag": "TEST TAG"
 		}`,
 		mockRuleSet.Id,
 	)

@@ -46,7 +46,8 @@ func Test_HTTP_RuleSet_Update_UnexpectedError(t *testing.T) {
 					"operator": ">=",
 					"value": "1000"
 				}
-			]
+			],
+			"tag": "TEST TAG"
 		}`
 
 	req, err := http.NewRequest("PUT", "/12345/rulesets/"+mockRuleSet.Id, bytes.NewBuffer([]byte(requestBody)))
