@@ -24,7 +24,7 @@ type Rule struct {
 }
 
 type UpdateRuleSet interface {
-	Execute(ctx context.Context, entityId string, ruleSetId string, name string, action string, rules []Rule) (*ruleSet.RuleSet, error)
+	Execute(ctx context.Context, entityId string, ruleSetId string, name string, action string, rules []Rule, tag string) (*ruleSet.RuleSet, error)
 }
 
 type App struct {
@@ -39,7 +39,7 @@ func NewUpdateRuleSet(logger *logger.Logger, ruleSetRepository ruleSet.Repositor
 	}
 }
 
-func (app *App) Execute(ctx context.Context, entityId string, ruleSetId string, name string, action string, rules []Rule) (*ruleSet.RuleSet, error) {
+func (app *App) Execute(ctx context.Context, entityId string, ruleSetId string, name string, action string, rules []Rule, tag string) (*ruleSet.RuleSet, error) {
 	app.instrumentation.setContext(ctx)
 	app.instrumentation.setMetadata(logger.Metadata{
 		"ruleSetId": ruleSetId,
@@ -47,6 +47,7 @@ func (app *App) Execute(ctx context.Context, entityId string, ruleSetId string, 
 		"name":      name,
 		"action":    action,
 		"rules":     rules,
+		"tag":       tag,
 	})
 
 	app.instrumentation.startUpdatingRuleSet()
@@ -87,6 +88,7 @@ func (app *App) Execute(ctx context.Context, entityId string, ruleSetId string, 
 		name,
 		ruleSet.Action(action),
 		ruleMetadataArray,
+		tag,
 	)
 
 	replaced, err := app.ruleSetRepository.Replace(ctx, entityId, replaceRuleSet)

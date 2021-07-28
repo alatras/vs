@@ -157,7 +157,8 @@ func Test_HTTP_ValidateTransaction_Success_Block(t *testing.T) {
 							"operator": ">",
 							"value": "50"
 						}
-					]
+					],
+					"tag":""
 				}
 			],
 			"tags": []

@@ -16,4 +16,5 @@ var mockRuleSets = [1]ruleSet.RuleSet{ruleSet.New(
 			Value:    "1000",
 		},
 	},
+	"TEST TAG",
 )}

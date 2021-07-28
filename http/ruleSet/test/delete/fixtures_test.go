@@ -20,7 +20,7 @@ var (
 			Operator: ">=",
 			Value:    "1000",
 		},
-	})
+	}, "TEST TAG")
 )
 
 type successApp struct {

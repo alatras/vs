@@ -29,6 +29,7 @@ var mockRuleSets = []ruleSet.RuleSet{ruleSet.New(
 			Value:    "1000",
 		},
 	},
+	"TEST TAG",
 )}
 
 type successApp struct {

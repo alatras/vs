@@ -22,6 +22,7 @@ type RuleSet struct {
 	Action       Action          `json:"action" bson:"action"`
 	Name         string          `json:"name" bson:"name"`
 	RuleMetadata []rule.Metadata `json:"rules" bson:"validationRuleMetadata"`
+	Tag          string          `json:"tag" bson:"tag"`
 }
 
 type Repository interface {
@@ -33,25 +34,27 @@ type Repository interface {
 	Ping(ctx context.Context) error
 }
 
-func New(entityId string, name string, action Action, metadata []rule.Metadata) RuleSet {
+func New(entityId string, name string, action Action, metadata []rule.Metadata, tag string) RuleSet {
 	ruleSet := RuleSet{
 		Id:           uuid.New().String(),
 		EntityId:     entityId,
 		Name:         name,
 		Action:       action,
 		RuleMetadata: metadata,
+		Tag:          tag,
 	}
 
 	return ruleSet
 }
 
-func From(ruleSetId string, entityId string, name string, action Action, metadata []rule.Metadata) RuleSet {
+func From(ruleSetId string, entityId string, name string, action Action, metadata []rule.Metadata, tag string) RuleSet {
 	return RuleSet{
 		Id:           ruleSetId,
 		EntityId:     entityId,
 		Name:         name,
 		Action:       action,
 		RuleMetadata: metadata,
+		Tag:          tag,
 	}
 }
 
