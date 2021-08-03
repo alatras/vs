@@ -33,6 +33,7 @@ func Test_App_UpdateRuleSet_Success(t *testing.T) {
 		mockUpdatedRuleSet.Name,
 		string(mockUpdatedRuleSet.Action),
 		mockUpdateRules,
+		"TEST TAG",
 	)
 
 	if err != nil {

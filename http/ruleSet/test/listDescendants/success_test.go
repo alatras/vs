@@ -65,7 +65,8 @@ func Test_HTTP_RuleSet_ListDescendants_Success(t *testing.T) {
 						"operator": ">=",
 						"value": "1000"
 					}
-				]
+				],
+				"tag": "TEST TAG"
 			}
 		]`,
 		mockRuleSets[0].Id,

@@ -13,6 +13,7 @@ type transaction struct {
 	Merchant   merchant     `json:"merchant"`
 	Customer   customer     `json:"customer"`
 	Instrument []instrument `json:"instrument"`
+	FraudScore fraudScore   `json:"fraudScore"`
 }
 
 type amount struct {
@@ -37,6 +38,10 @@ type customer struct {
 	CustomerIdentification customerIdentification `json:"identification"`
 	IP                     string                 `json:"IPAddressV4"`
 	IPCountry              string                 `json:"IPCountry"`
+}
+
+type fraudScore struct {
+	Value string `json:"value"`
 }
 
 type customerIdentification struct {

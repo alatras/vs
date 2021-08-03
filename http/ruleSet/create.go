@@ -53,7 +53,9 @@ func (rs Resource) Create(w http.ResponseWriter, r *http.Request) {
 		rules[index] = appRule
 	}
 
-	ruleSet, err := app.Execute(ctx, entityId, payload.Name, payload.Action, rules)
+	tag := payload.Tag
+
+	ruleSet, err := app.Execute(ctx, entityId, payload.Name, payload.Action, rules, tag)
 
 	if err != nil {
 		appd.AddBTError(businessTransaction, appd.APPD_LEVEL_ERROR, err.Error(), true)

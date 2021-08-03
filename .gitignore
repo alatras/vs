@@ -1,6 +1,3 @@
-# Binary file
-validation-service
-
 # rpm
 file.rpm
 
@@ -18,5 +15,6 @@ logs/
 *.log
 
 # Binaries
+validation-service
 listening
 main

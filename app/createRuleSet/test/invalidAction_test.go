@@ -25,6 +25,7 @@ func Test_App_CreateRuleSet_InvalidAction(t *testing.T) {
 		mockRuleSet.Name,
 		"INVALID",
 		mockRules,
+		"TEST TAG",
 	)
 
 	if err == nil {

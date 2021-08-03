@@ -23,7 +23,7 @@ type Rule struct {
 }
 
 type CreateRuleSet interface {
-	Execute(ctx context.Context, entityId string, name string, action string, rules []Rule) (*ruleSet.RuleSet, error)
+	Execute(ctx context.Context, entityId string, name string, action string, rules []Rule, tag string) (*ruleSet.RuleSet, error)
 }
 
 type App struct {
@@ -38,13 +38,14 @@ func NewCreateRuleSet(logger *logger.Logger, ruleSetRepository ruleSet.Repositor
 	}
 }
 
-func (app *App) Execute(ctx context.Context, entityId string, name string, action string, rules []Rule) (*ruleSet.RuleSet, error) {
+func (app *App) Execute(ctx context.Context, entityId string, name string, action string, rules []Rule, tag string) (*ruleSet.RuleSet, error) {
 	app.instrumentation.setContext(ctx)
 	app.instrumentation.setMetadata(logger.Metadata{
 		"entityId": entityId,
 		"name":     name,
 		"action":   action,
 		"rules":    rules,
+		"tag":      tag,
 	})
 
 	app.instrumentation.startCreatingRuleSet()
@@ -84,6 +85,7 @@ func (app *App) Execute(ctx context.Context, entityId string, name string, actio
 		name,
 		ruleSet.Action(action),
 		ruleMetadataArray,
+		tag,
 	)
 
 	if err := app.ruleSetRepository.Create(ctx, newRuleSet); err != nil {

@@ -26,6 +26,7 @@ func Test_App_UpdateRuleSet_InvalidRule_Key(t *testing.T) {
 		mockUpdatedRuleSet.Name,
 		string(mockRuleSet.Action),
 		mockInvalidKeyRules,
+		"TEST TAG",
 	)
 
 	if err == nil {
@@ -53,6 +54,7 @@ func Test_App_UpdateRuleSet_InvalidRule_Operation(t *testing.T) {
 		mockUpdatedRuleSet.Name,
 		string(mockRuleSet.Action),
 		mockInvalidOperatorRules,
+		"TEST TAG",
 	)
 
 	if err == nil {
@@ -80,6 +82,7 @@ func Test_App_UpdateRuleSet_InvalidRule_Value(t *testing.T) {
 		mockUpdatedRuleSet.Name,
 		string(mockRuleSet.Action),
 		mockInvalidValueRules,
+		"TEST TAG",
 	)
 
 	if err == nil {
@@ -107,6 +110,7 @@ func Test_App_UpdateRuleSet_InvalidRule_NoValue(t *testing.T) {
 		mockUpdatedRuleSet.Name,
 		string(mockRuleSet.Action),
 		mockInvalidNoValueRules,
+		"TEST TAG",
 	)
 
 	if err == nil {

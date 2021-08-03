@@ -58,6 +58,7 @@ var mockRuleSet = ruleSet.From(
 			Value:    "1000",
 		},
 	},
+	"TEST TAG",
 )
 
 var mockUpdatedRuleSet = ruleSet.From(
@@ -72,4 +73,5 @@ var mockUpdatedRuleSet = ruleSet.From(
 			Value:    "1000",
 		},
 	},
+	"TEST TAG",
 )

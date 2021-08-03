@@ -24,6 +24,7 @@ const (
 	PropertyCustomerId            Property = "customerId"
 	PropertyCustomerIP            Property = "customerIP"
 	PropertyCustomerIPCountryCode Property = "customerIPCountryCode"
+	FraudScore                    Property = "fraudScore"
 )
 
 type Operator string
@@ -70,6 +71,8 @@ func NewValidator(metadata Metadata) (Validator, error) {
 		validator, err = newCustomerIPValidator(metadata.Operator, metadata.Value)
 	case PropertyCustomerIPCountryCode:
 		validator, err = newCustomerIPCountryCodeValidator(metadata.Operator, metadata.Value)
+	case FraudScore:
+		validator, err = newFraudScoreValidator(metadata.Operator, metadata.Value)
 	default:
 		return nil, InvalidPropertyError
 	}
