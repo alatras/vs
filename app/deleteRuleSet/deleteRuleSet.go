@@ -21,9 +21,9 @@ type App struct {
 	ruleSetRepository ruleSet.Repository
 }
 
-func NewDeleteRuleSet(logger *logger.Logger, ruleSetRepository ruleSet.Repository) *App {
+func NewDeleteRuleSet(logger *logger.Logger, record *logger.LogRecord, ruleSetRepository ruleSet.Repository) *App {
 	return &App{
-		instrumentation:   newInstrumentation(logger),
+		instrumentation:   newInstrumentation(logger, record),
 		ruleSetRepository: ruleSetRepository,
 	}
 }

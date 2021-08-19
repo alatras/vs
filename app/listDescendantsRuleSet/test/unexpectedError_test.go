@@ -12,7 +12,9 @@ import (
 func Test_App_ListDescendantsRuleSet_UnexpectedError(t *testing.T) {
 	log := logger.NewStubLogger()
 	repo := stubRepository{}
-	app := listDescendantsRuleSet.NewListDescendantsRuleSet(log, &repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := listDescendantsRuleSet.NewListDescendantsRuleSet(log, newRec, &repo)
 
 	_, err := app.Execute(
 		context.TODO(),

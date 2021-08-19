@@ -18,7 +18,9 @@ func Test_App_CreateRuleSet_Success(t *testing.T) {
 		return
 	}
 
-	app := createRuleSet.NewCreateRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := createRuleSet.NewCreateRuleSet(log, newRec, repo)
 
 	newRuleSet, err := app.Execute(
 		context.TODO(),
@@ -49,7 +51,9 @@ func Test_App_CreateRuleSet_Success_Amount_AllOperators(t *testing.T) {
 			return
 		}
 
-		app := createRuleSet.NewCreateRuleSet(log, repo)
+		var rec *logger.LogRecord
+		newRec := rec.NewRecord()
+		app := createRuleSet.NewCreateRuleSet(log, newRec, repo)
 
 		mockRules := []createRuleSet.Rule{
 			{

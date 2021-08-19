@@ -13,7 +13,9 @@ func Test_App_DeleteRuleSet_UnexpectedError(t *testing.T) {
 	log := logger.NewStubLogger()
 	repo := &stubRepository{}
 
-	app := deleteRuleSet.NewDeleteRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := deleteRuleSet.NewDeleteRuleSet(log, newRec, repo)
 
 	err := app.Execute(
 		context.TODO(),

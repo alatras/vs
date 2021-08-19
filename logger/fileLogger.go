@@ -1,9 +1,5 @@
 package logger
 
-import (
-	"time"
-)
-
 // Field for one filed in log
 type Field struct {
 	Key   string
@@ -23,20 +19,4 @@ type LogError struct {
 	Stack   string
 	Code    int
 	Details ErrorDetails
-}
-
-// FileLogger for extra log
-type FileLogRecord struct {
-	Time     time.Time
-	TraceID  string
-	Name     string // service name
-	Hostname string
-	PID      int
-	Tag      string
-	Level    string
-	Scope    string
-	Metadata Metadata
-	Error    LogError
-	Fields   []Field
-	Message  string
 }

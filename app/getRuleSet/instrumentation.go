@@ -13,45 +13,72 @@ type metadata = logger.Metadata
 type instrumentation struct {
 	logger    *logger.Logger
 	startedAt time.Time
+	record    *logger.LogRecord
 }
 
-func newInstrumentation(logger *logger.Logger) *instrumentation {
+func newInstrumentation(log *logger.Logger, record *logger.LogRecord) *instrumentation {
 	return &instrumentation{
-		logger: logger.Scoped("GetRuleSet"),
+		logger: log,
+		record: record.NewRecord().Scoped("GetRuleSet"),
 	}
 }
 
 func (i *instrumentation) setContext(ctx context.Context) {
 	if traceId, ok := ctx.Value(contextKey.TraceId).(string); ok {
-		i.logger = i.logger.WithTraceId(traceId)
+		i.record = i.record.TraceId(traceId)
+	}
+	if correlationId, ok := ctx.Value(contextKey.CorrelationId).(string); ok {
+		i.record = i.record.CorrelationId(correlationId)
 	}
 }
 
 func (i *instrumentation) setMetadata(metadata metadata) {
-	i.logger = i.logger.WithMetadata(metadata)
+	i.record = i.record.Metadata(metadata)
+	// i.logger = i.logger.WithMetadata(metadata)
 }
 
 func (i *instrumentation) startFetchingRuleSet() {
 	i.startedAt = time.Now()
-	i.logger.Output.Info("Starting fetching a rule set")
+	i.record = i.record.MessageObject("Starting listing ancestors rule sets", "")
+	i.doLog(i.record.Mdc, i.record.Message, "startListingAncestorsRuleSet")
 }
 
 func (i *instrumentation) ruleSetFetchFailed(error error) {
-	i.logger.Output.
-		WithError(error).
-		Error("Failed to fetch a rule set from the repository")
+	i.record = i.record.MessageObject(
+		"[VS] Error: failed to fetch a rule set from the repository",
+		logger.Exception{
+			ExceptionClass:   "getRuleSet Execute",
+			Stacktrace:       "app/getRuleSet/instrumentation.go ruleSetFetchFailed",
+			ExceptionMessage: error,
+		},
+	)
+
+	i.doLog(i.record.Mdc, i.record.Message, "ruleSetFetchFailed")
 }
 
 func (i *instrumentation) ruleSetNotFound() {
-	i.logger.Output.
-		Error("A rule set was not found")
+	i.record = i.record.MessageObject("A rule set was not found", "")
+	i.doLog(i.record.Mdc, i.record.Message, "ruleSetNotFound")
 }
 
 func (i *instrumentation) finishFetchingRuleSet(ruleSet *ruleSet.RuleSet) {
 	duration := time.Since(i.startedAt)
 
-	i.logger.Output.
-		WithField("duration", duration).
-		WithField("ruleSet", *ruleSet).
-		Info("Finished fetching a rule set")
+	i.record.Duration(int(duration)).Data(
+		map[string]interface{}{"ruleSet": *ruleSet},
+	).MessageObject("Finished fetching a rule set", "")
+
+	i.doLog(i.record.Mdc, i.record.Message, "finishFetchingRuleSet")
+}
+
+func (i *instrumentation) doLog(
+	mdc logger.MDC,
+	message logger.Message,
+	loggerName string,
+) {
+	i.logger.Output.WithField(
+		"mdc", i.record.Mdc,
+	).WithField(
+		"message", i.record.Message,
+	).Info(loggerName)
 }

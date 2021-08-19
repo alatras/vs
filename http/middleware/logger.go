@@ -62,7 +62,7 @@ func (f RequestLogFormatter) NewLogEntry(r *http.Request) chi.LogEntry {
 	}
 
 	if traceID, ok := r.Context().Value(contextKey.TraceId).(string); ok {
-		output = output.WithField("traceId", traceID)
+		output = output.WithField("trace_id", traceID)
 	}
 
 	return &RequestLogEntry{

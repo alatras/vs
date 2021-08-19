@@ -36,10 +36,12 @@ func NewStubLogger() *Logger {
 	}
 }
 
+var AppName, AppVersion string
+
 func NewLogger(
 	appName string,
 	appVersion string,
-	format LogFormat,
+	format interface{},
 	level logrus.Level,
 	logfile string,
 	logFileMaxMb int,
@@ -47,9 +49,14 @@ func NewLogger(
 	logFileRotationDays int,
 ) (*Logger, error) {
 	logFields := logrus.Fields{
-		"name":    appName,
-		"version": appVersion,
+		"mdc": logrus.Fields{
+			"app_name":    appName,
+			"app_version": appVersion,
+		},
 	}
+
+	AppName = appName
+	AppVersion = appVersion
 
 	var formatter logrus.Formatter
 
@@ -58,7 +65,12 @@ func NewLogger(
 			ForceColors: true,
 		}
 	} else if format == JsonFormat {
-		formatter = &logrus.JSONFormatter{}
+		formatter = &logrus.JSONFormatter{
+			FieldMap: logrus.FieldMap{
+				logrus.FieldKeyMsg:  "logger_name",
+				logrus.FieldKeyTime: "timestamp",
+			},
+		}
 	} else {
 		return nil, fmt.Errorf("invalid log format %s", format)
 	}
@@ -103,8 +115,8 @@ func (l *Logger) Scoped(scope string) *Logger {
 
 func (l *Logger) WithTraceId(traceId string) *Logger {
 	return &Logger{
-		Output: l.Output.WithField("traceId", traceId),
-		Error:  l.Error.WithField("traceId", traceId),
+		Output: l.Output.WithField("trace_id", traceId),
+		Error:  l.Error.WithField("trace_id", traceId),
 	}
 }
 
@@ -112,5 +124,12 @@ func (l *Logger) WithMetadata(metadata Metadata) *Logger {
 	return &Logger{
 		Output: l.Output.WithField("metadata", metadata),
 		Error:  l.Error.WithField("metadata", metadata),
+	}
+}
+
+func (l *Logger) WithCorrelationId(correlationId string) *Logger {
+	return &Logger{
+		Output: l.Output.WithField("correlation_id", correlationId),
+		Error:  l.Error.WithField("correlation_id", correlationId),
 	}
 }

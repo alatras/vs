@@ -24,7 +24,9 @@ func Test_App_DeleteRuleSet_Success(t *testing.T) {
 		return
 	}
 
-	app := deleteRuleSet.NewDeleteRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := deleteRuleSet.NewDeleteRuleSet(log, newRec, repo)
 
 	err = app.Execute(
 		context.TODO(),

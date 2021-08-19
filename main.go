@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var version = "unknown"
+var version = "1.0.10"
 var appName = "Validation Service"
 
 // ConfigFileOpts is the opts type

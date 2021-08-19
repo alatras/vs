@@ -25,7 +25,9 @@ func Test_App_ListRuleSet_Success(t *testing.T) {
 		return
 	}
 
-	listApp := listRuleSet.NewListRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	listApp := listRuleSet.NewListRuleSet(log, newRec, repo)
 
 	ruleSets, err := listApp.Execute(
 		context.TODO(),

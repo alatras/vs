@@ -17,7 +17,9 @@ func Test_App_UpdateRuleSet_InvalidRule_Key(t *testing.T) {
 		return
 	}
 
-	app := updateRuleSet.NewUpdateRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := updateRuleSet.NewUpdateRuleSet(log, newRec, repo)
 
 	_, err = app.Execute(
 		context.TODO(),
@@ -45,7 +47,9 @@ func Test_App_UpdateRuleSet_InvalidRule_Operation(t *testing.T) {
 		return
 	}
 
-	app := updateRuleSet.NewUpdateRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := updateRuleSet.NewUpdateRuleSet(log, newRec, repo)
 
 	_, err = app.Execute(
 		context.TODO(),
@@ -73,7 +77,9 @@ func Test_App_UpdateRuleSet_InvalidRule_Value(t *testing.T) {
 		return
 	}
 
-	app := updateRuleSet.NewUpdateRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := updateRuleSet.NewUpdateRuleSet(log, newRec, repo)
 
 	_, err = app.Execute(
 		context.TODO(),
@@ -101,7 +107,9 @@ func Test_App_UpdateRuleSet_InvalidRule_NoValue(t *testing.T) {
 		return
 	}
 
-	app := updateRuleSet.NewUpdateRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := updateRuleSet.NewUpdateRuleSet(log, newRec, repo)
 
 	_, err = app.Execute(
 		context.TODO(),

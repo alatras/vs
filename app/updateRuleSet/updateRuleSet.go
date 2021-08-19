@@ -32,9 +32,9 @@ type App struct {
 	ruleSetRepository ruleSet.Repository
 }
 
-func NewUpdateRuleSet(logger *logger.Logger, ruleSetRepository ruleSet.Repository) *App {
+func NewUpdateRuleSet(logger *logger.Logger, record *logger.LogRecord, ruleSetRepository ruleSet.Repository) *App {
 	return &App{
-		instrumentation:   newInstrumentation(logger),
+		instrumentation:   newInstrumentation(logger, record),
 		ruleSetRepository: ruleSetRepository,
 	}
 }
