@@ -33,18 +33,17 @@ func (i *instrumentation) setContext(ctx context.Context) {
 
 func (i *instrumentation) setMetadata(metadata metadata) {
 	i.record = i.record.Metadata(metadata)
-	// i.logger = i.logger.WithMetadata(metadata)
 }
 
 func (i *instrumentation) startListingAncestorsRuleSet() {
 	i.startedAt = time.Now()
 	i.record = i.record.MessageObject("Starting listing ancestors rule sets", "")
-	i.doLog(i.record.Mdc, i.record.Message, "startListingAncestorsRuleSet")
+	i.doLog("startListingAncestorsRuleSet")
 }
 
 func (i *instrumentation) finishListingAncestorsRuleSet() {
 	i.record.Duration(int(time.Since(i.startedAt))).MessageObject("Finished listing ancestors rule set", "")
-	i.doLog(i.record.Mdc, i.record.Message, "finishListingAncestorsRuleSet")
+	i.doLog("finishListingAncestorsRuleSet")
 }
 
 func (i *instrumentation) failedListingAncestorsRuleSet(err error) {
@@ -56,18 +55,9 @@ func (i *instrumentation) failedListingAncestorsRuleSet(err error) {
 			ExceptionMessage: err,
 		},
 	)
-
-	i.doLog(i.record.Mdc, i.record.Message, "failedListingAncestorsRuleSet")
+	i.doLog("failedListingAncestorsRuleSet")
 }
 
-func (i *instrumentation) doLog(
-	mdc logger.MDC,
-	message logger.Message,
-	loggerName string,
-) {
-	i.logger.Output.WithField(
-		"mdc", i.record.Mdc,
-	).WithField(
-		"message", i.record.Message,
-	).Info(loggerName)
+func (i *instrumentation) doLog(loggerName string) {
+	i.logger.Output.WithField("mdc", i.record.Mdc).WithField("message", i.record.Message).Info(loggerName)
 }

@@ -40,7 +40,7 @@ func (i *instrumentation) setMetadata(metadata metadata) {
 func (i *instrumentation) startCreatingRuleSet() {
 	i.startedAt = time.Now()
 	i.record = i.record.MessageObject("Starting creating a rule set", "")
-	i.doLog(i.record.Mdc, i.record.Message, "startCreatingRuleSet")
+	i.doLog("startCreatingRuleSet")
 }
 
 func (i *instrumentation) invalidAction(action string) {
@@ -52,8 +52,7 @@ func (i *instrumentation) invalidAction(action string) {
 			ExceptionMessage: "Invalid action provided: " + action,
 		},
 	)
-
-	i.doLog(i.record.Mdc, i.record.Message, "invalidAction")
+	i.doLog("invalidAction")
 }
 
 func (i *instrumentation) rulesetCreationFailed(error error) {
@@ -65,8 +64,7 @@ func (i *instrumentation) rulesetCreationFailed(error error) {
 			ExceptionMessage: error,
 		},
 	)
-
-	i.doLog(i.record.Mdc, i.record.Message, "rulesetCreationFailed")
+	i.doLog("rulesetCreationFailed")
 }
 
 func (i *instrumentation) ruleMetadataInvalid(metadata rule.Metadata, error error) {
@@ -78,8 +76,7 @@ func (i *instrumentation) ruleMetadataInvalid(metadata rule.Metadata, error erro
 			ExceptionMessage: error,
 		},
 	)
-
-	i.doLog(i.record.Mdc, i.record.Message, "rulesetCreationFailed")
+	i.doLog("rulesetCreationFailed")
 }
 
 func (i *instrumentation) finishCreatingRuleSet(ruleset ruleSet.RuleSet) {
@@ -91,14 +88,6 @@ func (i *instrumentation) finishCreatingRuleSet(ruleset ruleSet.RuleSet) {
 		Info("Finished creating a rule set")
 }
 
-func (i *instrumentation) doLog(
-	mdc logger.MDC,
-	message logger.Message,
-	loggerName string,
-) {
-	i.logger.Output.WithField(
-		"mdc", i.record.Mdc,
-	).WithField(
-		"message", i.record.Message,
-	).Info(loggerName)
+func (i *instrumentation) doLog(loggerName string) {
+	i.logger.Output.WithField("mdc", i.record.Mdc).WithField("message", i.record.Message).Info(loggerName)
 }

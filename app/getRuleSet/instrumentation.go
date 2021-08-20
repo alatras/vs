@@ -34,13 +34,12 @@ func (i *instrumentation) setContext(ctx context.Context) {
 
 func (i *instrumentation) setMetadata(metadata metadata) {
 	i.record = i.record.Metadata(metadata)
-	// i.logger = i.logger.WithMetadata(metadata)
 }
 
 func (i *instrumentation) startFetchingRuleSet() {
 	i.startedAt = time.Now()
 	i.record = i.record.MessageObject("Starting listing ancestors rule sets", "")
-	i.doLog(i.record.Mdc, i.record.Message, "startListingAncestorsRuleSet")
+	i.doLog("startListingAncestorsRuleSet")
 }
 
 func (i *instrumentation) ruleSetFetchFailed(error error) {
@@ -53,12 +52,12 @@ func (i *instrumentation) ruleSetFetchFailed(error error) {
 		},
 	)
 
-	i.doLog(i.record.Mdc, i.record.Message, "ruleSetFetchFailed")
+	i.doLog("ruleSetFetchFailed")
 }
 
 func (i *instrumentation) ruleSetNotFound() {
 	i.record = i.record.MessageObject("A rule set was not found", "")
-	i.doLog(i.record.Mdc, i.record.Message, "ruleSetNotFound")
+	i.doLog("ruleSetNotFound")
 }
 
 func (i *instrumentation) finishFetchingRuleSet(ruleSet *ruleSet.RuleSet) {
@@ -68,17 +67,9 @@ func (i *instrumentation) finishFetchingRuleSet(ruleSet *ruleSet.RuleSet) {
 		map[string]interface{}{"ruleSet": *ruleSet},
 	).MessageObject("Finished fetching a rule set", "")
 
-	i.doLog(i.record.Mdc, i.record.Message, "finishFetchingRuleSet")
+	i.doLog("finishFetchingRuleSet")
 }
 
-func (i *instrumentation) doLog(
-	mdc logger.MDC,
-	message logger.Message,
-	loggerName string,
-) {
-	i.logger.Output.WithField(
-		"mdc", i.record.Mdc,
-	).WithField(
-		"message", i.record.Message,
-	).Info(loggerName)
+func (i *instrumentation) doLog(loggerName string) {
+	i.logger.Output.WithField("mdc", i.record.Mdc).WithField("message", i.record.Message).Info(loggerName)
 }

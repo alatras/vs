@@ -38,12 +38,12 @@ func (i *instrumentation) setMetadata(metadata metadata) {
 func (i *instrumentation) startListingDescendantsRuleSet() {
 	i.startedAt = time.Now()
 	i.record = i.record.MessageObject("Starting listing descendants rule sets", "")
-	i.doLog(i.record.Mdc, i.record.Message, "startListingDescendantsRuleSet")
+	i.doLog("startListingDescendantsRuleSet")
 }
 
 func (i *instrumentation) finishListingDescendantsRuleSet() {
 	i.record.Duration(int(time.Since(i.startedAt))).MessageObject("finished listing descendants rule set", "")
-	i.doLog(i.record.Mdc, i.record.Message, "finishListingDescendantsRuleSet")
+	i.doLog("finishListingDescendantsRuleSet")
 }
 
 func (i *instrumentation) failedListingDescendantsRuleSet(err error) {
@@ -56,17 +56,9 @@ func (i *instrumentation) failedListingDescendantsRuleSet(err error) {
 		},
 	)
 
-	i.doLog(i.record.Mdc, i.record.Message, "failedListingDescendantsRuleSet")
+	i.doLog("failedListingDescendantsRuleSet")
 }
 
-func (i *instrumentation) doLog(
-	mdc logger.MDC,
-	message logger.Message,
-	loggerName string,
-) {
-	i.logger.Output.WithField(
-		"mdc", i.record.Mdc,
-	).WithField(
-		"message", i.record.Message,
-	).Info(loggerName)
+func (i *instrumentation) doLog(loggerName string) {
+	i.logger.Output.WithField("mdc", i.record.Mdc).WithField("message", i.record.Message).Info(loggerName)
 }

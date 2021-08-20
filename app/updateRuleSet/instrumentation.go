@@ -35,14 +35,13 @@ func (i *instrumentation) setContext(ctx context.Context) {
 }
 
 func (i *instrumentation) setMetadata(metadata metadata) {
-	// i.logger = i.logger.WithMetadata(metadata)
 	i.record = i.record.Metadata(metadata)
 }
 
 func (i *instrumentation) startUpdatingRuleSet() {
 	i.startedAt = time.Now()
 	i.record = i.record.MessageObject("Starting transaction validation", "")
-	i.doLog(i.record.Mdc, i.record.Message, "startTransactionValidation")
+	i.doLog("startTransactionValidation")
 }
 
 func (i *instrumentation) invalidAction(action string) {
@@ -55,7 +54,7 @@ func (i *instrumentation) invalidAction(action string) {
 		},
 	)
 
-	i.doLog(i.record.Mdc, i.record.Message, "invalidAction")
+	i.doLog("invalidAction")
 }
 
 func (i *instrumentation) ruleSetUpdateFailed(error error) {
@@ -67,8 +66,7 @@ func (i *instrumentation) ruleSetUpdateFailed(error error) {
 			ExceptionMessage: error,
 		},
 	)
-
-	i.doLog(i.record.Mdc, i.record.Message, "invalidAction")
+	i.doLog("invalidAction")
 }
 
 func (i *instrumentation) ruleMetadataInvalid(metadata rule.Metadata, error error) {
@@ -80,8 +78,7 @@ func (i *instrumentation) ruleMetadataInvalid(metadata rule.Metadata, error erro
 			ExceptionMessage: error,
 		},
 	)
-
-	i.doLog(i.record.Mdc, i.record.Message, "invalidAction")
+	i.doLog("invalidAction")
 }
 
 func (i *instrumentation) finishUpdatingRuleSet(ruleset ruleSet.RuleSet) {
@@ -89,12 +86,7 @@ func (i *instrumentation) finishUpdatingRuleSet(ruleset ruleSet.RuleSet) {
 	i.record = i.record.Duration(int(duration)).Data(
 		map[string]interface{}{"ruleSet": ruleset},
 	).MessageObject("Finished updating a rule set", "")
-
-	i.doLog(i.record.Mdc, i.record.Message, "finishUpdatingRuleSet")
-	// i.logger.Output.
-	// 	WithField("duration", duration).
-	// 	WithField("ruleSet", ruleset).
-	// 	Info("Finished updating a rule set")
+	i.doLog("finishUpdatingRuleSet")
 }
 
 func (i *instrumentation) ruleSetNotReplaced(ruleset ruleSet.RuleSet) {
@@ -102,17 +94,9 @@ func (i *instrumentation) ruleSetNotReplaced(ruleset ruleSet.RuleSet) {
 		map[string]interface{}{"ruleSet": ruleset},
 	).MessageObject("RuleSet not updated", "")
 
-	i.doLog(i.record.Mdc, i.record.Message, "ruleSetNotReplaced")
+	i.doLog("ruleSetNotReplaced")
 }
 
-func (i *instrumentation) doLog(
-	mdc logger.MDC,
-	message logger.Message,
-	loggerName string,
-) {
-	i.logger.Output.WithField(
-		"mdc", i.record.Mdc,
-	).WithField(
-		"message", i.record.Message,
-	).Info(loggerName)
+func (i *instrumentation) doLog(loggerName string) {
+	i.logger.Output.WithField("mdc", i.record.Mdc).WithField("message", i.record.Message).Info(loggerName)
 }

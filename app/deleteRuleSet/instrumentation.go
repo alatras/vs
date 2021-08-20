@@ -33,13 +33,12 @@ func (i *instrumentation) setContext(ctx context.Context) {
 
 func (i *instrumentation) setMetadata(metadata metadata) {
 	i.record = i.record.Metadata(metadata)
-	// i.logger = i.logger.WithMetadata(metadata)
 }
 
 func (i *instrumentation) startDeletingRuleSet() {
 	i.startedAt = time.Now()
 	i.record = i.record.MessageObject("Starting deleting a rule set", "")
-	i.doLog(i.record.Mdc, i.record.Message, "startDeletingRuleSet")
+	i.doLog("startDeletingRuleSet")
 }
 
 func (i *instrumentation) ruleSetDeletionFailed(error error) {
@@ -51,30 +50,20 @@ func (i *instrumentation) ruleSetDeletionFailed(error error) {
 			ExceptionMessage: error,
 		},
 	)
-
-	i.doLog(i.record.Mdc, i.record.Message, "ruleSetDeletionFailed")
+	i.doLog("ruleSetDeletionFailed")
 }
 
 func (i *instrumentation) ruleSetNotFound() {
 	i.record = i.record.MessageObject("A rule set was not found", "")
-	i.doLog(i.record.Mdc, i.record.Message, "ruleSetNotFound")
+	i.doLog("ruleSetNotFound")
 }
 
 func (i *instrumentation) ruleSetDeleted() {
 	duration := time.Since(i.startedAt)
-
 	i.record.Duration(int(duration)).MessageObject("Finished deleting a rule set", "")
-	i.doLog(i.record.Mdc, i.record.Message, "ruleSetDeleted")
+	i.doLog("ruleSetDeleted")
 }
 
-func (i *instrumentation) doLog(
-	mdc logger.MDC,
-	message logger.Message,
-	loggerName string,
-) {
-	i.logger.Output.WithField(
-		"mdc", i.record.Mdc,
-	).WithField(
-		"message", i.record.Message,
-	).Info(loggerName)
+func (i *instrumentation) doLog(loggerName string) {
+	i.logger.Output.WithField("mdc", i.record.Mdc).WithField("message", i.record.Message).Info(loggerName)
 }

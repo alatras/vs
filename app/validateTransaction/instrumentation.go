@@ -42,23 +42,15 @@ func (i *instrumentation) startTransactionValidation() {
 	i.startedAt = time.Now()
 	i.record = i.record.Delay(int(delay))
 	i.record = i.record.MessageObject("Starting transaction validation", "")
-	i.doLog(i.record.Mdc, i.record.Message, "startTransactionValidation")
+	i.doLog("startTransactionValidation")
 }
 
 func (i *instrumentation) endTransactionValidation() {
 	duration := time.Since(i.startedAt)
 	i.record = i.record.Duration(int(duration))
-	i.doLog(i.record.Mdc, i.record.Message, "endTransactionValidation")
+	i.doLog("endTransactionValidation")
 }
 
-func (i *instrumentation) doLog(
-	mdc logger.MDC,
-	message logger.Message,
-	loggerName string,
-) {
-	i.logger.Output.WithField(
-		"mdc", i.record.Mdc,
-	).WithField(
-		"message", i.record.Message,
-	).Info(loggerName)
+func (i *instrumentation) doLog(loggerName string) {
+	i.logger.Output.WithField("mdc", i.record.Mdc).WithField("message", i.record.Message).Info(loggerName)
 }
