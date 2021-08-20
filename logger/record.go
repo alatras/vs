@@ -17,6 +17,16 @@ type Generic interface{}
 type Message struct {
 	Trace_message string  `json:"trace_message"`
 	Trace_details Generic `json:"trace_details"`
+	// OperationMessage
+	SOURCE_TARGET_OP_elapsed_time      int               // out_time - in_time
+	SOURCE_TARGET_OP_in_time           int               // unix timestamp
+	SOURCE_TARGET_OP_out_time          int               // unix timestamp
+	SOURCE_TARGET_OP_response_code     string            // HTTP STATUS CODE
+	SOURCE_TARGET_OP_error_codestring  string            // error code
+	SOURCE_TARGET_OP_error_description string            // thrown exception
+	SOURCE_TARGET_OP_in_parameters     map[string]string // sent payload
+	SOURCE_TARGET_OP_out_parameters    interface{}       // received payload
+	SOURCE_TARGET_OP_URL               string            // URL
 }
 
 type LogRecord struct {
