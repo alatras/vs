@@ -45,7 +45,7 @@ func (app *App) Execute(ctx context.Context, entityId, ruleSetId string) error {
 	}
 
 	if !deleted {
-		app.instrumentation.ruleSetNotFound()
+		app.instrumentation.ruleSetNotFound(ruleSetId)
 		return NotFound
 	}
 

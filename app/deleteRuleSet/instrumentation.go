@@ -53,8 +53,16 @@ func (i *instrumentation) ruleSetDeletionFailed(error error) {
 	i.doLog("ruleSetDeletionFailed")
 }
 
-func (i *instrumentation) ruleSetNotFound() {
-	i.record = i.record.MessageObject("A rule set was not found", "")
+func (i *instrumentation) ruleSetNotFound(ruleSetId string) {
+	i.record = i.record.MessageObject(
+		"[VS] Error: A rule set was not found",
+		logger.Exception{
+			ExceptionClass:   "ruleSetDelete Execute",
+			Stacktrace:       "app/deleteRuleset/instrumentation.go ruleSetNotFound",
+			ExceptionMessage: "A rule set was not found: " + ruleSetId,
+		},
+	)
+
 	i.doLog("ruleSetNotFound")
 }
 

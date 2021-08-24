@@ -45,7 +45,7 @@ func (app *App) Execute(ctx context.Context, entityId, ruleSetId string) (*ruleS
 	}
 
 	if fetchedRuleSet == nil {
-		app.instrumentation.ruleSetNotFound()
+		app.instrumentation.ruleSetNotFound(ruleSetId)
 		return nil, NotFound
 	}
 
