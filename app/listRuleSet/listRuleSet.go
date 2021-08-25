@@ -20,9 +20,9 @@ type App struct {
 	repository      ruleSet.Repository
 }
 
-func NewListRuleSet(logger *logger.Logger, ruleSetRepository ruleSet.Repository) *App {
+func NewListRuleSet(logger *logger.Logger, record *logger.LogRecord, ruleSetRepository ruleSet.Repository) *App {
 	return &App{
-		instrumentation: newInstrumentation(logger),
+		instrumentation: newInstrumentation(logger, record),
 		repository:      ruleSetRepository,
 	}
 }

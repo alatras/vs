@@ -12,7 +12,9 @@ import (
 func Test_App_ListAncestorsRuleSet_UnexpectedError(t *testing.T) {
 	log := logger.NewStubLogger()
 	repo := stubRepository{}
-	app := listAncestorsRuleSet.NewListAncestorsRuleSet(log, &repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := listAncestorsRuleSet.NewListAncestorsRuleSet(log, newRec, &repo)
 
 	_, err := app.Execute(
 		context.TODO(),

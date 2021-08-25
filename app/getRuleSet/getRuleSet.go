@@ -21,9 +21,9 @@ type App struct {
 	ruleSetRepository ruleSet.Repository
 }
 
-func NewGetRuleSet(logger *logger.Logger, ruleSetRepository ruleSet.Repository) *App {
+func NewGetRuleSet(logger *logger.Logger, record *logger.LogRecord, ruleSetRepository ruleSet.Repository) *App {
 	return &App{
-		instrumentation:   newInstrumentation(logger),
+		instrumentation:   newInstrumentation(logger, record),
 		ruleSetRepository: ruleSetRepository,
 	}
 }
@@ -45,7 +45,7 @@ func (app *App) Execute(ctx context.Context, entityId, ruleSetId string) (*ruleS
 	}
 
 	if fetchedRuleSet == nil {
-		app.instrumentation.ruleSetNotFound()
+		app.instrumentation.ruleSetNotFound(ruleSetId)
 		return nil, NotFound
 	}
 

@@ -24,7 +24,9 @@ func Test_App_UpdateRuleSet_Success(t *testing.T) {
 		return
 	}
 
-	app := updateRuleSet.NewUpdateRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := updateRuleSet.NewUpdateRuleSet(log, newRec, repo)
 
 	updatedRuleSet, err := app.Execute(
 		context.TODO(),

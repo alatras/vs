@@ -72,7 +72,7 @@ func NewServer(
 func (s *Server) Start() error {
 	r := s.router
 
-	r.Use(httpMiddleware.SetContextWithTraceId)
+	r.Use(httpMiddleware.SetContextWithHeaderIds)
 	r.Use(httpMiddleware.Logger(s.logger))
 	r.Use(chiMiddleware.URLFormat)
 	r.Use(httpMiddleware.SetContextWithBusinessTransaction)

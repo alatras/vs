@@ -14,46 +14,69 @@ type metadata = logger.Metadata
 type instrumentation struct {
 	logger    *logger.Logger
 	startedAt time.Time
+	record    *logger.LogRecord
 }
 
-func newInstrumentation(logger *logger.Logger) *instrumentation {
+func newInstrumentation(log *logger.Logger, record *logger.LogRecord) *instrumentation {
 	return &instrumentation{
-		logger: logger.Scoped("CreateRuleSet"),
+		logger: log,
+		record: record.NewRecord().Scoped("CreateRuleSet"),
 	}
 }
 
 func (i *instrumentation) setContext(ctx context.Context) {
 	if traceId, ok := ctx.Value(contextKey.TraceId).(string); ok {
-		i.logger = i.logger.WithTraceId(traceId)
+		i.record = i.record.TraceId(traceId)
+	}
+	if correlationId, ok := ctx.Value(contextKey.CorrelationId).(string); ok {
+		i.record = i.record.CorrelationId(correlationId)
 	}
 }
 
 func (i *instrumentation) setMetadata(metadata metadata) {
-	i.logger = i.logger.WithMetadata(metadata)
+	i.record = i.record.Metadata(metadata)
 }
 
 func (i *instrumentation) startCreatingRuleSet() {
 	i.startedAt = time.Now()
-	i.logger.Output.Info("Starting creating a rule set")
+	i.record = i.record.MessageObject("Starting creating a rule set", "")
+	i.doLog("startCreatingRuleSet")
 }
 
 func (i *instrumentation) invalidAction(action string) {
-	i.logger.Output.
-		WithField("action", action).
-		Error("Invalid action provided")
+	i.record = i.record.MessageObject(
+		"[VS] Error: Invalid action provided",
+		logger.Exception{
+			ExceptionClass:   "createRuleSet Execute",
+			Stacktrace:       "app/createRuleSet/instrumentation.go invalidAction",
+			ExceptionMessage: "Invalid action provided: " + action,
+		},
+	)
+	i.doLog("invalidAction")
 }
 
 func (i *instrumentation) rulesetCreationFailed(error error) {
-	i.logger.Output.
-		WithError(error).
-		Error("RuleSet creation failed in repository")
+	i.record = i.record.MessageObject(
+		"[VS] Error: ruleSet creation failed in repository",
+		logger.Exception{
+			ExceptionClass:   "createRuleSet Execute",
+			Stacktrace:       "app/createRuleSet/instrumentation.go rulesetCreationFailed",
+			ExceptionMessage: error,
+		},
+	)
+	i.doLog("rulesetCreationFailed")
 }
 
 func (i *instrumentation) ruleMetadataInvalid(metadata rule.Metadata, error error) {
-	i.logger.Output.
-		WithError(error).
-		WithField("ruleMetadata", metadata).
-		Error("Rule metadata is invalid")
+	i.record = i.record.Metadata(metadata).MessageObject(
+		"[VS] Error: rule metadata is invalid",
+		logger.Exception{
+			ExceptionClass:   "createRuleSet Execute",
+			Stacktrace:       "app/createRuleSet/instrumentation.go ruleMetadataInvalid",
+			ExceptionMessage: error,
+		},
+	)
+	i.doLog("rulesetCreationFailed")
 }
 
 func (i *instrumentation) finishCreatingRuleSet(ruleset ruleSet.RuleSet) {
@@ -63,4 +86,8 @@ func (i *instrumentation) finishCreatingRuleSet(ruleset ruleSet.RuleSet) {
 		WithField("duration", duration).
 		WithField("ruleSet", ruleset).
 		Info("Finished creating a rule set")
+}
+
+func (i *instrumentation) doLog(loggerName string) {
+	i.logger.Output.WithField("mdc", i.record.Mdc).WithField("message", i.record.Message).Info(loggerName)
 }

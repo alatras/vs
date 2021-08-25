@@ -17,7 +17,9 @@ func Test_App_GetRuleSet_NotFound(t *testing.T) {
 		return
 	}
 
-	app := getRuleSet.NewGetRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := getRuleSet.NewGetRuleSet(log, newRec, repo)
 
 	_, err = app.Execute(
 		context.TODO(),

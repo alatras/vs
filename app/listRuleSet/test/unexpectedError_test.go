@@ -13,7 +13,9 @@ func Test_App_ListRuleSet_UnexpectedError(t *testing.T) {
 	log := logger.NewStubLogger()
 	repo := stubRepository{}
 
-	app := listRuleSet.NewListRuleSet(log, &repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := listRuleSet.NewListRuleSet(log, newRec, &repo)
 
 	_, err := app.Execute(
 		context.TODO(),

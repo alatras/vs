@@ -29,8 +29,9 @@ func newTask(
 	trx transaction.Transaction,
 	ruleSetRepository ruleSet.Repository,
 	logger *logger.Logger,
+	record *logger.LogRecord,
 ) task {
-	instrumentation := newInstrumentation(logger)
+	instrumentation := newInstrumentation(logger, record)
 	instrumentation.setContext(ctx)
 	instrumentation.setMetadata(metadata{
 		"amount": trx.Amount,
@@ -90,19 +91,22 @@ type App struct {
 	numOfWorkers      int
 	workers           []chan struct{}
 	logger            *logger.Logger
+	record            *logger.LogRecord
 }
 
 func NewValidatorService(
 	numOfWorkers int,
 	ruleSetRepository ruleSet.Repository,
 	logger *logger.Logger,
+	record *logger.LogRecord,
 ) App {
 	v := App{
 		ruleSetRepository: ruleSetRepository,
 		queue:             make(chan task),
 		numOfWorkers:      numOfWorkers,
 		workers:           []chan struct{}{},
-		logger:            logger.Scoped(appName),
+		logger:            logger,
+		record:            record.Scoped(appName),
 	}
 
 	for workerId := 0; workerId < v.numOfWorkers; workerId++ {
@@ -113,7 +117,7 @@ func NewValidatorService(
 }
 
 func (v *App) Enqueue(ctx context.Context, trx transaction.Transaction) (chan report.Report, chan AppError) {
-	task := newTask(ctx, trx, v.ruleSetRepository, v.logger)
+	task := newTask(ctx, trx, v.ruleSetRepository, v.logger, v.record)
 	v.queue <- task
 	return task.response, task.error
 }

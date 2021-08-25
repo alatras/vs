@@ -14,6 +14,7 @@ type Log struct {
 	logFileMaxSize        int    `yaml:"logFileMaxSize"`
 	logFileRotationPeriod int    `yaml:"logFileRotationPeriod"`
 	logFileRotationCount  int    `yaml:"logFileRotationPeriod"`
+	traceIdHeader         string `yaml:"traceIdHeader"`
 }
 
 func (log Log) LevelValue() logrus.Level {
@@ -58,4 +59,8 @@ func (log Log) LogFileRotationCountValue() int {
 
 func (log Log) LogFileRotationDaysValue() int {
 	return log.logFileRotationPeriod
+}
+
+func (log Log) TraceIdHeader() string {
+	return log.traceIdHeader
 }
