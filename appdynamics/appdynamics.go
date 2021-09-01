@@ -127,6 +127,8 @@ type Config struct {
 type Controller struct {
     Host                            string
     Port                            uint16
+	ProxyHost                       string
+	ProxyPort                       string
     Account, AccessKey              string
     UseSSL                          bool
     CertificateFile, CertificateDir string

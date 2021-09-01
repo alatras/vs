@@ -56,10 +56,29 @@ type AppD struct {
 	Controller  struct {
 		Host      string `yaml:"host"`
 		Port      uint16 `yaml:"port"`
+		ProxyHost string `yaml:"proxyHost"`
+		ProxyPort string `yaml:"proxyPort"`
 		UseSSL    bool   `yaml:"useSSL"`
 		Account   string `yaml:"account"`
 		AccessKey string `yaml:"accessKey"`
 	} `yaml:"controller"`
+}
+
+func (a AppD) GetConfig(key string) string {
+	v := os.Getenv(key)
+
+	if v != "" {
+		return v
+	}
+
+	switch key {
+	case "APP_DYNAMICS_PROXY_HOST":
+		return a.Controller.ProxyHost
+	case "APP_DYNAMICS_PROXY_PORT":
+		return a.Controller.ProxyPort
+	default:
+		return "n/a"
+	}
 }
 
 func (c Server) Validate() error {

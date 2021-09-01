@@ -1,7 +1,7 @@
 log:
   level: info
   format: json
-  logFile: "./logs/ValidationService.log"
+  logFile: ./logs/ValidationService.log
   logFileMaxMb: 1
   logFileRotationCount: 30
   logFileRotationDays: 1
@@ -18,6 +18,8 @@ appd:
   controller:
     host: somehost
     port: 443
+    proxyHost:
+    proxyPort:
     useSSL: true
     account: account
     accessKey: password
