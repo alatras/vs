@@ -133,6 +133,12 @@ func setupAppD(appDConfig config.AppD) {
 	cfg.Controller.UseSSL = appDConfig.Controller.UseSSL
 	cfg.Controller.Account = appDConfig.Controller.Account
 	cfg.Controller.AccessKey = appDConfig.Controller.AccessKey
+	if proxyHost := appDConfig.GetConfig("APP_DYNAMICS_PROXY_HOST"); proxyHost != "" {
+		cfg.Controller.ProxyHost = appDConfig.Controller.ProxyHost
+	}
+	if proxyPort := appDConfig.GetConfig("APP_DYNAMICS_PROXY_HOST"); proxyPort != "" {
+		cfg.Controller.ProxyPort = appDConfig.Controller.ProxyPort
+	}
 
 	if err := appd.InitSDK(&cfg); err != nil {
 		log.Panic("Error initializing the AppDynamics SDK\n")
