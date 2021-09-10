@@ -27,40 +27,56 @@ import (
 func StartServer(config config.Server) error {
 	log := setupLogger(config.Log)
 
+	rec := &logger.LogRecord{}
+
 	setupAppD(config.AppD)
 
 	ruleSetRepo := createRuleSetRepository(config.Mongo, log)
 
-	validateTransactionApp := createValidateTransactionApp(ruleSetRepo, log)
+	validateTransactionApp := createValidateTransactionApp(ruleSetRepo, log, rec)
 
 	log.Output.Infof("Starting REST API server at port %d", config.HTTPPort)
 
 	createRuleSetAppFactory := func() createRuleSet.CreateRuleSet {
-		return createRuleSet.NewCreateRuleSet(log, ruleSetRepo)
+		var rec *logger.LogRecord
+		newRec := rec.NewRecord()
+		return createRuleSet.NewCreateRuleSet(log, newRec, ruleSetRepo)
 	}
 
 	getRuleSetAppFactory := func() getRuleSet.GetRuleSet {
-		return getRuleSet.NewGetRuleSet(log, ruleSetRepo)
+		var rec *logger.LogRecord
+		newRec := rec.NewRecord()
+		return getRuleSet.NewGetRuleSet(log, newRec, ruleSetRepo)
 	}
 
 	deleteRuleSetAppFactory := func() deleteRuleSet.DeleteRuleSet {
-		return deleteRuleSet.NewDeleteRuleSet(log, ruleSetRepo)
+		var rec *logger.LogRecord
+		newRec := rec.NewRecord()
+		return deleteRuleSet.NewDeleteRuleSet(log, newRec, ruleSetRepo)
 	}
 
 	listRuleSetAppFactory := func() listRuleSet.ListRuleSet {
-		return listRuleSet.NewListRuleSet(log, ruleSetRepo)
+		var rec *logger.LogRecord
+		newRec := rec.NewRecord()
+		return listRuleSet.NewListRuleSet(log, newRec, ruleSetRepo)
 	}
 
 	listAncestorsRuleSetAppFactory := func() listAncestorsRuleSet.ListAncestorsRuleSet {
-		return listAncestorsRuleSet.NewListAncestorsRuleSet(log, ruleSetRepo)
+		var rec *logger.LogRecord
+		newRec := rec.NewRecord()
+		return listAncestorsRuleSet.NewListAncestorsRuleSet(log, newRec, ruleSetRepo)
 	}
 
 	listDescendantsRuleSetAppFactory := func() listDescendantsRuleSet.ListDescendantsRuleSet {
-		return listDescendantsRuleSet.NewListDescendantsRuleSet(log, ruleSetRepo)
+		var rec *logger.LogRecord
+		newRec := rec.NewRecord()
+		return listDescendantsRuleSet.NewListDescendantsRuleSet(log, newRec, ruleSetRepo)
 	}
 
 	updateRuleSetAppFactory := func() updateRuleSet.UpdateRuleSet {
-		return updateRuleSet.NewUpdateRuleSet(log, ruleSetRepo)
+		var rec *logger.LogRecord
+		newRec := rec.NewRecord()
+		return updateRuleSet.NewUpdateRuleSet(log, newRec, ruleSetRepo)
 	}
 
 	err := http.NewServer(
@@ -117,6 +133,12 @@ func setupAppD(appDConfig config.AppD) {
 	cfg.Controller.UseSSL = appDConfig.Controller.UseSSL
 	cfg.Controller.Account = appDConfig.Controller.Account
 	cfg.Controller.AccessKey = appDConfig.Controller.AccessKey
+	if proxyHost := appDConfig.GetConfig("APP_DYNAMICS_PROXY_HOST"); proxyHost != "" {
+		cfg.Controller.ProxyHost = appDConfig.Controller.ProxyHost
+	}
+	if proxyPort := appDConfig.GetConfig("APP_DYNAMICS_PROXY_HOST"); proxyPort != "" {
+		cfg.Controller.ProxyPort = appDConfig.Controller.ProxyPort
+	}
 
 	if err := appd.InitSDK(&cfg); err != nil {
 		log.Panic("Error initializing the AppDynamics SDK\n")
@@ -158,7 +180,8 @@ func createRuleSetRepository(mongoConfig config.Mongo, logger *logger.Logger) *r
 func createValidateTransactionApp(
 	r *ruleSet.MongoRuleSetRepository,
 	l *logger.Logger,
+	rec *logger.LogRecord,
 ) validateTransaction.ValidatorService {
-	validator := validateTransaction.NewValidatorService(runtime.NumCPU(), r, l)
+	validator := validateTransaction.NewValidatorService(runtime.NumCPU(), r, l, rec)
 	return &validator
 }

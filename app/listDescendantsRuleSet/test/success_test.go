@@ -26,7 +26,9 @@ func Test_App_ListDescendantsRuleSet_Success(t *testing.T) {
 		return
 	}
 
-	app := listDescendantsRuleSet.NewListDescendantsRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := listDescendantsRuleSet.NewListDescendantsRuleSet(log, newRec, repo)
 
 	ruleSets, error := app.Execute(
 		context.TODO(),

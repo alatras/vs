@@ -24,7 +24,9 @@ func Test_App_GetRuleSet_Success(t *testing.T) {
 		return
 	}
 
-	app := getRuleSet.NewGetRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := getRuleSet.NewGetRuleSet(log, newRec, repo)
 
 	fetchedRuleSet, err := app.Execute(
 		context.TODO(),

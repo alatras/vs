@@ -17,7 +17,9 @@ func Test_App_CreateRuleSet_InvalidRule_Key(t *testing.T) {
 		return
 	}
 
-	app := createRuleSet.NewCreateRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := createRuleSet.NewCreateRuleSet(log, newRec, repo)
 
 	_, err = app.Execute(
 		context.TODO(),
@@ -44,7 +46,9 @@ func Test_App_CreateRuleSet_InvalidRule_Operator(t *testing.T) {
 		return
 	}
 
-	app := createRuleSet.NewCreateRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := createRuleSet.NewCreateRuleSet(log, newRec, repo)
 
 	_, err = app.Execute(
 		context.TODO(),
@@ -71,7 +75,9 @@ func Test_App_CreateRuleSet_InvalidRule_Value(t *testing.T) {
 		return
 	}
 
-	app := createRuleSet.NewCreateRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := createRuleSet.NewCreateRuleSet(log, newRec, repo)
 
 	_, err = app.Execute(
 		context.TODO(),
@@ -98,7 +104,9 @@ func Test_App_CreateRuleSet_InvalidRule_NoValue(t *testing.T) {
 		return
 	}
 
-	app := createRuleSet.NewCreateRuleSet(log, repo)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := createRuleSet.NewCreateRuleSet(log, newRec, repo)
 
 	_, err = app.Execute(
 		context.TODO(),

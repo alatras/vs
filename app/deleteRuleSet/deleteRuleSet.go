@@ -21,9 +21,9 @@ type App struct {
 	ruleSetRepository ruleSet.Repository
 }
 
-func NewDeleteRuleSet(logger *logger.Logger, ruleSetRepository ruleSet.Repository) *App {
+func NewDeleteRuleSet(logger *logger.Logger, record *logger.LogRecord, ruleSetRepository ruleSet.Repository) *App {
 	return &App{
-		instrumentation:   newInstrumentation(logger),
+		instrumentation:   newInstrumentation(logger, record),
 		ruleSetRepository: ruleSetRepository,
 	}
 }
@@ -45,7 +45,7 @@ func (app *App) Execute(ctx context.Context, entityId, ruleSetId string) error {
 	}
 
 	if !deleted {
-		app.instrumentation.ruleSetNotFound()
+		app.instrumentation.ruleSetNotFound(ruleSetId)
 		return NotFound
 	}
 

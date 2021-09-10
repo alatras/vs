@@ -25,9 +25,11 @@ var trx = transaction.Transaction{
 
 func Test_App_ValidateTransaction_Success(t *testing.T) {
 	log := logger.NewStubLogger()
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
 	repo, _ := ruleSet.NewStubRepository(nil)
 
-	app := NewValidatorService(1, repo, log)
+	app := NewValidatorService(1, repo, log, newRec)
 
 	reportChan, errorChan := app.Enqueue(context.TODO(), trx)
 
@@ -68,7 +70,9 @@ func Test_App_ValidateTransaction_Success_SkipCardValidation(t *testing.T) {
 		t.Errorf("expected create blocking ruleset, but got error %s", err)
 	}
 
-	app := NewValidatorService(1, repo, log)
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
+	app := NewValidatorService(1, repo, log, newRec)
 
 	reportChan, errorChan := app.Enqueue(context.TODO(), trx)
 
@@ -84,9 +88,11 @@ func Test_App_ValidateTransaction_Success_SkipCardValidation(t *testing.T) {
 
 func Test_App_ValidateTransaction_UnexpectedError(t *testing.T) {
 	log := logger.NewStubLogger()
+	var rec *logger.LogRecord
+	newRec := rec.NewRecord()
 	repo, _ := ruleSet.NewStubRepository(errors.New("unexpected"))
 
-	app := NewValidatorService(1, repo, log)
+	app := NewValidatorService(1, repo, log, newRec)
 
 	reportChan, errorChan := app.Enqueue(context.TODO(), trx)
 

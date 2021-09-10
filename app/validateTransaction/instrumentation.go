@@ -13,32 +13,44 @@ type instrumentation struct {
 	logger    *logger.Logger
 	createdAt time.Time
 	startedAt time.Time
+	record    *logger.LogRecord
 }
 
-func newInstrumentation(logger *logger.Logger) *instrumentation {
+func newInstrumentation(log *logger.Logger, record *logger.LogRecord) *instrumentation {
 	return &instrumentation{
-		logger:    logger.Scoped("ValidateTransaction"),
+		logger:    log,
 		createdAt: time.Now(),
+		record:    record.NewRecord().Scoped("ValidateTransaction"),
 	}
 }
 
 func (i *instrumentation) setContext(ctx context.Context) {
 	if traceId, ok := ctx.Value(contextKey.TraceId).(string); ok {
-		i.logger = i.logger.WithTraceId(traceId)
+		i.record = i.record.TraceId(traceId)
+	}
+	if correlationId, ok := ctx.Value(contextKey.CorrelationId).(string); ok {
+		i.record = i.record.CorrelationId(correlationId)
 	}
 }
 
 func (i *instrumentation) setMetadata(metadata metadata) {
-	i.logger = i.logger.WithMetadata(metadata)
+	i.record = i.record.Metadata(metadata)
 }
 
 func (i *instrumentation) startTransactionValidation() {
 	delay := time.Since(i.createdAt)
 	i.startedAt = time.Now()
-	i.logger.Output.WithField("delay", delay).Info("Starting transaction validation")
+	i.record = i.record.Delay(int(delay))
+	i.record = i.record.MessageObject("Starting transaction validation", "")
+	i.doLog("startTransactionValidation")
 }
 
 func (i *instrumentation) endTransactionValidation() {
 	duration := time.Since(i.startedAt)
-	i.logger.Output.WithField("duration", duration).Info("Transaction validation finished")
+	i.record = i.record.Duration(int(duration))
+	i.doLog("endTransactionValidation")
+}
+
+func (i *instrumentation) doLog(loggerName string) {
+	i.logger.Output.WithField("mdc", i.record.Mdc).WithField("message", i.record.Message).Info(loggerName)
 }
