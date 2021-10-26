@@ -15,16 +15,20 @@ var (
 type Property string
 
 const (
-	PropertyAmount                Property = "amount"
-	PropertyCurrencyCode          Property = "currencyCode"
-	PropertyCustomerCountryCode   Property = "customerCountryCode"
-	PropertyCard                  Property = "card"
-	PropertyIssuerCountryCode     Property = "issuerCountryCode"
-	PropertyEntityId              Property = "entityId"
-	PropertyCustomerId            Property = "customerId"
-	PropertyCustomerIP            Property = "customerIP"
-	PropertyCustomerIPCountryCode Property = "customerIPCountryCode"
-	FraudScore                    Property = "fraudScore"
+	PropertyAmount                            Property = "amount"
+	PropertyCurrencyCode                      Property = "currencyCode"
+	PropertyCustomerCountryCode               Property = "customerCountryCode"
+	PropertyCard                              Property = "card"
+	PropertyIssuerCountryCode                 Property = "issuerCountryCode"
+	PropertyEntityId                          Property = "entityId"
+	PropertyCustomerId                        Property = "customerId"
+	PropertyCustomerIP                        Property = "customerIP"
+	PropertyCustomerIPCountryCode             Property = "customerIPCountryCode"
+	PropertyFraudScore                        Property = "fraudScore"
+	PropertyThreeDSecureEnrollmentStatus      Property = "threeDSecureEnrollmentStatus"
+	PropertyThreeDSecureAuthenticationStatus  Property = "threeDSecureAuthenticationStatus"
+	PropertyThreeDSecureSignatureVerification Property = "threeDSecureSignatureVerification"
+	PropertyThreeDSecureErrorNo               Property = "threeDSecureErrorNo"
 )
 
 type Operator string
@@ -71,8 +75,16 @@ func NewValidator(metadata Metadata) (Validator, error) {
 		validator, err = newCustomerIPValidator(metadata.Operator, metadata.Value)
 	case PropertyCustomerIPCountryCode:
 		validator, err = newCustomerIPCountryCodeValidator(metadata.Operator, metadata.Value)
-	case FraudScore:
+	case PropertyFraudScore:
 		validator, err = newFraudScoreValidator(metadata.Operator, metadata.Value)
+	case PropertyThreeDSecureEnrollmentStatus:
+		validator, err = newThreeDSecureEnrollmentStatusValidator(metadata.Operator, metadata.Value)
+	case PropertyThreeDSecureAuthenticationStatus:
+		validator, err = newThreeDSecureAuthenticationStatusValidator(metadata.Operator, metadata.Value)
+	case PropertyThreeDSecureSignatureVerification:
+		validator, err = newThreeDSecureSignatureVerificationValidator(metadata.Operator, metadata.Value)
+	case PropertyThreeDSecureErrorNo:
+		validator, err = newThreeDSecureErrorNoValidator(metadata.Operator, metadata.Value)
 	default:
 		return nil, InvalidPropertyError
 	}
