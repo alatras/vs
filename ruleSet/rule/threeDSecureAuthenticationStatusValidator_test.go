@@ -33,7 +33,7 @@ func TestThreeDSecureEnrollmentStatusValidatorFailure(t *testing.T) {
 	}
 }
 
-func ThreeDSecureEnrollmentStatus_Validate(t *testing.T) {
+func TestThreeDSecureEnrollmentStatus_Validate(t *testing.T) {
 	var validator Validator
 	var err error
 
