@@ -106,22 +106,16 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 
 	entityId := trxPayload.Transaction.Merchant.Organisation.UUID
 
-	fraudScore := trxPayload.Transaction.FraudScore.Value
-	threeDSecureEnrollmentStatus := trxPayload.Transaction.ThreeDSecureEnrollmentStatus.Value
-	threeDSecureAuthenticationStatus := trxPayload.Transaction.ThreeDSecureAuthenticationStatus.Value
-	threeDSecureSignatureVerification := trxPayload.Transaction.ThreeDSecureSignatureVerification.Value
-	threeDSecureErrorNo := trxPayload.Transaction.ThreeDSecureErrorNo.Value
-
 	t := trx.Transaction{
 		Amount:                            amount,
 		MinorUnits:                        minorUnits,
 		CurrencyCode:                      trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
 		EntityId:                          entityId,
-		FraudScore:                        fraudScore,
-		ThreeDSecureEnrollmentStatus:      threeDSecureEnrollmentStatus,
-		ThreeDSecureAuthenticationStatus:  threeDSecureAuthenticationStatus,
-		ThreeDSecureSignatureVerification: threeDSecureSignatureVerification,
-		ThreeDSecureErrorNo:               threeDSecureErrorNo,
+		FraudScore:                        trxPayload.Transaction.FraudScore.Value,
+		ThreeDSecureEnrollmentStatus:      trxPayload.Transaction.ThreeDSecureData.EnrollmentStatus,
+		ThreeDSecureAuthenticationStatus:  trxPayload.Transaction.ThreeDSecureData.AuthenticationStatus,
+		ThreeDSecureSignatureVerification: trxPayload.Transaction.ThreeDSecureData.SignatureVerification,
+		ThreeDSecureErrorNo:               trxPayload.Transaction.ThreeDSecureData.ErrorNo,
 	}
 
 	if trxPayload.Transaction.Customer != (customer{}) {
