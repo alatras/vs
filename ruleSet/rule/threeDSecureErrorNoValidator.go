@@ -1,32 +1,29 @@
 package rule
 
 import (
+	"fmt"
 	"strconv"
 	"validation-service/ruleSet/compare"
 	"validation-service/transaction"
 )
 
 type threeDSecureErrorNoValidator struct {
-	comparator compare.Float64Comparator
+	comparator compare.StringComparator
 }
 
 func newThreeDSecureErrorNoValidator(operator Operator, value string) (*threeDSecureErrorNoValidator, error) {
-	if !transaction.IsThreeDSecureErrorNo(value) {
-		return nil, InvalidValueError
-	}
-
 	valueNumber, err := strconv.Atoi(value)
 	if err != nil {
 		return nil, InvalidValueError
 	}
 
-	var comparator compare.Float64Comparator
+	var comparator compare.StringComparator
 
 	switch operator {
 	case OperatorEqual:
-		comparator = compare.EqualFloat64(float64(valueNumber))
+		comparator = compare.EqualString(fmt.Sprint(valueNumber))
 	case OperatorNotEqual:
-		comparator = compare.NotEqualFloat64(float64(valueNumber))
+		comparator = compare.NotEqualString(fmt.Sprint(valueNumber))
 	default:
 		return nil, InvalidOperatorError
 	}
@@ -35,7 +32,5 @@ func newThreeDSecureErrorNoValidator(operator Operator, value string) (*threeDSe
 }
 
 func (v threeDSecureErrorNoValidator) Validate(transaction transaction.Transaction) bool {
-	errNo, _ := strconv.Atoi(string(transaction.ThreeDSecureErrorNo))
-	errNoFloat := float64(errNo)
-	return v.comparator(errNoFloat)
+	return v.comparator(transaction.ThreeDSecureErrorNo)
 }

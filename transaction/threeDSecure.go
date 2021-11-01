@@ -1,9 +1,5 @@
 package transaction
 
-import (
-	"strconv"
-)
-
 type ThreeDSecureEnrollmentStatus string
 
 func IsThreeDSecureEnrollmentStatus(status string) bool {
@@ -43,11 +39,11 @@ var threeDSecureSignatureVerification = map[string]bool{
 	"N": true,
 }
 
-type ThreeDSecureErrorNo string
+// type ThreeDSecureErrorNo 	string
 
-func IsThreeDSecureErrorNo(value string) bool {
-	if _, err := strconv.Atoi(value); err != nil {
-		return false
-	}
-	return true
-}
+// func IsThreeDSecureErrorNo(value string) bool {
+// 	if _, err := strconv.Atoi(value); err != nil {
+// 		return false
+// 	}
+// 	return true
+// }
