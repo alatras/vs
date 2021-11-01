@@ -9,11 +9,12 @@ type ValidateTransactionPayload struct {
 }
 
 type transaction struct {
-	Amount     amount       `json:"amount"`
-	Merchant   merchant     `json:"merchant"`
-	Customer   customer     `json:"customer"`
-	Instrument []instrument `json:"instrument"`
-	FraudScore fraudScore   `json:"fraudScore"`
+	Amount           amount           `json:"amount"`
+	Merchant         merchant         `json:"merchant"`
+	Customer         customer         `json:"customer"`
+	Instrument       []instrument     `json:"instrument"`
+	FraudScore       fraudScore       `json:"fraudScore"`
+	ThreeDSecureData ThreeDSecureData `json:"threeDSecureData"`
 }
 
 type amount struct {
@@ -42,6 +43,13 @@ type customer struct {
 
 type fraudScore struct {
 	Value string `json:"value"`
+}
+
+type ThreeDSecureData struct {
+	EnrollmentStatus      string `json:"enrollmentStatus"`
+	AuthenticationStatus  string `json:"authenticationStatus"`
+	SignatureVerification string `json:"signatureVerification"`
+	ErrorNo               string `json:"errorNo"`
 }
 
 type customerIdentification struct {

@@ -106,14 +106,16 @@ func (rs Resource) Validate(w http.ResponseWriter, r *http.Request) {
 
 	entityId := trxPayload.Transaction.Merchant.Organisation.UUID
 
-	fraudScore := trxPayload.Transaction.FraudScore.Value
-
 	t := trx.Transaction{
-		Amount:       amount,
-		MinorUnits:   minorUnits,
-		CurrencyCode: trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
-		EntityId:     entityId,
-		FraudScore:   fraudScore,
+		Amount:                            amount,
+		MinorUnits:                        minorUnits,
+		CurrencyCode:                      trx.CurrencyCode(trxPayload.Transaction.Amount.CurrencyCode),
+		EntityId:                          entityId,
+		FraudScore:                        trxPayload.Transaction.FraudScore.Value,
+		ThreeDSecureEnrollmentStatus:      trxPayload.Transaction.ThreeDSecureData.EnrollmentStatus,
+		ThreeDSecureAuthenticationStatus:  trxPayload.Transaction.ThreeDSecureData.AuthenticationStatus,
+		ThreeDSecureSignatureVerification: trxPayload.Transaction.ThreeDSecureData.SignatureVerification,
+		ThreeDSecureErrorNo:               trxPayload.Transaction.ThreeDSecureData.ErrorNo,
 	}
 
 	if trxPayload.Transaction.Customer != (customer{}) {
