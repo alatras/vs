@@ -19,7 +19,7 @@ pipeline {
                 sh "mkdir -p /var/www/yum"
                 sh "mkdir artifacts"
                 sh "cp validation-service-${TAG}-1.el7.x86_64.rpm artifacts/"
-                sh 'curl -H "Authorization: Bearer ${token}" -T /var/www/yum/x86_64/validation-service-${TAG}-${RELEASE}.el7.x86_64.rpm "${ARTI_URL}/${CHARTS_REPO}/${PROJECT}/${PROJECT}-${BUILD_NUMBER}.${TAG}.x86_64.rpm"'
+                sh 'curl -H "Authorization: Bearer ${token}" -T /var/www/yum/x86_64/validation-service-${TAG}-${RELEASE}.el7_9.x86_64.rpm "${ARTI_URL}/${CHARTS_REPO}/${PROJECT}/${PROJECT}-${BUILD_NUMBER}.${TAG}.x86_64.rpm"'
                 archiveArtifacts artifacts: 'artifacts/**', fingerprint: true
             }
            }
