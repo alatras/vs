@@ -154,13 +154,7 @@ func setupAppD(appDConfig config.AppD) {
 }
 
 func createRuleSetRepository(mongoConfig config.Mongo, logger *logger.Logger) *ruleSet.MongoRuleSetRepository {
-	// var mongoRetryDelay time.Duration
-
 	mongoRetryDelay := time.Duration(mongoConfig.RetryMilliseconds) * time.Millisecond
-	// if mongoConfig.RetryMilliseconds != 0 {
-	// } else {
-	// 	mongoRetryDelay = 0
-	// }
 
 	ruleSetRepository, err := ruleSet.NewMongoRepository(
 		mongoConfig.URL,
