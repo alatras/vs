@@ -1,10 +1,6 @@
 pipeline {
     agent { label "master" }
     environment {
-        ARTI_URL='http://artifactory-new-93bf8f5a14c88dd6.elb.eu-west-2.amazonaws.com:8082/artifactory'
-        CHARTS_REPO='rpm.ecom.dev-ci-release'
-        PROJECT='validation-service'
-        RELEASE= '1'
         TAG = sh(
             script: "printf \$(git rev-parse --short ${GIT_COMMIT})",
             returnStdout: true
@@ -13,16 +9,13 @@ pipeline {
     stages {
         stage("RPM build") {
             steps {
-                 withCredentials([string(credentialsId: 'ARTI-RPM', variable: 'token')])
-                {
                 sh "make rpm"
                 sh "mkdir -p /var/www/yum"
                 sh "mkdir artifacts"
                 sh "cp validation-service-${TAG}-1.el7.x86_64.rpm artifacts/"
-                sh 'curl -H "Authorization: Bearer ${token}" -T validation-service-${TAG}-${RELEASE}.el7.x86_64.rpm "${ARTI_URL}/${CHARTS_REPO}/${PROJECT}/${PROJECT}-${BUILD_NUMBER}.${TAG}.x86_64.rpm"'
+                sh "aws s3 cp validation-service-${TAG}-1.el7.x86_64.rpm s3://verifone.dimebox.com/rpm/validation-service/"
                 archiveArtifacts artifacts: 'artifacts/**', fingerprint: true
             }
-           }
         }
     }
     post {
@@ -31,10 +24,10 @@ pipeline {
             cleanWs()
         }
         failure {
-        echo "Job is failure"
+            slackSend channel: "#ci", color: "danger", message: "*Validation Service RPM FAILED* `${env.JOB_NAME}` on ${env.STAGE_NAME}\n- ${env.BUILD_DISPLAY_NAME}: ${env.RUN_DISPLAY_URL}\n- Commit: `${env.GIT_PREVIOUS_COMMIT}`", tokenCredentialId: "slack-api"
         }
         success {
-        echo "Job is success"
+            slackSend channel: "#ci", color: "good", message: "*Validation Service RPM SUCCESS* `${env.JOB_NAME}`\n- ${env.BUILD_DISPLAY_NAME}: ${env.RUN_DISPLAY_URL}\n- Commit: `${env.GIT_PREVIOUS_COMMIT}`", tokenCredentialId: "slack-api"
         }
     }
 }
