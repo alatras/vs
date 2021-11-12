@@ -8,12 +8,7 @@ import (
 )
 
 func main() {
-	config.Read()
-
-	// log.Println("::::: config.App.AppD.AppName :::", config.App.AppD.AppName)
-	// log.Println("::::: config.App.Log.Format :::", config.App.Log.Format)
-	// log.Println("::::: config.App.HTTPPort :::", config.App.HTTPPort)
-	// log.Println("::::: config.App.HTTPPort :::", config.App.Mongo.RetryMilliseconds)
+	config.Read("")
 
 	err := cmd.StartServer(config.App)
 

@@ -8,7 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var Version = "1.0.10"
+var Version = "1.0.11"
 var AppName = "Validation Service"
 
 type Server struct {
@@ -25,7 +25,7 @@ type Mongo struct {
 }
 
 type AppD struct {
-	AppName     string `yaml:"appName" env:"APP_NAME" env-default:"Validation Service" env-description:"App name"`
+	AppName     string `yaml:"appName" env:"APP_DYNAMICS_APP_NAME" env-default:"Validation Service" env-description:"App name"`
 	TierName    string `yaml:"tierName" env:"APP_DYNAMICS_TIRENAME" env-default:"transaction" env-description:"App dynamics tier name"`
 	NodeName    string `yaml:"nodeName" env:"APP_DYNAMICS_NODE_NAME" env-default:"transaction01" env-description:"App dynamics node name"`
 	InitTimeout int    `yaml:"initTimeout" env:"APP_DYNAMICS_INIT_TIMEOUT" env-default:"1000" env-description:"App dynamics node name"`
@@ -52,13 +52,13 @@ type Log struct {
 
 var App Server
 
-func Read() {
+func Read(path string) {
 	errEnv := godotenv.Load(".env")
 	if errEnv != nil {
 		fmt.Println("No .env file")
 	}
 
-	readError := cleanenv.ReadConfig("config.yml", &App)
+	readError := cleanenv.ReadConfig(path+"config.yml", &App)
 	if readError != nil {
 		log.Panic("Failed to read yaml file", readError)
 	}
