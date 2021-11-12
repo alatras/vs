@@ -106,12 +106,12 @@ func setupLogger(logConfig config.Log) *logger.Logger {
 	l, err := logger.NewLogger(
 		config.AppName,
 		config.Version,
-		logConfig.FormatValue(),
+		logConfig.Format,
 		logConfig.LevelValue(),
-		logConfig.LogFileValue(),
-		logConfig.LogFileMaxMbValue(),
-		logConfig.LogFileRotationCountValue(),
-		logConfig.LogFileRotationDaysValue(),
+		logConfig.LogFile,
+		logConfig.LogFileMaxMb,
+		logConfig.LogFileRotationCount,
+		logConfig.LogFileRotationDays,
 	)
 
 	if err != nil {
@@ -133,15 +133,15 @@ func setupAppD(appDConfig config.AppD) {
 	cfg.Controller.UseSSL = appDConfig.Controller.UseSSL
 	cfg.Controller.Account = appDConfig.Controller.Account
 	cfg.Controller.AccessKey = appDConfig.Controller.AccessKey
-	if proxyHost := appDConfig.GetConfig("APP_DYNAMICS_PROXY_HOST"); proxyHost != "" {
+	if proxyHost := appDConfig.Controller.ProxyHost; proxyHost != "" {
 		cfg.Controller.ProxyHost = appDConfig.Controller.ProxyHost
 	}
-	if proxyPort := appDConfig.GetConfig("APP_DYNAMICS_PROXY_HOST"); proxyPort != "" {
+	if proxyPort := appDConfig.Controller.ProxyPort; proxyPort != "" {
 		cfg.Controller.ProxyPort = appDConfig.Controller.ProxyPort
 	}
 
 	if err := appd.InitSDK(&cfg); err != nil {
-		log.Panic("Error initializing the AppDynamics SDK\n")
+		log.Panic("Error initializing the AppDynamics SDK\n", err)
 	}
 
 	backendProperties := map[string]string{
@@ -154,17 +154,17 @@ func setupAppD(appDConfig config.AppD) {
 }
 
 func createRuleSetRepository(mongoConfig config.Mongo, logger *logger.Logger) *ruleSet.MongoRuleSetRepository {
-	var mongoRetryDelay time.Duration
+	// var mongoRetryDelay time.Duration
 
-	if mongoConfig.RetryMilliseconds != 0 {
-		mongoRetryDelay = time.Duration(mongoConfig.RetryMilliseconds) * time.Millisecond
-	} else {
-		mongoRetryDelay = time.Duration(config.DefaultMongoRetryMilliseconds) * time.Millisecond
-	}
+	mongoRetryDelay := time.Duration(mongoConfig.RetryMilliseconds) * time.Millisecond
+	// if mongoConfig.RetryMilliseconds != 0 {
+	// } else {
+	// 	mongoRetryDelay = 0
+	// }
 
 	ruleSetRepository, err := ruleSet.NewMongoRepository(
-		mongoConfig.GetConfig("MONGO_URL"),
-		mongoConfig.GetConfig("MONGO_DB"),
+		mongoConfig.URL,
+		mongoConfig.DB,
 		mongoRetryDelay,
 		logger,
 	)
