@@ -47,7 +47,7 @@ type Log struct {
 	LogFileMaxMb         int    `yaml:"logFileMaxMb" env:"LOG_FILE_MAX_SIZE" env-default:"1" env-description:"Log file max size"`
 	LogFileRotationDays  int    `yaml:"logFileRotationDays" env:"LOG_FILE_ROTATION_DAYS" env-default:"1" env-description:"Log file rotation period"`
 	LogFileRotationCount int    `yaml:"logFileRotationCount" env:"LOG_FILE_ROTATION_COUNT" env-default:"30" env-description:"Log file rotation count"`
-	TraceIdHeader        string `yaml:"traceIdHeader" env:"TRACE_ID_HEADER" env-default:"" env-description:"Log trace ID header name"`
+	TraceIdHeader        string `yaml:"traceIdHeader" env:"TRACE_ID_HEADER" env-default:"x-b3-traceid" env-description:"Trace ID header key name"`
 }
 
 var App Server

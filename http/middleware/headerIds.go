@@ -3,33 +3,38 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"validation-service/config"
 	"validation-service/enums/contextKey"
 
 	"github.com/google/uuid"
 )
 
-func SetContextWithHeaderIds(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
+// type MiddlewareFunc = func(next http.Handler) http.Handler
 
-		var traceId string
-		var correlationId string
+func SetContextWithHeaders(l *config.Log) Func {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
 
-		if headerTraceId := r.Header.Get("x_b3-traceid"); headerTraceId != "" {
-			traceId = headerTraceId
-		} else {
-			traceId = uuid.New().String()
-		}
+			var traceId string
+			var correlationId string
 
-		if headerCorrelationId := r.Header.Get("correlation_id"); headerCorrelationId != "" {
-			correlationId = headerCorrelationId
-		} else {
-			correlationId = uuid.New().String()
-		}
+			if headerTraceId := r.Header.Get(l.TraceIdHeader); headerTraceId != "" {
+				traceId = headerTraceId
+			} else {
+				traceId = uuid.New().String()
+			}
 
-		ctx = context.WithValue(ctx, contextKey.TraceId, traceId)
-		ctx = context.WithValue(ctx, contextKey.CorrelationId, correlationId)
+			if headerCorrelationId := r.Header.Get("correlation_id"); headerCorrelationId != "" {
+				correlationId = headerCorrelationId
+			} else {
+				correlationId = uuid.New().String()
+			}
 
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+			ctx = context.WithValue(ctx, contextKey.TraceId, traceId)
+			ctx = context.WithValue(ctx, contextKey.CorrelationId, correlationId)
+
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
 }

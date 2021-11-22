@@ -5,6 +5,7 @@ log:
   logFileMaxMb: 1
   logFileRotationCount: 30
   logFileRotationDays: 1
+  traceIdHeader: x-b3-traceid
 httpPort: 8080
 mongo:
   url: mongodb://mongo
