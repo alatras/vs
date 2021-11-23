@@ -8,7 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var Version = "1.0.11"
+var Version = "1.0.12"
 var AppName = "Validation Service"
 
 type Server struct {
