@@ -74,10 +74,10 @@ func (f RequestLogFormatter) NewLogEntry(r *http.Request) chi.LogEntry {
 }
 
 // Func function which is accepted as chi middleware
-type Func = func(next http.Handler) http.Handler
+type MiddlewareFunc = func(next http.Handler) http.Handler
 
 // Logger creates logger middleware which will output to specified logger
-func Logger(logger *logger.Logger) Func {
+func Logger(logger *logger.Logger) MiddlewareFunc {
 	formatter := RequestLogFormatter{logger}
 
 	return func(next http.Handler) http.Handler {

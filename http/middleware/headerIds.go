@@ -9,9 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// type MiddlewareFunc = func(next http.Handler) http.Handler
-
-func SetContextWithHeaders(l *config.Log) Func {
+func SetContextWithHeaders(l *config.Log) MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
