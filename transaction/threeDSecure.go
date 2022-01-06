@@ -38,12 +38,3 @@ var threeDSecureSignatureVerification = map[string]bool{
 	"Y": true,
 	"N": true,
 }
-
-// type ThreeDSecureErrorNo 	string
-
-// func IsThreeDSecureErrorNo(value string) bool {
-// 	if _, err := strconv.Atoi(value); err != nil {
-// 		return false
-// 	}
-// 	return true
-// }
