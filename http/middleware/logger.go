@@ -90,7 +90,7 @@ func Logger(logger *logger.Logger) MiddlewareFunc {
 	}
 }
 
-func HealthCheckLogger(logger *logger.HealthCheckLogger) Func {
+func HealthCheckLogger(logger *logger.HealthCheckLogger) MiddlewareFunc {
 	formatter := RequestLogFormatterHealthCheck{logger}
 
 	return func(next http.Handler) http.Handler {

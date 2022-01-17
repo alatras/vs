@@ -79,7 +79,6 @@ func NewServer(
 func (s *Server) Start() error {
 	r := s.router
 
-	r.Use(httpMiddleware.SetContextWithHeaderIds)
 	r.Use(httpMiddleware.SetContextWithHeaders(&s.LogConfig))
 	r.Use(chiMiddleware.URLFormat)
 	r.Use(httpMiddleware.SetContextWithBusinessTransaction)
