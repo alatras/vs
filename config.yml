@@ -1,10 +1,13 @@
 log:
   level: info
   format: json
-  logFile: ./logs/ValidationService.log
+  logFile: ./logs/main.log
   logFileMaxMb: 1
-  logFileRotationCount: 30
-  logFileRotationDays: 1
+  logRotatingPeriod: 30
+  logRotatingCount: 10
+  healthCheckLogFile: ./logs/health.log
+  healthCheckLogRotatingPeriod: 10
+  healthCheckLogRotatingCount: 2
 httpPort: 8080
 mongo:
   url: mongodb://mongo

@@ -13,7 +13,7 @@ import (
 func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 
-	log := logger.NewStubLogger()
+	log := logger.NewStubHealthCheckLogger()
 
 	resource := NewResource(log, &StubRepositorySuccess{})
 
@@ -25,7 +25,7 @@ func setupSuccessRecorder(t *testing.T, request *http.Request) *httptest.Respons
 func setupUnexpectedErrorRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 
-	log := logger.NewStubLogger()
+	log := logger.NewStubHealthCheckLogger()
 
 	resource := NewResource(log, &StubRepositoryError{})
 

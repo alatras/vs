@@ -27,6 +27,8 @@ import (
 func StartServer(config config.Server) error {
 	log := setupLogger(config.Log)
 
+	healthCheckLog := setupHealthCheckLogger(config.Log)
+
 	rec := &logger.LogRecord{}
 
 	setupAppD(config.AppD)
@@ -83,6 +85,7 @@ func StartServer(config config.Server) error {
 		config.HTTPPort,
 		chi.NewRouter(),
 		log,
+		healthCheckLog,
 		ruleSetRepo,
 		validateTransactionApp,
 		createRuleSetAppFactory,
@@ -110,12 +113,31 @@ func setupLogger(logConfig config.Log) *logger.Logger {
 		logConfig.LevelValue(),
 		logConfig.LogFile,
 		logConfig.LogFileMaxMb,
-		logConfig.LogFileRotationCount,
-		logConfig.LogFileRotationDays,
+		logConfig.LogRotationCount,
+		logConfig.LogRotationPeriod,
 	)
 
 	if err != nil {
 		log.Panic("Failed to initialize logger")
+	}
+
+	return l
+}
+
+func setupHealthCheckLogger(logConfig config.Log) *logger.HealthCheckLogger {
+	l, err := logger.NewHealthCheckLogger(
+		config.AppName,
+		config.Version,
+		logConfig.Format,
+		logConfig.LevelValue(),
+		logConfig.HealthLogFilePath,
+		logConfig.LogFileMaxMb,
+		logConfig.HealthCheckLogRotationCount,
+		logConfig.HealthCheckLogRotatingPeriod,
+	)
+
+	if err != nil {
+		log.Panic("Failed to initialize healthCheck logger")
 	}
 
 	return l

@@ -41,13 +41,16 @@ type AppD struct {
 }
 
 type Log struct {
-	Level                string `yaml:"level" env:"LOG_LEVEL" env-default:"info" env-description:"Log level"`
-	Format               string `yaml:"format" env:"LOG_FORMAT" env-default:"json" env-description:"Log format"`
-	LogFile              string `yaml:"logFile" env:"LOG_FILE" env-default:"./logs/ValidationService.log" env-description:"Path of the log file"`
-	LogFileMaxMb         int    `yaml:"logFileMaxMb" env:"LOG_FILE_MAX_SIZE" env-default:"1" env-description:"Log file max size"`
-	LogFileRotationDays  int    `yaml:"logFileRotationDays" env:"LOG_FILE_ROTATION_DAYS" env-default:"1" env-description:"Log file rotation period"`
-	LogFileRotationCount int    `yaml:"logFileRotationCount" env:"LOG_FILE_ROTATION_COUNT" env-default:"30" env-description:"Log file rotation count"`
-	TraceIdHeader        string `yaml:"traceIdHeader" env:"TRACE_ID_HEADER" env-default:"" env-description:"Log trace ID header name"`
+	Level                        string `yaml:"level" env:"LOG_LEVEL" env-default:"info" env-description:"Log level"`
+	Format                       string `yaml:"format" env:"LOG_FORMAT" env-default:"json" env-description:"Log format"`
+	TraceIdHeader                string `yaml:"traceIdHeader" env:"TRACE_ID_HEADER" env-default:"" env-description:"Log trace ID header name"`
+	LogFile                      string `yaml:"logFile" env:"LOG_FILE" env-default:"./logs/main.log" env-description:"Path of the log file"`
+	LogFileMaxMb                 int    `yaml:"logFileMaxMb" env:"LOG_FILE_MAX_SIZE" env-default:"1" env-description:"Log file max size"`
+	LogRotationPeriod            int    `yaml:"logRotatingPeriod" env:"LOG_ROTATING_PERIOD" env-default:"30" env-description:"Log file rotation period"`
+	LogRotationCount             int    `yaml:"logRotatingCount" env:"LOG_ROTATING_COUNT" env-default:"10" env-description:"Log file rotation count"`
+	HealthLogFilePath            string `yaml:"healthCheckLogFile" env:"HEALTH_LOG_FILE" env-default:"./logs/health.log" env-description:"Path of the health check log file"`
+	HealthCheckLogRotatingPeriod int    `yaml:"healthCheckLogRotatingPeriod" env:"HEALTH_CHECK_LOG_ROTATING_PERIOD" env-default:"10" env-description:"Log file rotation period"`
+	HealthCheckLogRotationCount  int    `yaml:"healthCheckLogRotatingCount" env:"HEALTH_CHECK_LOG_ROTATING_COUNT" env-default:"2" env-description:"Log file rotation count"`
 }
 
 var App Server
