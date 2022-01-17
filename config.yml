@@ -8,6 +8,7 @@ log:
   healthCheckLogFile: ./logs/health.log
   healthCheckLogRotatingPeriod: 10
   healthCheckLogRotatingCount: 2
+  traceIdHeader: x-b3-traceid
 httpPort: 8080
 mongo:
   url: mongodb://mongo

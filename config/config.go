@@ -8,7 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var Version = "1.0.11"
+var Version = "1.0.12"
 var AppName = "Validation Service"
 
 type Server struct {
@@ -43,7 +43,7 @@ type AppD struct {
 type Log struct {
 	Level                        string `yaml:"level" env:"LOG_LEVEL" env-default:"info" env-description:"Log level"`
 	Format                       string `yaml:"format" env:"LOG_FORMAT" env-default:"json" env-description:"Log format"`
-	TraceIdHeader                string `yaml:"traceIdHeader" env:"TRACE_ID_HEADER" env-default:"" env-description:"Log trace ID header name"`
+	TraceIdHeader                string `yaml:"traceIdHeader" env:"TRACE_ID_HEADER" env-default:"x-b3-traceid" env-description:"Trace ID header key name"`
 	LogFile                      string `yaml:"logFile" env:"LOG_FILE" env-default:"./logs/main.log" env-description:"Path of the log file"`
 	LogFileMaxMb                 int    `yaml:"logFileMaxMb" env:"LOG_FILE_MAX_SIZE" env-default:"1" env-description:"Log file max size"`
 	LogRotationPeriod            int    `yaml:"logRotatingPeriod" env:"LOG_ROTATING_PERIOD" env-default:"30" env-description:"Log file rotation period"`
