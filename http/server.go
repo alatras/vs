@@ -12,6 +12,7 @@ import (
 	"validation-service/app/listRuleSet"
 	"validation-service/app/updateRuleSet"
 	"validation-service/app/validateTransaction"
+	"validation-service/config"
 	"validation-service/http/healthCheck"
 	httpMiddleware "validation-service/http/middleware"
 	httpRuleSet "validation-service/http/ruleSet"
@@ -37,6 +38,7 @@ type Server struct {
 	getRuleSetAppFactory             func() getRuleSet.GetRuleSet
 	deleteRuleSetAppFactory          func() deleteRuleSet.DeleteRuleSet
 	updateRuleSetAppFactory          func() updateRuleSet.UpdateRuleSet
+	LogConfig                        config.Log
 }
 
 func NewServer(
@@ -52,6 +54,7 @@ func NewServer(
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
 	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet,
+	logConfig config.Log,
 ) *Server {
 	return &Server{
 		port:                             port,
@@ -66,13 +69,14 @@ func NewServer(
 		getRuleSetAppFactory:             getRuleSetAppFactory,
 		deleteRuleSetAppFactory:          deleteRuleSetAppFactory,
 		updateRuleSetAppFactory:          updateRuleSetAppFactory,
+		LogConfig:                        logConfig,
 	}
 }
 
 func (s *Server) Start() error {
 	r := s.router
 
-	r.Use(httpMiddleware.SetContextWithHeaderIds)
+	r.Use(httpMiddleware.SetContextWithHeaders(&s.LogConfig))
 	r.Use(httpMiddleware.Logger(s.logger))
 	r.Use(chiMiddleware.URLFormat)
 	r.Use(httpMiddleware.SetContextWithBusinessTransaction)

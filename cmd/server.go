@@ -92,6 +92,7 @@ func StartServer(config config.Server) error {
 		getRuleSetAppFactory,
 		deleteRuleSetAppFactory,
 		updateRuleSetAppFactory,
+		config.Log,
 	).Start()
 
 	if err != nil {
