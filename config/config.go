@@ -46,8 +46,8 @@ type Log struct {
 	TraceIdHeader                string `yaml:"traceIdHeader" env:"TRACE_ID_HEADER" env-default:"x-b3-traceid" env-description:"Trace ID header key name"`
 	LogFile                      string `yaml:"logFile" env:"LOG_FILE" env-default:"./logs/main.log" env-description:"Path of the log file"`
 	LogFileMaxMb                 int    `yaml:"logFileMaxMb" env:"LOG_FILE_MAX_SIZE" env-default:"1" env-description:"Log file max size"`
-	LogRotationPeriod            int    `yaml:"logRotatingPeriod" env:"LOG_ROTATING_PERIOD" env-default:"30" env-description:"Log file rotation period"`
-	LogRotationCount             int    `yaml:"logRotatingCount" env:"LOG_ROTATING_COUNT" env-default:"10" env-description:"Log file rotation count"`
+	LogRotationPeriod            int    `yaml:"logRotatingPeriod" env:"LOG_ROTATING_PERIOD" env-default:"1" env-description:"Log file rotation period"`
+	LogRotationCount             int    `yaml:"logRotatingCount" env:"LOG_ROTATING_COUNT" env-default:"30" env-description:"Log file rotation count"`
 	HealthLogFilePath            string `yaml:"healthCheckLogFile" env:"HEALTH_LOG_FILE" env-default:"./logs/health.log" env-description:"Path of the health check log file"`
 	HealthCheckLogRotatingPeriod int    `yaml:"healthCheckLogRotatingPeriod" env:"HEALTH_CHECK_LOG_ROTATING_PERIOD" env-default:"10" env-description:"Log file rotation period"`
 	HealthCheckLogRotationCount  int    `yaml:"healthCheckLogRotatingCount" env:"HEALTH_CHECK_LOG_ROTATING_COUNT" env-default:"2" env-description:"Log file rotation count"`

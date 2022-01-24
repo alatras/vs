@@ -3,8 +3,8 @@ log:
   format: json
   logFile: ./logs/main.log
   logFileMaxMb: 1
-  logRotatingPeriod: 30
-  logRotatingCount: 10
+  logRotatingPeriod: 1
+  logRotatingCount: 30
   healthCheckLogFile: ./logs/health.log
   healthCheckLogRotatingPeriod: 10
   healthCheckLogRotatingCount: 2
