@@ -11,11 +11,11 @@ import (
 )
 
 type Resource struct {
-	logger      *logger.Logger
+	logger      *logger.HealthCheckLogger
 	ruleSetRepo ruleSet.Repository
 }
 
-func NewResource(l *logger.Logger, r ruleSet.Repository) Resource {
+func NewResource(l *logger.HealthCheckLogger, r ruleSet.Repository) Resource {
 	return Resource{
 		logger:      l.Scoped("healthCheck"),
 		ruleSetRepo: r,

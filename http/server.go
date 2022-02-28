@@ -29,6 +29,7 @@ type Server struct {
 	port                             int
 	router                           chi.Router
 	logger                           *logger.Logger
+	healthCheckLogger                *logger.HealthCheckLogger
 	ruleSetRepository                ruleSet.Repository
 	validateTransactionService       validateTransaction.ValidatorService
 	createRuleSetAppFactory          func() createRuleSet.CreateRuleSet
@@ -45,6 +46,7 @@ func NewServer(
 	port int,
 	router chi.Router,
 	logger *logger.Logger,
+	healthCheckLogger *logger.HealthCheckLogger,
 	ruleSetRepository ruleSet.Repository,
 	validateTransactionService validateTransaction.ValidatorService,
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
@@ -60,6 +62,7 @@ func NewServer(
 		port:                             port,
 		router:                           router,
 		logger:                           logger,
+		healthCheckLogger:                healthCheckLogger,
 		ruleSetRepository:                ruleSetRepository,
 		validateTransactionService:       validateTransactionService,
 		createRuleSetAppFactory:          createRuleSetAppFactory,
@@ -77,13 +80,16 @@ func (s *Server) Start() error {
 	r := s.router
 
 	r.Use(httpMiddleware.SetContextWithHeaders(&s.LogConfig))
-	r.Use(httpMiddleware.Logger(s.logger))
 	r.Use(chiMiddleware.URLFormat)
 	r.Use(httpMiddleware.SetContextWithBusinessTransaction)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	r.Mount("/healthCheck", healthCheck.NewResource(s.logger, s.ruleSetRepository).Routes())
+	hRoute := r.Group(nil)
+	hRoute.Use(httpMiddleware.HealthCheckLogger(s.healthCheckLogger))
+	hRoute.Mount("/healthCheck", healthCheck.NewResource(s.healthCheckLogger, s.ruleSetRepository).Routes())
+
 	r.Mount("/transaction", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
+
 	r.Mount(
 		"/entities",
 		httpRuleSet.NewResource(

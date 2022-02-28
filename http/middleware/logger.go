@@ -17,6 +17,10 @@ type RequestLogFormatter struct {
 	logger *logger.Logger
 }
 
+type RequestLogFormatterHealthCheck struct {
+	logger *logger.HealthCheckLogger
+}
+
 // RequestLogEntry HTTP request log entry
 type RequestLogEntry struct {
 	output  *logrus.Entry
@@ -83,5 +87,42 @@ func Logger(logger *logger.Logger) MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		requestLogger := chi.RequestLogger(&formatter)
 		return requestLogger(next)
+	}
+}
+
+func HealthCheckLogger(logger *logger.HealthCheckLogger) MiddlewareFunc {
+	formatter := RequestLogFormatterHealthCheck{logger}
+
+	return func(next http.Handler) http.Handler {
+		requestLogger := chi.RequestLogger(&formatter)
+		return requestLogger(next)
+	}
+}
+
+// NewLogEntry called by chi when new request has arrived
+func (f RequestLogFormatterHealthCheck) NewLogEntry(r *http.Request) chi.LogEntry {
+	scheme := "http"
+
+	if r.TLS != nil {
+		scheme = "https"
+	}
+
+	msg := fmt.Sprintf("%s %s://%s%s %s", r.Method, scheme, r.Host, r.RequestURI, r.Proto)
+
+	output := f.logger.Output.WithField("from", r.RemoteAddr)
+
+	if r.ContentLength != 0 {
+		output = output.WithField("body", fmt.Sprintf("%d bytes", r.ContentLength))
+	}
+
+	if traceID, ok := r.Context().Value(contextKey.TraceId).(string); ok {
+		output = output.WithField("trace_id", traceID)
+	}
+
+	return &RequestLogEntry{
+		output:  output,
+		request: r,
+		msg:     msg,
+		fmt:     f,
 	}
 }
