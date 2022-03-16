@@ -18,10 +18,12 @@ import (
 	"validation-service/config"
 	"validation-service/enums/appdBackend"
 	"validation-service/http"
+	"validation-service/http/httpClient"
 	"validation-service/logger"
 	"validation-service/ruleSet"
 
 	"github.com/go-chi/chi"
+	"github.com/go-resty/resty/v2"
 )
 
 func StartServer(config config.Server) error {
@@ -81,6 +83,8 @@ func StartServer(config config.Server) error {
 		return updateRuleSet.NewUpdateRuleSet(log, newRec, ruleSetRepo)
 	}
 
+	httpClientInst := httpClient.NewClient(log, &config, rec, resty.New())
+
 	err := http.NewServer(
 		config.HTTPPort,
 		chi.NewRouter(),
@@ -95,7 +99,8 @@ func StartServer(config config.Server) error {
 		getRuleSetAppFactory,
 		deleteRuleSetAppFactory,
 		updateRuleSetAppFactory,
-		config.Log,
+		config,
+		httpClientInst,
 	).Start()
 
 	if err != nil {

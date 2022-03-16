@@ -14,6 +14,7 @@ import (
 	"validation-service/app/validateTransaction"
 	"validation-service/config"
 	"validation-service/http/healthCheck"
+	"validation-service/http/httpClient"
 	httpMiddleware "validation-service/http/middleware"
 	httpRuleSet "validation-service/http/ruleSet"
 	"validation-service/http/transaction"
@@ -39,7 +40,8 @@ type Server struct {
 	getRuleSetAppFactory             func() getRuleSet.GetRuleSet
 	deleteRuleSetAppFactory          func() deleteRuleSet.DeleteRuleSet
 	updateRuleSetAppFactory          func() updateRuleSet.UpdateRuleSet
-	LogConfig                        config.Log
+	LogConfig                        config.Server
+	httpClient                       httpClient.Client
 }
 
 func NewServer(
@@ -56,7 +58,8 @@ func NewServer(
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
 	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet,
-	logConfig config.Log,
+	serverConfig config.Server,
+	httpClient httpClient.Client,
 ) *Server {
 	return &Server{
 		port:                             port,
@@ -72,21 +75,22 @@ func NewServer(
 		getRuleSetAppFactory:             getRuleSetAppFactory,
 		deleteRuleSetAppFactory:          deleteRuleSetAppFactory,
 		updateRuleSetAppFactory:          updateRuleSetAppFactory,
-		LogConfig:                        logConfig,
+		LogConfig:                        serverConfig,
+		httpClient:                       httpClient,
 	}
 }
 
 func (s *Server) Start() error {
 	r := s.router
 
-	r.Use(httpMiddleware.SetContextWithHeaders(&s.LogConfig))
+	r.Use(httpMiddleware.SetContextWithHeaders(&s.LogConfig.Log))
 	r.Use(chiMiddleware.URLFormat)
 	r.Use(httpMiddleware.SetContextWithBusinessTransaction)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	hRoute := r.Group(nil)
-	hRoute.Use(httpMiddleware.HealthCheckLogger(s.healthCheckLogger))
-	hRoute.Mount("/healthCheck", healthCheck.NewResource(s.healthCheckLogger, s.ruleSetRepository).Routes())
+	healthCheckGroup := r.Group(nil)
+	healthCheckGroup.Use(httpMiddleware.HealthCheckLogger(s.healthCheckLogger))
+	healthCheckGroup.Mount("/healthCheck", healthCheck.NewResource(s.healthCheckLogger, s.ruleSetRepository).Routes())
 
 	r.Mount("/transaction", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
 
@@ -94,6 +98,7 @@ func (s *Server) Start() error {
 		"/entities",
 		httpRuleSet.NewResource(
 			s.logger,
+			s.httpClient,
 			s.createRuleSetAppFactory,
 			s.getRuleSetAppFactory,
 			s.deleteRuleSetAppFactory,
