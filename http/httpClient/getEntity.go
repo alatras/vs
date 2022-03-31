@@ -6,7 +6,7 @@ import (
 	"validation-service/config"
 )
 
-func (c Client) CheckEntity(
+func (c HttpClient) CheckEntity(
 	token string,
 	entityId string,
 	traceID string,

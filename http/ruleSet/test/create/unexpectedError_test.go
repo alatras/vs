@@ -6,10 +6,14 @@ import (
 	"net/http/httptest"
 	"testing"
 	"validation-service/app/createRuleSet"
+	"validation-service/config"
+	"validation-service/http/httpClient"
 	"validation-service/http/ruleSet"
 	"validation-service/logger"
 
 	"github.com/bitly/go-simplejson"
+	"github.com/go-resty/resty/v2"
+	"github.com/jarcoal/httpmock"
 )
 
 func setupUnknownErrorRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
@@ -17,8 +21,17 @@ func setupUnknownErrorRecorder(t *testing.T, request *http.Request) *httptest.Re
 
 	log := logger.NewStubLogger()
 
+	c := resty.New()
+	httpmock.ActivateNonDefault(c.GetClient())
+	defer httpmock.DeactivateAndReset()
+	responder := httpmock.NewStringResponder(200, "")
+	fakeUrl := "/entities/12345"
+	httpmock.RegisterResponder("GET", fakeUrl, responder)
+	cl := httpClient.NewHttpClient(log, &config.Server{}, &logger.LogRecord{}, c)
+
 	resource := ruleSet.NewResource(
 		log,
+		cl,
 		func() createRuleSet.CreateRuleSet {
 			return &errorApp{error: createRuleSet.UnexpectedError}
 		},
@@ -50,12 +63,13 @@ func Test_HTTP_RuleSet_Create_UnexpectedError(t *testing.T) {
 		}`
 
 	req, err := http.NewRequest("POST", "/12345/rulesets", bytes.NewBuffer([]byte(requestBody)))
-	req.Header.Set("Content-Type", "application/json")
-
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
 		return
 	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer token")
 
 	recorder := setupUnknownErrorRecorder(t, req)
 

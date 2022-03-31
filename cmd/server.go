@@ -83,7 +83,7 @@ func StartServer(config config.Server) error {
 		return updateRuleSet.NewUpdateRuleSet(log, newRec, ruleSetRepo)
 	}
 
-	httpClientInst := httpClient.NewClient(log, &config, rec, resty.New())
+	httpClientInst := httpClient.NewHttpClient(log, &config, rec, resty.New())
 
 	err := http.NewServer(
 		config.HTTPPort,

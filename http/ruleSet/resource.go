@@ -18,7 +18,7 @@ import (
 
 type Resource struct {
 	logger                           *logger.Logger
-	httpClient                       *httpClient.Client
+	httpClient                       *httpClient.HttpClient
 	createRuleSetAppFactory          func() createRuleSet.CreateRuleSet
 	listRuleSetAppFactory            func() listRuleSet.ListRuleSet
 	listAncestorsRuleSetAppFactory   func() listAncestorsRuleSet.ListAncestorsRuleSet
@@ -30,7 +30,7 @@ type Resource struct {
 
 func NewResource(
 	logger *logger.Logger,
-	httpClient httpClient.Client,
+	httpClient httpClient.HttpClient,
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,

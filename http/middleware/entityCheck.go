@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-func CheckEntity(c *httpClient.Client) MiddlewareFunc {
+func CheckEntity(c *httpClient.HttpClient) MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()

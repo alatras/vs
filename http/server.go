@@ -41,7 +41,7 @@ type Server struct {
 	deleteRuleSetAppFactory          func() deleteRuleSet.DeleteRuleSet
 	updateRuleSetAppFactory          func() updateRuleSet.UpdateRuleSet
 	LogConfig                        config.Server
-	httpClient                       httpClient.Client
+	httpClient                       httpClient.HttpClient
 }
 
 func NewServer(
@@ -59,7 +59,7 @@ func NewServer(
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
 	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet,
 	serverConfig config.Server,
-	httpClient httpClient.Client,
+	httpClient httpClient.HttpClient,
 ) *Server {
 	return &Server{
 		port:                             port,

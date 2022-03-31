@@ -7,7 +7,7 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-type Client struct {
+type HttpClient struct {
 	logger          *logger.Logger
 	config          *config.Server
 	instrumentation *instrumentation
@@ -15,13 +15,13 @@ type Client struct {
 	restyClient     *resty.Client
 }
 
-func NewClient(
+func NewHttpClient(
 	logger *logger.Logger,
 	config *config.Server,
 	record *logger.LogRecord,
 	restyClient *resty.Client,
-) Client {
-	return Client{
+) HttpClient {
+	return HttpClient{
 		instrumentation: newInstrumentation(logger, record),
 		config:          config,
 		logger:          logger,
