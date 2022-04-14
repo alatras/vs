@@ -1,15 +1,15 @@
-FROM golang:1.13.14-buster AS build
+FROM golang:1.16.0-buster AS build
 
 ENV CGO_ENABLED=1
 ENV GOOS=linux
 ENV GOARCH=amd64
-ENV GOLANG_CI_LINT_VERSION=1.18.0
+ENV GOLANG_CI_LINT_VERSION=1.45.2
 
 RUN apt-get update && apt-get install -y --no-install-recommends g++ gcc libc6-dev wget && \
     rm -rf /var/lib/apt/lists/*
 
 # Install the linter
-RUN wget -O - -q https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v$GOLANG_CI_LINT_VERSION
+RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@v$GOLANG_CI_LINT_VERSION
 RUN golangci-lint --version
 
 # Install Cobertura coverage report converter
@@ -22,7 +22,7 @@ WORKDIR /go/src/validation-service
 COPY . .
 
 # Run linter
-RUN golangci-lint run
+RUN golangci-lint run -c .golangci.yml
 
 # Run tests
 RUN go test -v -timeout 30s -coverprofile=/build_artifacts/coverage.out ./... && \

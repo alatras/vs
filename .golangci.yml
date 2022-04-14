@@ -1,0 +1,6 @@
+linters:
+  disable-all: false
+
+run:
+  skip-files:
+    - http/transaction/validateTransaction_test.go
