@@ -8,14 +8,20 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var Version = "1.0.12"
+var Version = "1.0.13"
 var AppName = "Validation Service"
 
 type Server struct {
-	HTTPPort int   `yaml:"httpPort" env:"HTTP_PORT" env-default:"8080" env-description:"App HTTP port"`
-	Mongo    Mongo `yaml:"mongo"`
-	Log      Log   `yaml:"log"`
-	AppD     AppD  `yaml:"appd"`
+	HTTPPort      int           `yaml:"httpPort" env:"HTTP_PORT" env-default:"8080" env-description:"App HTTP port"`
+	Mongo         Mongo         `yaml:"mongo"`
+	Log           Log           `yaml:"log"`
+	AppD          AppD          `yaml:"appd"`
+	EntityService EntityService `yaml:"entityService"`
+}
+
+type EntityService struct {
+	URL     string `yaml:"entityServiceUrl" env:"ENTITY_SERVICE_URL" env-default:"https://dev2.test-gsc.vfims.com/oidc/ds-entity-service" env-description:"Base URL of Entity Service"`
+	Timeout string `yaml:"entityServiceTimeout" env:"ENTITY_SERVICE_TIMEOUT" env-default:"20" env-description:"Timeout of Entity Service call"`
 }
 
 type Mongo struct {
