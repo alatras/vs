@@ -80,7 +80,7 @@ func (task *task) run() {
 		}
 	}
 
-	task.instrumentation.endTransactionValidation()
+	task.instrumentation.endTransactionValidation(r)
 
 	task.response <- r
 }

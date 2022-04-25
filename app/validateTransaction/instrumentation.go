@@ -5,6 +5,7 @@ import (
 	"time"
 	"validation-service/enums/contextKey"
 	"validation-service/logger"
+	"validation-service/report"
 )
 
 type metadata = logger.Metadata
@@ -45,9 +46,10 @@ func (i *instrumentation) startTransactionValidation() {
 	i.doLog("startTransactionValidation")
 }
 
-func (i *instrumentation) endTransactionValidation() {
+func (i *instrumentation) endTransactionValidation(r report.Report) {
 	duration := time.Since(i.startedAt)
 	i.record = i.record.Duration(int(duration))
+	i.record = i.record.MessageObject("End transaction validation", r)
 	i.doLog("endTransactionValidation")
 }
 
