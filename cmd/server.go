@@ -18,14 +18,18 @@ import (
 	"validation-service/config"
 	"validation-service/enums/appdBackend"
 	"validation-service/http"
+	"validation-service/http/httpClient"
 	"validation-service/logger"
 	"validation-service/ruleSet"
 
 	"github.com/go-chi/chi"
+	"github.com/go-resty/resty/v2"
 )
 
 func StartServer(config config.Server) error {
 	log := setupLogger(config.Log)
+
+	healthCheckLog := setupHealthCheckLogger(config.Log)
 
 	rec := &logger.LogRecord{}
 
@@ -79,10 +83,13 @@ func StartServer(config config.Server) error {
 		return updateRuleSet.NewUpdateRuleSet(log, newRec, ruleSetRepo)
 	}
 
+	httpClientInst := httpClient.NewHttpClient(log, &config, rec, resty.New())
+
 	err := http.NewServer(
 		config.HTTPPort,
 		chi.NewRouter(),
 		log,
+		healthCheckLog,
 		ruleSetRepo,
 		validateTransactionApp,
 		createRuleSetAppFactory,
@@ -92,6 +99,8 @@ func StartServer(config config.Server) error {
 		getRuleSetAppFactory,
 		deleteRuleSetAppFactory,
 		updateRuleSetAppFactory,
+		config,
+		httpClientInst,
 	).Start()
 
 	if err != nil {
@@ -106,16 +115,35 @@ func setupLogger(logConfig config.Log) *logger.Logger {
 	l, err := logger.NewLogger(
 		config.AppName,
 		config.Version,
-		logConfig.FormatValue(),
+		logConfig.Format,
 		logConfig.LevelValue(),
-		logConfig.LogFileValue(),
-		logConfig.LogFileMaxMbValue(),
-		logConfig.LogFileRotationCountValue(),
-		logConfig.LogFileRotationDaysValue(),
+		logConfig.LogFile,
+		logConfig.LogFileMaxMb,
+		logConfig.LogRotationCount,
+		logConfig.LogRotationPeriod,
 	)
 
 	if err != nil {
 		log.Panic("Failed to initialize logger")
+	}
+
+	return l
+}
+
+func setupHealthCheckLogger(logConfig config.Log) *logger.HealthCheckLogger {
+	l, err := logger.NewHealthCheckLogger(
+		config.AppName,
+		config.Version,
+		logConfig.Format,
+		logConfig.LevelValue(),
+		logConfig.HealthLogFilePath,
+		logConfig.LogFileMaxMb,
+		logConfig.HealthCheckLogRotationCount,
+		logConfig.HealthCheckLogRotatingPeriod,
+	)
+
+	if err != nil {
+		log.Panic("Failed to initialize healthCheck logger")
 	}
 
 	return l
@@ -133,15 +161,15 @@ func setupAppD(appDConfig config.AppD) {
 	cfg.Controller.UseSSL = appDConfig.Controller.UseSSL
 	cfg.Controller.Account = appDConfig.Controller.Account
 	cfg.Controller.AccessKey = appDConfig.Controller.AccessKey
-	if proxyHost := appDConfig.GetConfig("APP_DYNAMICS_PROXY_HOST"); proxyHost != "" {
+	if proxyHost := appDConfig.Controller.ProxyHost; proxyHost != "" {
 		cfg.Controller.ProxyHost = appDConfig.Controller.ProxyHost
 	}
-	if proxyPort := appDConfig.GetConfig("APP_DYNAMICS_PROXY_HOST"); proxyPort != "" {
+	if proxyPort := appDConfig.Controller.ProxyPort; proxyPort != "" {
 		cfg.Controller.ProxyPort = appDConfig.Controller.ProxyPort
 	}
 
 	if err := appd.InitSDK(&cfg); err != nil {
-		log.Panic("Error initializing the AppDynamics SDK\n")
+		log.Panic("Error initializing the AppDynamics SDK\n", err)
 	}
 
 	backendProperties := map[string]string{
@@ -154,17 +182,11 @@ func setupAppD(appDConfig config.AppD) {
 }
 
 func createRuleSetRepository(mongoConfig config.Mongo, logger *logger.Logger) *ruleSet.MongoRuleSetRepository {
-	var mongoRetryDelay time.Duration
-
-	if mongoConfig.RetryMilliseconds != 0 {
-		mongoRetryDelay = time.Duration(mongoConfig.RetryMilliseconds) * time.Millisecond
-	} else {
-		mongoRetryDelay = time.Duration(config.DefaultMongoRetryMilliseconds) * time.Millisecond
-	}
+	mongoRetryDelay := time.Duration(mongoConfig.RetryMilliseconds) * time.Millisecond
 
 	ruleSetRepository, err := ruleSet.NewMongoRepository(
-		mongoConfig.GetConfig("MONGO_URL"),
-		mongoConfig.GetConfig("MONGO_DB"),
+		mongoConfig.URL,
+		mongoConfig.DB,
 		mongoRetryDelay,
 		logger,
 	)

@@ -7,18 +7,31 @@ import (
 	"net/http/httptest"
 	"testing"
 	"validation-service/app/listAncestorsRuleSet"
+	"validation-service/config"
+	"validation-service/http/httpClient"
 	"validation-service/http/ruleSet"
 	"validation-service/logger"
 
 	"github.com/bitly/go-simplejson"
+	"github.com/go-resty/resty/v2"
+	"github.com/jarcoal/httpmock"
 )
 
 func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.ResponseRecorder {
 	recorder := httptest.NewRecorder()
 	log := logger.NewStubLogger()
 
+	c := resty.New()
+	httpmock.ActivateNonDefault(c.GetClient())
+	defer httpmock.DeactivateAndReset()
+	responder := httpmock.NewStringResponder(200, "")
+	fakeUrl := "/entities/12345"
+	httpmock.RegisterResponder("GET", fakeUrl, responder)
+	cl := httpClient.NewHttpClient(log, &config.Server{}, &logger.LogRecord{}, c)
+
 	resource := ruleSet.NewResource(
 		log,
+		cl,
 		nil,
 		nil,
 		nil,
@@ -36,13 +49,13 @@ func setupUnknownErrorRecorder(t *testing.T, r *http.Request) *httptest.Response
 
 func Test_HTTP_RuleSet_ListAncestors_UnexpectedError(t *testing.T) {
 	req, err := http.NewRequest("GET", "/12345/rulesets/ancestors", bytes.NewBuffer([]byte("")))
-
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
 		return
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer token")
 
 	recorder := setupUnknownErrorRecorder(t, req)
 

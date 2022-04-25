@@ -64,6 +64,7 @@ func Test_HTTP_ValidateTransaction_Success_Pass(t *testing.T) {
 
 	req, err := http.NewRequest("POST", "/validate", bytes.NewBuffer([]byte(requestBody)))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer token")
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
@@ -129,6 +130,7 @@ func Test_HTTP_ValidateTransaction_Success_Block(t *testing.T) {
 
 	req, err := http.NewRequest("POST", "/validate", bytes.NewBuffer([]byte(requestBody)))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer token")
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
@@ -191,6 +193,7 @@ func Test_HTTP_ValidateTransaction_EntityNotFound(t *testing.T) {
 
 	req, err := http.NewRequest("POST", "/validate", bytes.NewBuffer([]byte(requestBody)))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer token")
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
@@ -250,6 +253,7 @@ func Test_HTTP_ValidateTransaction_EntityIdFormatIncorrect(t *testing.T) {
 
 	req, err := http.NewRequest("POST", "/validate", bytes.NewBuffer([]byte(requestBody)))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer token")
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
@@ -309,6 +313,7 @@ func Test_HTTP_ValidateTransaction_UnexpectedError(t *testing.T) {
 
 	req, err := http.NewRequest("POST", "/validate", bytes.NewBuffer([]byte(requestBody)))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer token")
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)

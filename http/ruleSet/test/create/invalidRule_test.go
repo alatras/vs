@@ -7,10 +7,14 @@ import (
 	"testing"
 
 	"validation-service/app/createRuleSet"
+	"validation-service/config"
+	"validation-service/http/httpClient"
 	"validation-service/http/ruleSet"
 	"validation-service/logger"
 
 	"github.com/bitly/go-simplejson"
+	"github.com/go-resty/resty/v2"
+	"github.com/jarcoal/httpmock"
 )
 
 func setupInvalidRuleRecorder(t *testing.T, request *http.Request) *httptest.ResponseRecorder {
@@ -18,8 +22,17 @@ func setupInvalidRuleRecorder(t *testing.T, request *http.Request) *httptest.Res
 
 	log := logger.NewStubLogger()
 
+	c := resty.New()
+	httpmock.ActivateNonDefault(c.GetClient())
+	defer httpmock.DeactivateAndReset()
+	responder := httpmock.NewStringResponder(200, "")
+	fakeUrl := "/entities/12345"
+	httpmock.RegisterResponder("GET", fakeUrl, responder)
+	cl := httpClient.NewHttpClient(log, &config.Server{}, &logger.LogRecord{}, c)
+
 	resource := ruleSet.NewResource(
 		log,
+		cl,
 		func() createRuleSet.CreateRuleSet {
 			return &errorApp{error: createRuleSet.InvalidRule}
 		},
@@ -52,6 +65,7 @@ func Test_HTTP_RuleSet_Create_InvalidRule(t *testing.T) {
 
 	req, err := http.NewRequest("POST", "/12345/rulesets", bytes.NewBuffer([]byte(requestBody)))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer token")
 
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
@@ -113,12 +127,13 @@ func Test_HTTP_RuleSet_Create_InvalidRule_Blacklisted(t *testing.T) {
 		}`
 
 	req, err := http.NewRequest("POST", "/12345/rulesets", bytes.NewBuffer([]byte(requestBody)))
-	req.Header.Set("Content-Type", "application/json")
-
 	if err != nil {
 		t.Errorf("Failed to create request: %v", err)
 		return
 	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer token")
 
 	recorder := setupInvalidRuleRecorder(t, req)
 

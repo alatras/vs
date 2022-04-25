@@ -8,13 +8,17 @@ import (
 	"validation-service/app/listDescendantsRuleSet"
 	"validation-service/app/listRuleSet"
 	"validation-service/app/updateRuleSet"
+	"validation-service/http/httpClient"
 	"validation-service/logger"
 
 	"github.com/go-chi/chi"
+
+	httpMiddleware "validation-service/http/middleware"
 )
 
 type Resource struct {
 	logger                           *logger.Logger
+	httpClient                       *httpClient.HttpClient
 	createRuleSetAppFactory          func() createRuleSet.CreateRuleSet
 	listRuleSetAppFactory            func() listRuleSet.ListRuleSet
 	listAncestorsRuleSetAppFactory   func() listAncestorsRuleSet.ListAncestorsRuleSet
@@ -26,6 +30,7 @@ type Resource struct {
 
 func NewResource(
 	logger *logger.Logger,
+	httpClient httpClient.HttpClient,
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
@@ -36,6 +41,7 @@ func NewResource(
 ) Resource {
 	return Resource{
 		logger:                           logger,
+		httpClient:                       &httpClient,
 		createRuleSetAppFactory:          createRuleSetAppFactory,
 		listRuleSetAppFactory:            listRuleSetAppFactory,
 		listAncestorsRuleSetAppFactory:   listAncestorsRuleSetAppFactory,
@@ -48,15 +54,19 @@ func NewResource(
 
 func (rs Resource) Routes() chi.Router {
 	r := chi.NewRouter()
-	r.Get("/{id}/rulesets", rs.List)
-	r.Get("/{id}/rulesets/ancestors", rs.ListAncestors)
-	r.Get("/{id}/rulesets/descendants", rs.ListDescendants)
-	r.Post("/{id}/rulesets", rs.Create)
 
-	r.Route("/{id}/rulesets/{ruleSetId}", func(r chi.Router) {
-		r.Get("/", rs.Get)
-		r.Put("/", rs.Update)
-		r.Delete("/", rs.Delete)
+	r.Group(func(r chi.Router) {
+		r.Use(httpMiddleware.CheckEntity(rs.httpClient))
+
+		r.Get("/{id}/rulesets", rs.List)
+		r.Get("/{id}/rulesets/ancestors", rs.ListAncestors)
+		r.Get("/{id}/rulesets/descendants", rs.ListDescendants)
+		r.Post("/{id}/rulesets", rs.Create)
+		r.Route("/{id}/rulesets/{ruleSetId}", func(r chi.Router) {
+			r.Get("/", rs.Get)
+			r.Put("/", rs.Update)
+			r.Delete("/", rs.Delete)
+		})
 	})
 
 	return r

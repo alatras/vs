@@ -12,7 +12,9 @@ import (
 	"validation-service/app/listRuleSet"
 	"validation-service/app/updateRuleSet"
 	"validation-service/app/validateTransaction"
+	"validation-service/config"
 	"validation-service/http/healthCheck"
+	"validation-service/http/httpClient"
 	httpMiddleware "validation-service/http/middleware"
 	httpRuleSet "validation-service/http/ruleSet"
 	"validation-service/http/transaction"
@@ -28,6 +30,7 @@ type Server struct {
 	port                             int
 	router                           chi.Router
 	logger                           *logger.Logger
+	healthCheckLogger                *logger.HealthCheckLogger
 	ruleSetRepository                ruleSet.Repository
 	validateTransactionService       validateTransaction.ValidatorService
 	createRuleSetAppFactory          func() createRuleSet.CreateRuleSet
@@ -37,12 +40,15 @@ type Server struct {
 	getRuleSetAppFactory             func() getRuleSet.GetRuleSet
 	deleteRuleSetAppFactory          func() deleteRuleSet.DeleteRuleSet
 	updateRuleSetAppFactory          func() updateRuleSet.UpdateRuleSet
+	LogConfig                        config.Server
+	httpClient                       httpClient.HttpClient
 }
 
 func NewServer(
 	port int,
 	router chi.Router,
 	logger *logger.Logger,
+	healthCheckLogger *logger.HealthCheckLogger,
 	ruleSetRepository ruleSet.Repository,
 	validateTransactionService validateTransaction.ValidatorService,
 	createRuleSetAppFactory func() createRuleSet.CreateRuleSet,
@@ -52,11 +58,14 @@ func NewServer(
 	getRuleSetAppFactory func() getRuleSet.GetRuleSet,
 	deleteRuleSetAppFactory func() deleteRuleSet.DeleteRuleSet,
 	updateRuleSetAppFactory func() updateRuleSet.UpdateRuleSet,
+	serverConfig config.Server,
+	httpClient httpClient.HttpClient,
 ) *Server {
 	return &Server{
 		port:                             port,
 		router:                           router,
 		logger:                           logger,
+		healthCheckLogger:                healthCheckLogger,
 		ruleSetRepository:                ruleSetRepository,
 		validateTransactionService:       validateTransactionService,
 		createRuleSetAppFactory:          createRuleSetAppFactory,
@@ -66,24 +75,30 @@ func NewServer(
 		getRuleSetAppFactory:             getRuleSetAppFactory,
 		deleteRuleSetAppFactory:          deleteRuleSetAppFactory,
 		updateRuleSetAppFactory:          updateRuleSetAppFactory,
+		LogConfig:                        serverConfig,
+		httpClient:                       httpClient,
 	}
 }
 
 func (s *Server) Start() error {
 	r := s.router
 
-	r.Use(httpMiddleware.SetContextWithHeaderIds)
-	r.Use(httpMiddleware.Logger(s.logger))
+	r.Use(httpMiddleware.SetContextWithHeaders(&s.LogConfig.Log))
 	r.Use(chiMiddleware.URLFormat)
 	r.Use(httpMiddleware.SetContextWithBusinessTransaction)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	r.Mount("/healthCheck", healthCheck.NewResource(s.logger, s.ruleSetRepository).Routes())
+	healthCheckGroup := r.Group(nil)
+	healthCheckGroup.Use(httpMiddleware.HealthCheckLogger(s.healthCheckLogger))
+	healthCheckGroup.Mount("/healthCheck", healthCheck.NewResource(s.healthCheckLogger, s.ruleSetRepository).Routes())
+
 	r.Mount("/transaction", transaction.NewResource(s.logger, s.validateTransactionService).Routes())
+
 	r.Mount(
 		"/entities",
 		httpRuleSet.NewResource(
 			s.logger,
+			s.httpClient,
 			s.createRuleSetAppFactory,
 			s.getRuleSetAppFactory,
 			s.deleteRuleSetAppFactory,

@@ -1,15 +1,22 @@
 log:
   level: info
   format: json
-  logFile: ./logs/ValidationService.log
+  logFile: ./logs/main.log
   logFileMaxMb: 1
-  logFileRotationCount: 30
-  logFileRotationDays: 1
+  logRotatingPeriod: 1
+  logRotatingCount: 30
+  healthCheckLogFile: ./logs/health.log
+  healthCheckLogRotatingPeriod: 10
+  healthCheckLogRotatingCount: 2
+  traceIdHeader: x-b3-traceid
 httpPort: 8080
 mongo:
   url: mongodb://mongo
   db: validationService
   retryMilliseconds: 0
+entityService:
+    entityServiceUrl: https://dev2.test-gsc.vfims.com/oidc/ds-entity-service
+    entityServiceTimeout: 20
 appd:
   appName: validationService
   tierName: transaction
