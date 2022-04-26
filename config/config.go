@@ -67,7 +67,14 @@ func Read(path string) {
 		fmt.Println("No .env file")
 	}
 
-	readError := cleanenv.ReadConfig(path+"config.yml", &App)
+	var configPath string
+	if path == "" {
+		configPath = "config.yml"
+	} else {
+		configPath = path + "config.yml"
+	}
+
+	readError := cleanenv.ReadConfig(configPath, &App)
 	if readError != nil {
 		log.Panic("Failed to read yaml file", readError)
 	}

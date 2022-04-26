@@ -13,8 +13,6 @@ RUN yum install -y golang-1.13.14 gcc gcc-c++ \
     yum-utils rpm-build && \
     yum clean all
 
-ADD . /src
-
 RUN useradd builder -u 1000 -m -G users,wheel && \
     echo "builder ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     echo "# macros"                      >  /home/builder/.rpmmacros && \
@@ -25,13 +23,12 @@ RUN useradd builder -u 1000 -m -G users,wheel && \
     echo "%_rpmdir    %{_topdir}"        >> /home/builder/.rpmmacros && \
     echo "%_srcrpmdir %{_topdir}"        >> /home/builder/.rpmmacros && \
     mkdir /home/builder/rpm && \
-    chown -R builder /home/builder && \
-    chown -R builder /src
-
+    chown -R builder /home/builder
 USER builder
 
 ENV FLAVOR=rpmbuild OS=centos DIST=el7
 
+ADD . /src
 WORKDIR /src
 RUN git archive --prefix validation-service/ -o /home/builder/rpm/validation-service.tar.gz `git rev-parse --short HEAD`
 
