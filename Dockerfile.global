@@ -22,10 +22,10 @@ WORKDIR /go/src/validation-service
 COPY . .
 
 # Run linter
-RUN golangci-lint run
+RUN golangci-lint --timeout 2m run
 
 # Run tests
-RUN go test -v -timeout 30s -coverprofile=/build_artifacts/coverage.out ./... && \
+RUN go test -v -timeout 60s -coverprofile=/build_artifacts/coverage.out ./... && \
     gocover-cobertura < /build_artifacts/coverage.out > /build_artifacts/coverage.xml && \
     rm /build_artifacts/coverage.out
 
