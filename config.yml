@@ -15,8 +15,8 @@ mongo:
   db: validationService
   retryMilliseconds: 0
 entityService:
-    entityServiceUrl: https://dev2.test-gsc.vfims.com/oidc/ds-entity-service
-    entityServiceTimeout: 20
+  entityServiceUrl: https://dev2.test-gsc.vfims.com/oidc/ds-entity-service
+  entityServiceTimeout: 20
 appd:
   appName: validationService
   tierName: transaction
