@@ -1,15 +1,21 @@
 version: '3'
 services:
   app:
+    platform: linux/amd64  # Add this line
     build:
       dockerfile: Dockerfile.dev
       context: .
     ports:
       - "3000:3000"
+      - "8080:8080"
     volumes:
       - ./:/go/src/validation-service
     environment:
       - ENVIRONMENT=development
+      - HTTP_PORT=8080
+      - CGO_ENABLED=1
+      - GOOS=linux
+      - GOARCH=amd64
     links:
       - mongo
     depends_on:

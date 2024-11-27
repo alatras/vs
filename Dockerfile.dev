@@ -1,24 +1,42 @@
-FROM golang:1.13.14-buster
+# V1
 
-ENV CGO_ENABLED=1
-ENV GOOS=linux
-ENV GOARCH=amd64
+FROM golang:1.20
+
+# Set environment variables
 ENV GOPATH /go
 ENV HTTP_PORT=8080
+ENV PATH=$PATH:/go/bin
+ENV CGO_ENABLED=1
 
-RUN apt-get update && apt-get install -y --no-install-recommends g++ gcc libc6-dev curl && \
+# Install required packages and clean up
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    g++ \
+    gcc \
+    libc6-dev \
+    curl \
+    build-essential && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Gin live reloading golang library
-RUN go get github.com/codegangsta/gin
+WORKDIR /go/src/validation-service
+
+# Copy go.mod and go.sum first to leverage Docker cache
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Install Gin live reloading tool
+RUN go install github.com/codegangsta/gin@latest
+
+# Copy the rest of the code
+COPY . .
+
+# Healthcheck
+HEALTHCHECK CMD curl --fail http://localhost:8080/healthCheck || exit 1
 
 # Expose port 3000 to the host so we can access the gin proxy
 EXPOSE 3000
 
-WORKDIR /go/src/validation-service
-
-COPY . .
-
-HEALTHCHECK CMD curl --fail http://localhost:8080/healthCheck || exit 1
-
-CMD gin --immediate --appPort $HTTP_PORT --bin validation-service run
+# Run the application using gin
+# CMD ["gin", "--immediate", "--appPort", "$HTTP_PORT", "--bin", "validation-service", "run"]
+CMD ["gin", "--immediate", "--appPort", "8080", "--bin", "validation-service", "run"]
